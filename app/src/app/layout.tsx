@@ -16,9 +16,9 @@ import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ANC Planning Studio · Ethiopia",
+  title: "ANC8+ Ethiopia · EDHS 2024–25",
   description:
-    "Where women in Ethiopia are lost along the antenatal care ladder, what predicts completing eight contacts, and what planning scenarios imply. Built on the 2024–25 Ethiopia DHS.",
+    "Predicting attainment of eight antenatal care contacts in Ethiopia: where women are lost along the antenatal care ladder, who is left behind, and what our models show. Built on the 2024–25 Ethiopia DHS.",
 };
 
 // Runs before hydration to avoid a light/dark flash: the same keys ThemeProvider uses.

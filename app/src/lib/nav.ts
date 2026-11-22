@@ -7,10 +7,12 @@ import {
   CircleHelp,
   Compass,
   Gauge,
+  Hammer,
   Info,
   Layers,
   LifeBuoy,
   Microscope,
+  Presentation,
   ListTree,
   Map as MapIcon,
   Split,
@@ -54,6 +56,8 @@ export const NAV: Record<Mode, NavGroup[]> = {
     {
       label: "Start",
       items: [
+        { key: "welcome", label: "Title screen", icon: Presentation, path: "/welcome",
+          meta: ["Start", "Title screen", "the study question and the way in"] },
         { key: "overview", label: "Overview", icon: Gauge, path: "/",
           meta: ["Plan", "Antenatal care in Ethiopia at a glance", "EDHS 2024–25"] },
       ],
@@ -108,6 +112,8 @@ NAV.help = [
     items: [
       { key: "help-home", label: "Help home", icon: CircleHelp, path: "/help",
         meta: ["Help", "How to use the studio", "every tool, in plain language"] },
+      { key: "built", label: "How it was built", icon: Hammer, path: "/built",
+        meta: ["Help", "How this dashboard was built", "survey file → notebooks 1–4 → export → app"] },
     ],
   },
   ...HELP_GROUPS.map((g) => ({

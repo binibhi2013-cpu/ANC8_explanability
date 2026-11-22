@@ -12,21 +12,34 @@ import { useTheme } from "./theme-provider";
  * purpose: they are prompts for the presenter, not a script to read.
  */
 
-const STEPS: { path: string; title: string; say: string }[] = [
-  { path: "/", title: "The ladder",
-    say: "78% of women had at least one ANC contact, 52% reached four and 19% reached the eight the WHO recommends. Of women who reached four, 63% did not reach eight." },
-  { path: "/map?metric=anc8", title: "Where",
-    say: "Every region shaded by ANC8+ in our full cohort. Press play to move the map from ANC1+ to ANC8+, and see the country empty out." },
-  { path: "/map?region=Somali&metric=never", title: "One region",
-    say: "Click a region: its ladder with intervals, where women are lost, what that suggests for programmes, and who is left behind by wealth, education and other study predictors." },
-  { path: "/explore/ladder", title: "One distribution",
-    say: "The three rungs are cuts through one contact count. Women bunch at three or four contacts, and at eight." },
-  { path: "/models", title: "Our models",
-    say: "Three models on 21 predictors, tested on held-out women: average precision 0.40 to 0.44 against 0.16 by chance. Wealth, travel time and region lead the SHAP ranking." },
-  { path: "/explore/cohorts", title: "The first visit",
-    say: "Among women who started ANC, adding an early first visit raised average precision by 0.022 to 0.034, but every interval includes zero." },
-  { path: "/help", title: "Help for every screen",
-    say: "Every panel's (i) says how to read it, and Read more opens a plain-language guide. About the study has the abstract." },
+/** The 10-minute story: problem → ladder → where → who → models → first visit →
+ *  what to act on → how it was built. `focus` is the panel the step scrolls to and
+ *  outlines (its data-help id). About 50 seconds a step. */
+const STEPS: { path: string; focus?: string; title: string; say: string }[] = [
+  { path: "/", focus: "overview.tiles", title: "1 · The problem",
+    say: "78% of women had at least one ANC contact, 52% reached four, and only 19% reached the eight the WHO recommends." },
+  { path: "/", focus: "overview.ladder", title: "2 · Where women are lost",
+    say: "The biggest loss is not starting care but staying in it: of women who reached four contacts, 63% did not reach eight." },
+  { path: "/map?metric=anc8", focus: "map.map", title: "3 · Where in Ethiopia",
+    say: "ANC8+ ranges from 4% in Somali to 66% in Addis Ababa. Press Play to move the map from ANC1+ to ANC8+ and watch the country empty." },
+  { path: "/map?region=Somali&metric=never", title: "4 · One region",
+    say: "Somali: most women never start ANC. Each region panel shows its five stages against Ethiopia, its travel times and the study's review question." },
+  { path: "/explore/ladder", focus: "ladder.equity", title: "5 · Who is left behind",
+    say: "After four contacts, 20% of the poorest reach eight against 52% of the richest. Switch to travel time: the same gradient." },
+  { path: "/explore/ladder", focus: "ladder.region-travel", title: "6 · Distance",
+    say: "In Afar, 79% of women within two hours of care start ANC, against 39% of those further away." },
+  { path: "/models", focus: "analysis.vs-chance", title: "7 · Our models",
+    say: "Three models on 21 predictors, tested on 1,375 held-out women: average precision 0.40 to 0.44 against 0.16 by chance. All three overpredict." },
+  { path: "/models", focus: "analysis.learned", title: "8 · What the models lean on",
+    say: "Wealth, travel time and region lead. They are markers of circumstances, not causes." },
+  { path: "/explore/cohorts", focus: "cohorts.timing", title: "9 · The first visit",
+    say: "42% of early starters reached ANC8+ against 11% of later starters, yet 58% of early starters still did not. Adding early ANC to the models raised AP by 0.022 to 0.034, with intervals that include zero." },
+  { path: "/", focus: "overview.key-finding", title: "10 · Key finding",
+    say: "The models predict 34% against 13% with an early first visit: a model contrast, not an intervention effect." },
+  { path: "/", focus: "overview.act-on", title: "11 · Four things to act on",
+    say: "Retention after four contacts, women who never start, the wealth gap and distance: questions for programme review, from notebook 4." },
+  { path: "/built", title: "12 · How it was built",
+    say: "Survey file → four notebooks → exported models checked against the published results → this dashboard. Next: external validation and recalibration." },
 ];
 
 export default function Tour() {
@@ -40,6 +53,21 @@ export default function Tour() {
       const n = Math.max(0, Math.min(STEPS.length - 1, k));
       setI(n);
       router.push(STEPS[n].path, { scroll: true });
+      const focus = STEPS[n].focus;
+      if (focus) {
+        // wait for the screen to render its panel, then bring it into view and outline it
+        let tries = 0;
+        const t = setInterval(() => {
+          const el = document.querySelector<HTMLElement>(`[data-help="${focus}"]`);
+          if (el || ++tries > 30) {
+            clearInterval(t);
+            if (!el) return;
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+            el.setAttribute("data-tour-focus", "on");
+            setTimeout(() => el.removeAttribute("data-tour-focus"), 2600);
+          }
+        }, 120);
+      }
     },
     [router],
   );
@@ -65,7 +93,7 @@ export default function Tour() {
       className="fixed right-14 bottom-36 z-[1200] w-[min(360px,calc(100vw-28px))] bg-panel border border-accent rounded-3">
       <div className="flex items-center gap-8 px-12 py-7 border-b border-border">
         <span className="text-9.5 font-semibold uppercase tracking-label text-accent flex-1">
-          Tour · {i + 1} of {STEPS.length}
+          Presentation · {i + 1} of {STEPS.length}
         </span>
         <button type="button" onClick={togglePresent} className="text-faint hover:text-text" aria-label="Leave the tour" title="Leave (Esc)">
           <X className="size-13" />

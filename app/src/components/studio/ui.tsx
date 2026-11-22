@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, Info } from "lucide-react";
 import { Select } from "@/components/ui/select";
+import { MOH_LOGO, MOH_NAME, PROJECT } from "@/lib/project";
 import { helpHref } from "@/lib/help/href";
 
 /**
@@ -17,7 +18,29 @@ import { helpHref } from "@/lib/help/href";
  */
 
 export function Screen({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`p-10 md:p-14 flex flex-col gap-10 md:gap-14 ${className}`}>{children}</div>;
+  return (
+    <div className={`p-10 md:p-14 flex flex-col gap-10 md:gap-14 ${className}`}>
+      {children}
+      <SiteFooter />
+    </div>
+  );
+}
+
+/** The footer under every screen: data source, citation, code and team. */
+export function SiteFooter() {
+  return (
+    <footer className="mt-6 pt-10 border-t border-border flex flex-wrap items-center gap-x-14 gap-y-6 text-9.5 text-faint leading-relaxed">
+      {MOH_LOGO && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={MOH_LOGO} alt={MOH_NAME} className="h-22 w-auto" />
+      )}
+      <span><span className="font-semibold text-dim">Data:</span> {PROJECT.data}.</span>
+      <span><span className="font-semibold text-dim">Team:</span> {PROJECT.team.join(", ")}.</span>
+      <a href={PROJECT.github} target="_blank" rel="noreferrer" className="text-accent hover:underline">Code on GitHub</a>
+      <Link href="/built" className="text-accent hover:underline">How it was built</Link>
+      <span className="basis-full"><span className="font-semibold text-dim">Cite as:</span> {PROJECT.citation}</span>
+    </footer>
+  );
 }
 
 /** The (i) hint. With `more`, the tooltip ends in a link to the Help's longer
