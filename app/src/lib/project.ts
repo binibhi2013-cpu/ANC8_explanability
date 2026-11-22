@@ -15,7 +15,7 @@ export const PROJECT = {
     "Can survey-based prediction identify which women are unlikely to reach the eight antenatal care contacts the WHO recommends, and does an early first visit add to that prediction?",
   short: "ANC8+ Ethiopia",
   programme: "Data Science Capstone · ANC8+ prediction",
-  team: ["Biniam Kefiyalew Taye, PhD", "Solomon Kasahun", "Hagere Mokonnen", "Roman Gebreyes"],
+  team: ["Biniam Kefiyalew Taye, PhD", "Solomon Kasahun", "Hagere Mekonen", "Roman Gebreyes"],
   date: "November 2026",
   data: "Ethiopia Demographic and Health Survey 2024–25 (women's file), survey-weighted",
   citation:
