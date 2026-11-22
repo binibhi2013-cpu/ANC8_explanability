@@ -133,7 +133,7 @@ export default function LadderPage() {
         <PanelLoading rows={2} />
       )}
 
-      <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
+      <div className="grid gap-10 md:gap-14 ">
         <Panel help="ladder.contacts"
           title={`How many contacts women had · ${place}`}
           how="Each bar is the share of women with that many antenatal contacts. The three rungs are cuts through this one distribution: ANC1+ is every bar after the red one, ANC4+ from 4, ANC8+ from 8. Note the peaks at 3–4 and at 8. When a region is selected, the dashed line is Ethiopia."
@@ -175,126 +175,9 @@ export default function LadderPage() {
           )}
         </Panel>
 
-        <Panel help="ladder.survival"
-          title="Women with at least each number of contacts"
-          how="The share of all women who had at least that many contacts. This is one count per woman, not follow-up over time: the steep first step is women with no ANC, the drop after 4 is the gap the eight-contact standard exposes."
-        >
-          {contacts ? (
-            <>
-              <ChartBox height={230} className="pt-10 pr-10">
-                <ComposedChart data={contacts.surv} margin={{ left: -8, right: 10, top: 12, bottom: 0 }}>
-                  <CartesianGrid {...GRID} />
-                  <XAxis {...AXIS} dataKey="k" type="number" domain={[1, contacts.surv.length]} ticks={[1, 2, 4, 6, 8, 10, 12]} />
-                  <YAxis {...AXIS} tickFormatter={(v) => pct(v)} domain={[0, 1]} width={44} />
-                  {[1, 4, 8].map((k) => (
-                    <ReferenceLine key={k} x={k} stroke={RUNG_COLOR[`anc${k}`]} strokeDasharray="3 3"
-                      label={{ value: `ANC${k}+`, position: "insideTopLeft", fontSize: 10, fill: "var(--dim)" }} />
-                  ))}
-                  <Tooltip
-                    content={tip<(typeof contacts.surv)[number]>((d) => (
-                      <TipPanel
-                        title={`${d.k} or more contacts`}
-                        rows={[
-                          { label: place, value: pct(d.here, 1), color: "var(--accent)" },
-                          ...(studio.region ? [{ label: "Ethiopia", value: pct(d.national, 1) }] : []),
-                        ]}
-                      />
-                    ))}
-                  />
-                  <Area dataKey="here" type="stepAfter" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.14} strokeWidth={2} />
-                  {studio.region && (
-                    <Line dataKey="national" type="stepAfter" stroke="var(--text)" strokeDasharray="4 3" strokeWidth={1.5} dot={false} />
-                  )}
-                </ComposedChart>
-              </ChartBox>
-              <SeriesLegend
-                items={[
-                  { key: "here", label: place, color: "var(--accent)" },
-                  ...(studio.region ? [{ key: "nat", label: "Ethiopia", color: "var(--text)", dashed: true }] : []),
-                ]}
-              />
-            </>
-          ) : (
-            <PanelLoading />
-          )}
-        </Panel>
       </div>
 
-      <Panel help="ladder.groups"
-        title={`The ladder, group by group · ${place}`}
-        how="Each row is one group of women. The three dots are the share reaching ANC1+, ANC4+ and ANC8+; the longer the line, the more women the group loses on the way up. Groups with fewer than 25 women are not shown."
-        actions={
-          <Picker
-            label="Group by"
-            options={dims.map((d) => ({ key: d, label: d }))}
-            value={dims.includes(dim) ? dim : dims[0] ?? ""}
-            onChange={setDim}
-          />
-        }
-      >
-        {reg.data ? (
-          <DotRows
-            rows={subRows.map((r) => ({
-              key: r.level,
-              label: r.level,
-              sub: `n ${r.n.toLocaleString()}`,
-              muted: r.small,
-              values: Object.fromEntries(rungs.map((k) => [k, reach(r, k)])),
-              display: pct(reach(r, studio.rung)),
-            }))}
-            series={rungs.map((k) => ({ key: k, label: RUNG_LABEL[k], color: RUNG_COLOR[k] }))}
-            domain={[0, 1]}
-            ticks={[0, 0.25, 0.5, 0.75, 1]}
-            format={(v) => pct(v)}
-            labelWidth={190}
-          />
-        ) : (
-          <PanelLoading />
-        )}
-      </Panel>
 
-      <div className="grid gap-10 md:gap-14">
-        <Panel help="ladder.regions"
-          title="Where each region keeps and loses women"
-          how="Each column is shaded on its own five classes: darker is better on that step. Continuation 1→4 is the share of women who started ANC and reached four; 4→8 the share of those who reached four and went on to eight. Click a region to follow it through the page."
-        >
-          {reg.data ? (
-            <MatrixHeat
-              theme={theme}
-              perColumn
-              rows={REGION_NAMES.map((r) => {
-                const c = reg.data!.cohorts[cohort].regions[r];
-                return {
-                  key: r,
-                  label: r,
-                  values: c
-                    ? {
-                        reach1: cohort === "entry" ? null : c.reach1,
-                        c14: c.continue_1_to_4,
-                        c48: c.continue_4_to_8,
-                        reach8: c.reach8,
-                      }
-                    : {},
-                };
-              })}
-              cols={[
-                ...(cohort === "entry" ? [] : [{ key: "reach1", label: "Start (ANC1+)" }]),
-                { key: "c14", label: "Continue 1→4" },
-                { key: "c48", label: "Continue 4→8" },
-                { key: "reach8", label: "Reach ANC8+" },
-              ]}
-              format={(v) => pct(v)}
-              active={studio.region}
-              onRow={(r) => studio.set({ region: r === studio.region ? "" : r })}
-              onCell={(r) => studio.set({ region: r === studio.region ? "" : r })}
-              labelWidth={140}
-            />
-          ) : (
-            <PanelLoading rows={8} />
-          )}
-        </Panel>
-
-      </div>
 
       <EquityPanel />
 

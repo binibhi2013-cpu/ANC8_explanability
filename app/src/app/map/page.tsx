@@ -7,7 +7,6 @@ import { Layers, Pause, Play, Tag as TagIcon } from "lucide-react";
 import Heatmap from "@/components/charts/Heatmap";
 import RankedBars from "@/components/charts/RankedBars";
 import Legend from "@/components/map/Legend";
-import MiniMap, { useRegionPaths } from "@/components/map/MiniMap";
 import RegionPanel from "@/components/map/RegionPanel";
 import { useRenderTheme } from "@/components/shell/theme-provider";
 import { DataNote, InlineError, Panel, PanelLoading, Screen, Segmented } from "@/components/studio/ui";
@@ -15,6 +14,7 @@ import { Select } from "@/components/ui/select";
 import { classify, colorOf, inkOn } from "@/lib/colors";
 import { useJSON } from "@/lib/data";
 import { LADDER_KEYS, allMetrics, formatValue, type Metric } from "@/lib/metrics";
+import { useNb4 } from "@/lib/nb4";
 import { REGION_NAMES } from "@/lib/regions";
 import type { RegionsData } from "@/lib/regionsData";
 import { useStudio, type Rung } from "@/lib/studio";
@@ -26,28 +26,41 @@ const RegionMap = dynamic(() => import("@/components/map/RegionMap"), {
 });
 
 const HEATMAP_SETS = {
-  ladder: { label: "Ladder & losses", groups: ["The ladder", "Where women are lost"] },
+  ladder: { label: "Ladder & losses", groups: ["The ladder", "Where women are lost", "Timing"] },
   circumstances: { label: "Circumstances", groups: ["Circumstances"] },
   all: { label: "Everything", groups: ["The ladder", "Where women are lost", "Circumstances"] },
 } as const;
 
-// A fixed 0-100% scale for the three ladder maps, so they can be compared with each
-// other: the country visibly empties from ANC1+ to ANC8+.
-const LADDER_BREAKS = { breaks: [0.2, 0.4, 0.6, 0.8], min: 0, max: 1 };
+/** The map's layer list: the ladder, where women are lost, and the first-visit timing.
+ *  The circumstance measures stay in the heatmap below. */
+const MAP_LAYERS = ["anc1", "anc4", "anc8", "never", "start_lt4", "drop48", "early"];
 
 export default function MapPage() {
   const studio = useStudio();
   const theme = useRenderTheme();
   const geo = useJSON<FeatureCollection>("/geo/regions.geojson");
   const reg = useJSON<RegionsData>("/data/regions.json");
-  const paths = useRegionPaths(geo.data);
   const [basemap, setBasemap] = useState(true);
   const [labels, setLabels] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [heatSet, setHeatSet] = useState<keyof typeof HEATMAP_SETS>("ladder");
 
   const data = reg.data;
-  const metrics = useMemo(() => (data ? allMetrics(data) : []), [data]);
+  const nb4 = useNb4().data;
+  const metrics = useMemo(() => {
+    if (!data) return [];
+    const ms = allMetrics(data);
+    if (nb4) {
+      // Early first visit by region: notebook 4 (women who started ANC), the same in either cohort.
+      ms.push({
+        key: "early", label: "First visit by 12 weeks (among women who started)", short: "Early ANC", group: "Timing",
+        scale: "good", kind: "share",
+        legend: "Darker: more women who started ANC had their first visit by 12 weeks (notebook 4).",
+        value: (_d, _c, r) => (r ? nb4.regions[r]?.early_anc?.pct ?? null : nb4.national.early_anc),
+      });
+    }
+    return ms;
+  }, [data, nb4]);
   const usable = useMemo(
     () => (data ? metrics.filter((m) => REGION_NAMES.some((r) => m.value(data, studio.cohort, r) != null)) : []),
     [data, metrics, studio.cohort],
@@ -86,16 +99,6 @@ export default function MapPage() {
     return { classes, mapData, rows, national: metric.value(data, studio.cohort, null) };
   }, [data, metric, studio.cohort, theme]);
 
-  const ladderFills = useMemo(() => {
-    if (!data) return [];
-    const colors = classify([0, 1], "good", theme).colors;
-    return LADDER_KEYS.map((k) => {
-      const m = metrics.find((x) => x.key === k)!;
-      const cls = { ...LADDER_BREAKS, colors };
-      const fills = Object.fromEntries(REGION_NAMES.map((r) => [r, colorOf(m.value(data, studio.cohort, r), cls, theme)]));
-      return { m, fills, national: m.value(data, studio.cohort, null) };
-    });
-  }, [data, metrics, studio.cohort, theme]);
 
   const select = (region: string) => studio.set({ region: region === studio.region ? "" : region });
 
@@ -107,7 +110,8 @@ export default function MapPage() {
     );
   }
 
-  const grouped = usable.reduce<Record<string, Metric[]>>((acc, m) => {
+  const layers = usable.filter((m) => MAP_LAYERS.includes(m.key) || m.key === metric?.key);
+  const grouped = layers.reduce<Record<string, Metric[]>>((acc, m) => {
     (acc[m.group] ||= []).push(m);
     return acc;
   }, {});
@@ -242,50 +246,6 @@ export default function MapPage() {
           </Panel>
         </div>
 
-        <Panel help="map.ladder-maps"
-          title="The ladder, region by region"
-          how="The same map three times, on one fixed scale from 0 to 100%. Read left to right: the country empties from reaching care to completing it. Click a region to open it."
-        >
-          {paths.length && data ? (
-            <div className="grid sm:grid-cols-3">
-              {ladderFills.map(({ m, fills, national }, i) => (
-                <button
-                  key={m.key}
-                  type="button"
-                  onClick={() => studio.set({ metric: m.key })}
-                  className={`p-10 text-left hover:bg-panel2 ${i < 2 ? "sm:border-r border-b sm:border-b-0 border-border" : ""} ${
-                    studio.metric === m.key ? "bg-soft" : ""
-                  }`}
-                  disabled={m.value(data, studio.cohort, null) == null}
-                >
-                  <div className="flex items-baseline gap-8 mb-4">
-                    <span className="text-12 font-semibold">{m.short}</span>
-                    <span className="font-mono text-10.5 text-dim">Ethiopia {formatValue(m, national)}</span>
-                  </div>
-                  <MiniMap
-                    paths={paths}
-                    fills={fills}
-                    selected={studio.region}
-                    onSelect={select}
-                    title={`${m.label} by region`}
-                    noData={theme === "dark" ? "#1f2830" : "#dfe5ec"}
-                  />
-                </button>
-              ))}
-            </div>
-          ) : (
-            <PanelLoading rows={4} />
-          )}
-          <div className="px-14 py-7 border-t border-border flex items-center gap-6 text-9.5 text-faint flex-wrap">
-            <span>share of women:</span>
-            {classify([0, 1], "good", theme).colors.map((c, i) => (
-              <span key={c} className="flex items-center gap-3">
-                <span className="w-10 h-8 rounded-1" style={{ background: c }} />
-                {["0–20%", "20–40%", "40–60%", "60–80%", "80–100%"][i]}
-              </span>
-            ))}
-          </div>
-        </Panel>
 
         <Panel help="map.heatmap"
           title="Every region, every measure"

@@ -21,18 +21,17 @@ export const PLAN: HelpTopic[] = [
       {
         id: "tiles",
         title: "The four headline numbers",
-        shows: "The national share of women reaching each rung, and the share lost between four and eight contacts. Under them, what each number suggests for programmes.",
+        shows: "The national share of women reaching each rung, and the share lost between four and eight contacts.",
         read: [
           "**Reach any ANC**: at least one antenatal contact (ANC1+).",
           "**Reach four contacts**: the earlier standard (ANC4+).",
           "**Reach eight contacts**, in red: the WHO recommendation (ANC8+), the study's outcome.",
           "**Lost between 4 and 8**, in orange: of the women who reached four contacts, the share who did not reach eight.",
-          "The **For programmes** notes are suggestions tied to these numbers, not findings about causes.",
         ],
         terms: ["rung", "continuation"],
       },
       {
-        id: "act-on",
+        id: "key-finding",
         title: "Key finding from our model",
         shows: "The study's what-if for the first visit (notebook 3, table T8): among women who started ANC, the share the models predict reach eight contacts with an early first visit against a later one.",
         plain: [
@@ -42,6 +41,7 @@ export const PLAN: HelpTopic[] = [
         read: [
           "The sentence gives the logistic regression result; the three boxes give each model.",
           "Read the gap as how strongly the model links an early first visit with reaching eight contacts.",
+          "Under the boxes, **What women actually did** gives notebook 4's observed result: 42% of early starters reached ANC8+ against 11% of later starters.",
         ],
         terms: ["association"],
         shot: false,
@@ -70,11 +70,13 @@ export const PLAN: HelpTopic[] = [
         terms: ["rung", "continuation"],
       },
       {
-        id: "tools",
-        title: "Where to look next",
-        shows: "Four doors into the other screens: the map, the ANC ladder, the model analysis and your own data.",
-        read: ["Each card says in one line what the screen answers. Click to open it."],
-        shot: false,
+        id: "act-on",
+        title: "Four things to act on",
+        shows: "Four findings from the study, each with the study's own programme-review cue: retention between the fourth and eighth contact, women who never start ANC (Somali), the wealth gap after four contacts, and travel time in Afar.",
+        read: [
+          "The coloured edge marks the kind of finding. Click a card to open the screen that shows it.",
+          "The cues are questions for programme review, not effects of an intervention.",
+        ],
       },
     ],
   },
@@ -138,15 +140,6 @@ export const PLAN: HelpTopic[] = [
         ],
       },
       {
-        id: "ladder-maps",
-        title: "The ladder, region by region",
-        shows: "Three small maps, ANC1+, ANC4+ and ANC8+, all on one fixed 0–100% scale.",
-        read: [
-          "Because the scale is shared, the three maps compare directly: read left to right and the country empties from reaching care to completing it.",
-          "Click a small map to put that rung on the big map; click a region inside one to open it.",
-        ],
-      },
-      {
         id: "heatmap",
         title: "Every region, every measure",
         shows: "A grid: regions down the side, measures across the top, each cell shaded.",
@@ -172,7 +165,7 @@ export const PLAN: HelpTopic[] = [
       },
       {
         id: "region-far",
-        title: "How far women get",
+        title: "How far women get, and where they are lost",
         shows: "The region's own ladder: the share reaching each rung.",
         read: [
           "The grey figures at the right are Ethiopia's values, and under them Ethiopia's 95% interval in brackets.",

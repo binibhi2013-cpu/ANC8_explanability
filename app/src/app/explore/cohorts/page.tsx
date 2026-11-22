@@ -128,75 +128,11 @@ export default function CohortsPage() {
           )}
         </Panel>
 
-        <Panel help="cohorts.contacts"
-          title={`Contact counts in each cohort · ${place}`}
-          how="The share of women with each number of contacts, one line per cohort. The ANC-entry line has no zero (every woman in it started ANC) and so sits higher everywhere else."
-        >
-          {contactLines ? (
-            <>
-              <ChartBox height={210} className="pt-10 pr-14">
-                <LineChart data={contactLines} margin={{ left: -8, right: 6, top: 6, bottom: 0 }}>
-                  <CartesianGrid {...GRID} vertical={false} />
-                  <XAxis {...AXIS} dataKey="k" interval={0} />
-                  <YAxis {...AXIS} tickFormatter={(v) => pct(v)} width={44} />
-                  <Tooltip
-                    content={tip<Record<string, number | string>>((d) => (
-                      <TipPanel
-                        title={`${d.k} contacts`}
-                        rows={COHORTS.map((c) => ({ label: c.label, value: pct(d[c.key] as number, 1), color: COHORT_COLOR[c.key] }))}
-                      />
-                    ))}
-                  />
-                  {COHORTS.map((c) => (
-                    <Line key={c.key} dataKey={c.key} stroke={COHORT_COLOR[c.key]} strokeWidth={studio.cohort === c.key ? 2.5 : 1.5}
-                      dot={{ r: 2, strokeWidth: 0, fill: COHORT_COLOR[c.key] }} isAnimationActive={false} connectNulls />
-                  ))}
-                </LineChart>
-              </ChartBox>
-              <SeriesLegend items={COHORTS.map((c) => ({ key: c.key, label: c.label, color: COHORT_COLOR[c.key] }))} />
-            </>
-          ) : (
-            <PanelLoading rows={5} />
-          )}
-        </Panel>
+        <TimingPanel />
+
       </div>
 
       <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
-        <Panel help="cohorts.regions"
-          title={`Region by region, both cohorts · ${RUNG_LABEL[rung]}`}
-          how="Each region's share reaching the rung in the full cohort and among women who started ANC. The ANC-entry share is higher because women with no ANC are not in it."
-          actions={
-            <Segmented label="Rung" options={RUNGS.map((r) => ({ key: r.key, label: r.label }))} value={rung}
-              onChange={(k) => studio.set({ rung: k })} />
-          }
-        >
-          {reg.data ? (
-            <DotRows
-              rows={[...REGION_NAMES]
-                .sort((a, b) => (reach("full", rung, b) ?? 0) - (reach("full", rung, a) ?? 0))
-                .map((r) => ({
-                  key: r,
-                  label: r,
-                  values: Object.fromEntries(COHORTS.map((c) => [c.key, reach(c.key, rung, r)])),
-                  display: pct(reach("full", rung, r)),
-                }))}
-              series={COHORTS.map((c) => ({ key: c.key, label: c.label, color: COHORT_COLOR[c.key] }))}
-              domain={[0, 1]}
-              ticks={[0, 0.25, 0.5, 0.75, 1]}
-              format={(v) => pct(v)}
-              active={studio.region}
-              onSelect={(k) => studio.set({ region: k === studio.region ? "" : k })}
-              labelWidth={150}
-              valueWidth={48}
-            />
-          ) : (
-            <PanelLoading rows={10} />
-          )}
-          <div className="px-14 pb-12">
-            <Note tone="accent">The number at the right is the full cohort&apos;s value.</Note>
-          </div>
-          <DataNote>Earlier EDHS rounds would give a trend across surveys rather than one reconstructed from birth dates.</DataNote>
-        </Panel>
 
         {SHOW_24_MONTH && <Panel help="cohorts.edhs"
           title="The 24-month cohort reproduces the EDHS report"
@@ -245,7 +181,7 @@ export default function CohortsPage() {
         </Panel>}
       </div>
 
-      <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
+      <div className="grid gap-10 md:gap-14">
         <Panel help="cohorts.first-visit"
           title="What the first visit adds · ANC8+"
           how="Manuscript Table 3 (study file Table_2_anc_entry_probability_performance.csv). The 984 held-out women who started ANC, scored by each model without (ring) and with (dot) whether the first visit came by 12 weeks. Under each model: the gain in average precision and its 95% interval from the paired bootstrap."
@@ -286,7 +222,6 @@ export default function CohortsPage() {
           )}
         </Panel>
 
-        <TimingPanel />
       </div>
     </Screen>
   );

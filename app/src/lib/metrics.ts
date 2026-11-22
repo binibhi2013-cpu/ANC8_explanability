@@ -17,7 +17,7 @@ export interface Metric {
   label: string;
   /** column header in the heatmap */
   short: string;
-  group: "The ladder" | "Where women are lost" | "Women per year" | "Against circumstances" | "Circumstances";
+  group: "The ladder" | "Where women are lost" | "Timing" | "Women per year" | "Against circumstances" | "Circumstances";
   scale: Scale;
   kind: "share" | "count" | "gap";
   /** what a darker colour means, in one sentence */

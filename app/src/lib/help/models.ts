@@ -50,14 +50,6 @@ export const MODELS: HelpTopic[] = [
         shot: false,
       },
       {
-        id: "first-visit",
-        title: "What early initiation adds",
-        shows: "Manuscript Table 3: among the 984 held-out women who started ANC, each model with and without whether the first visit was by 12 weeks.",
-        read: ["The gains are positive for all three models, but every 95% interval includes zero."],
-        terms: ["paired"],
-        shot: false,
-      },
-      {
         id: "learned",
         title: "What the model leans on (SHAP)",
         shows: "Notebook 3 tables T2 and T5: XGBoost's survey-weighted mean absolute SHAP value per predictor, in the full cohort or at ANC entry.",

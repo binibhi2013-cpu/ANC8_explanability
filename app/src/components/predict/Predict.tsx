@@ -151,6 +151,8 @@ export default function Predict({
   const [outcome, setOutcome] = useState<CatalogModel["outcome"]>("anc8plus");
   const [horizon, setHorizon] = useState<CatalogModel["horizon"]>("before");
   const [algorithm, setAlgorithm] = useState<string>("Logistic regression");
+  // The recommended model (logistic regression) is shown first; the others on request.
+  const [showModels, setShowModels] = useState(false);
   const [answers, setAnswers] = useState<Answers>(start);
   const [showAll, setShowAll] = useState(false);
   const [current, setCurrent] = useState<Scored | null>(null);
@@ -332,6 +334,12 @@ export default function Predict({
         how="The starting woman is a synthetic profile close to the typical woman in the survey. Change an answer to see what the model predicts for someone with that recorded characteristic, not what would happen if her circumstances changed."
       >
         <div className="px-14 py-10 flex flex-wrap items-center gap-10 border-b border-border">
+          {!showModels ? (
+            <>
+              <Tag>{SHORT[algorithm] ?? algorithm} · recommended</Tag>
+              <button type="button" className={btn} onClick={() => setShowModels(true)}>Compare models</button>
+            </>
+          ) : (
           <Segmented
             label="Model"
             options={ALGORITHMS.map((a) => {
@@ -345,12 +353,13 @@ export default function Predict({
             value={algorithm}
             onChange={(a) => setAlgorithm(a)}
           />
-          <Segmented
+          )}
+          {Object.keys(schema.outcomes).length > 1 && <Segmented
             label="Outcome"
             options={(["anc1plus", "anc4plus", "anc8plus"] as const).filter((o) => schema.outcomes[o]).map((o) => ({ key: o, label: schema.outcomes[o] }))}
             value={outcome}
             onChange={(o) => { setOutcome(o); if (!hasEntry(o)) setHorizon("before"); }}
-          />
+          />}
           {outcome !== "anc1plus" && (
             <Segmented
               label="When"
@@ -456,7 +465,7 @@ export default function Predict({
           </Panel>
         )}
 
-        <Panel help="predict.compare"
+        {showModels && <Panel help="predict.compare"
           title={`Every ${outcomeLabel} model`}
           how="These answers scored by every model for this question, updated as they change, to see whether the models agree. Click one to switch to it."
         >
@@ -489,7 +498,7 @@ export default function Predict({
           ) : (
             <p className="px-14 py-10 text-10.5 text-dim">Scoring…</p>
           )}
-        </Panel>
+        </Panel>}
       </aside>
     </div>
   );

@@ -53,37 +53,6 @@ export const EXPLORE: HelpTopic[] = [
         ],
       },
       {
-        id: "survival",
-        title: "Women with at least each number of contacts",
-        shows: "The share of all women who had at least that many contacts. It comes from one count per woman, not from following women over time.",
-        read: [
-          "The first steep step is women with no ANC.",
-          "The drop after four is the gap the eight-contact standard exposes.",
-          "Dashed vertical lines mark the three rungs; hover for exact shares.",
-        ],
-      },
-      {
-        id: "groups",
-        title: "The ladder, group by group",
-        shows: "One row per group of women (for example each wealth fifth), with three dots: the share reaching ANC1+, ANC4+ and ANC8+.",
-        read: [
-          "The longer the line from the first dot to the last, the more of that group is lost on the way up.",
-          "Pick the grouping with the switch (a list on a phone). Only groupings that are among the study's 21 predictors are offered.",
-          "Groups with fewer than 25 women are not shown.",
-        ],
-      },
-      {
-        id: "regions",
-        title: "Where each region keeps and loses women",
-        shows: "A grid of regions against four steps: starting care, continuing from 1 to 4 contacts, continuing from 4 to 8, and reaching eight.",
-        read: [
-          "Each column is shaded on its own: darker is better on that step. Compare regions down a column.",
-          "A region dark on **Start** but light on **Continue 4→8** gets women in but does not keep them.",
-          "Click a region to follow it through the page.",
-        ],
-        terms: ["continuation"],
-      },
-      {
         id: "equity",
         title: "Who moves through each stage",
         shows: "Notebook 4's equity tables: for wealth, travel time, maternal occupation, religion and pregnancy intention, the share of each group passing each of five stages, with 95% intervals.",
@@ -145,22 +114,6 @@ export const EXPLORE: HelpTopic[] = [
           "Click a rung to switch to it.",
         ],
         terms: ["ci"],
-      },
-      {
-        id: "contacts",
-        title: "Contact counts in each cohort",
-        shows: "The share of women with each number of contacts, one line per cohort.",
-        read: ["The ANC-entry line has no zero (every woman in it started) and so sits higher everywhere else."],
-      },
-      {
-        id: "regions",
-        title: "Region by region, both cohorts",
-        shows: "Each region's share reaching the rung in the two cohorts.",
-        read: [
-          "The number at the right is the full cohort's value.",
-          "The ANC-entry share is higher because women with no ANC are not in it.",
-          "Click a region to select it.",
-        ],
       },
       {
         id: "first-visit",

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Layers, Map as MapIcon, Microscope, Upload } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Funnel from "@/components/charts/Funnel";
 import { Cue, Panel, PanelLoading, Screen, StatTile, InlineError } from "@/components/studio/ui";
 import { useJSON } from "@/lib/data";
@@ -26,16 +26,6 @@ type Study = { what_if: { model: string; later: number; early: number; differenc
 
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 
-const SCREENS = [
-  { path: "/map", icon: MapIcon, title: "Map & regions",
-    body: "Every region shaded by ANC1+, ANC4+ or ANC8+. Click one for its ladder and where women are lost." },
-  { path: "/explore/ladder", icon: Layers, title: "The ANC ladder",
-    body: "How many contacts women had, and who reaches each rung, by group and region." },
-  { path: "/models", icon: Microscope, title: "Model analysis",
-    body: "How well our three models predict ANC8+ on held-out women, and which predictors they lean on." },
-  { path: "/your-data", icon: Upload, title: "Your data",
-    body: "A tool, not a study finding: load routine ANC counts and see the trend and a forecast." },
-];
 
 export default function Overview() {
   const studio = useStudio();
@@ -53,10 +43,6 @@ export default function Overview() {
                       sub="the WHO recommendation (ANC8+)" tone="bad" />
             <StatTile label="Lost between 4 and 8" value={pct(1 - policy.data.cascade.continue_4_to_8)}
                       sub="of women who reach four never reach eight" tone="warn" />
-          </div>
-          <div className="grid gap-8 lg:grid-cols-2">
-            <Cue>{CUES.anyAnc(policy.data.cascade.reach1)}</Cue>
-            <Cue>{CUES.lost48(1 - policy.data.cascade.continue_4_to_8)}</Cue>
           </div>
         </>
       )}
@@ -84,29 +70,7 @@ export default function Overview() {
           )}
         </Panel>
 
-        <Panel help="overview.tools" title="Where to look next">
-          <div className="grid sm:grid-cols-2">
-            {SCREENS.map((t, i) => {
-              const Icon = t.icon;
-              return (
-                <Link
-                  key={t.path}
-                  href={studio.href(t.path)}
-                  className={`group block px-14 py-12 border-border hover:bg-panel2 hover:no-underline text-text ${
-                    i % 2 === 0 ? "sm:border-r" : ""
-                  } ${i < 2 ? "border-b" : "border-b sm:border-b-0"} last:border-b-0`}
-                >
-                  <div className="flex items-center gap-7">
-                    <Icon className="size-14 text-accent" />
-                    <span className="text-12 font-semibold flex-1">{t.title}</span>
-                    <ArrowRight className="size-12 text-faint group-hover:text-accent" />
-                  </div>
-                  <div className="text-11 text-dim mt-5 leading-relaxed">{t.body}</div>
-                </Link>
-              );
-            })}
-          </div>
-        </Panel>
+        <ActOn cascade={policy.state === "ready" ? policy.data.cascade : null} />
       </div>
       <Link href={studio.href("/about")} className="text-10.5 text-accent hover:underline self-start">
         About the study
@@ -147,7 +111,7 @@ function KeyFindingAndMap() {
 
   return (
     <div className="grid gap-10 md:gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-      <Panel help="overview.act-on" title="Key finding from our model"
+      <Panel help="overview.key-finding" title="Key finding from our model"
         how="Notebook 3, table T8. Each of the 984 held-out women who started ANC was scored twice by the same model: once with her first visit set to early (by 12 weeks) and once set to later, with everything else unchanged.">
         {lr ? (
           <div className="px-14 py-12 flex flex-col gap-10">
@@ -225,5 +189,60 @@ function KeyFindingAndMap() {
         )}
       </Panel>
     </div>
+  );
+}
+
+/**
+ * Four things to act on: the supervisor's clickable cards, filled with the study's own
+ * findings (notebook 4 and the ladder). Each card names its number, the study's cue for
+ * it, and opens the screen that shows it.
+ */
+function ActOn({ cascade }: { cascade: Cascade | null }) {
+  const studio = useStudio();
+  const nb4 = useNb4();
+  const d = nb4.data;
+  if (!cascade || !d) {
+    return <Panel help="overview.act-on" title="Four things to act on"><PanelLoading rows={4} /></Panel>;
+  }
+  const wealth = d.equity.wealth.stages.anc8 ?? [];
+  const poorest = wealth.find((r) => r.level === "Poorest")?.pct ?? 0;
+  const richest = wealth.find((r) => r.level === "Richest")?.pct ?? 0;
+  const somali = d.regions.Somali?.any_anc?.pct ?? 0;
+  const afar = d.region_travel.entry.Afar;
+  const items = [
+    { tone: "var(--warn)", href: "/explore/ladder",
+      head: `${pct(1 - cascade.continue_4_to_8)} of women who reach four contacts do not reach eight`,
+      body: CUES.lost48(1 - cascade.continue_4_to_8).split(". ").slice(1).join(". ") },
+    { tone: "var(--bad)", href: "/map?region=Somali&metric=never",
+      head: `${pct(1 - cascade.reach1)} of women had no ANC; in Somali only ${pct(somali)} start care`,
+      body: CUES.region },
+    { tone: "var(--accent)", href: "/explore/ladder",
+      head: `After four contacts, ${pct(poorest)} of the poorest reach eight, against ${pct(richest)} of the richest`,
+      body: CUES.signal("wealth") },
+    { tone: "var(--rung4)", href: "/map?region=Afar",
+      head: `Afar: ${pct(afar["<=120 min"].pct)} start ANC within two hours of care, ${pct(afar[">120 min"].pct)} beyond`,
+      body: CUES.signal("travel") },
+  ];
+  return (
+    <Panel help="overview.act-on" title="Four things to act on" how="Each card is a finding from the study with the study's own programme-review cue. Click a card to open the screen that shows it. Associations, not causes.">
+      <div className="grid sm:grid-cols-2">
+        {items.map((it, i) => (
+          <Link
+            key={i}
+            href={studio.href(it.href)}
+            className={`group block px-14 py-12 border-border hover:bg-panel2 hover:no-underline text-text ${
+              i % 2 === 0 ? "sm:border-r" : ""
+            } ${i < 2 ? "border-b" : "border-b sm:border-b-0"} last:border-b-0`}
+            style={{ boxShadow: `inset 3px 0 0 ${it.tone}` }}
+          >
+            <div className="text-12 font-semibold leading-snug flex items-start gap-6">
+              <span className="flex-1">{it.head}</span>
+              <ArrowRight className="size-12 text-faint group-hover:text-accent flex-none mt-2" />
+            </div>
+            <div className="text-10.5 text-dim mt-4 leading-relaxed">{it.body}</div>
+          </Link>
+        ))}
+      </div>
+    </Panel>
   );
 }

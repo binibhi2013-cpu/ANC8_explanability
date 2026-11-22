@@ -98,6 +98,7 @@ export default function RegionPanel({
 }) {
   const cues = useJSON<{ regional_cues: Record<string, { pattern: string; question: string }> }>("/data/study.json").data?.regional_cues;
   const [dim, setDim] = useState("Wealth");
+  const [more, setMore] = useState(false);
   useEffect(() => {
     const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", k);
@@ -154,7 +155,7 @@ export default function RegionPanel({
           />
         </div>
 
-        <Section help="map.region-far" title="How far women get" how="Bars: share of all women in the region who reached each rung, with how many continued between rungs. On the right: Ethiopia's value and its 95% interval, for comparison.">
+        <Section help="map.region-far" title="How far women get, and where they are lost" how="Bars: share of all women in the region who reached each rung, with how many continued between rungs; on the right, Ethiopia's value and its 95% interval. Below: every woman falls in exactly one of four groups; the widest red, orange or purple block is where the region loses most women.">
           <div className="grid grid-cols-[minmax(0,1fr)_64px] gap-x-8">
             <Funnel
               compact
@@ -173,24 +174,24 @@ export default function RegionPanel({
               ))}
             </div>
           </div>
+          {cohort !== "entry" && (
+            <div className="mt-10 pt-8 border-t border-border" data-help="map.region-lost">
+                <div className="flex flex-col gap-5">
+                  <LossBar label={region.length > 10 ? region.slice(0, 9) + "…" : region} c={c} />
+                  <LossBar label="Ethiopia" c={nat} />
+                </div>
+                <div className="flex flex-wrap gap-x-10 gap-y-2 mt-6 text-9.5 text-dim">
+                  {[["var(--bad)", "no ANC"], ["var(--warn)", "did not reach 4"], ["var(--cross)", "reached 4, not 8"], ["var(--good)", "reached 8"]].map(([bg, l]) => (
+                    <span key={l} className="flex items-center gap-4">
+                      <span className="w-8 h-8 rounded-1" style={{ background: bg }} />
+                      {l}
+                    </span>
+                  ))}
+                </div>
+            </div>
+          )}
         </Section>
 
-        {cohort !== "entry" && (
-          <Section help="map.region-lost" title="Where women are lost" how="Every woman falls in exactly one of these four groups; the widest red, orange or purple block is where the region loses most women.">
-            <div className="flex flex-col gap-5">
-              <LossBar label={region.length > 10 ? region.slice(0, 9) + "…" : region} c={c} />
-              <LossBar label="Ethiopia" c={nat} />
-            </div>
-            <div className="flex flex-wrap gap-x-10 gap-y-2 mt-6 text-9.5 text-dim">
-              {[["var(--bad)", "no ANC"], ["var(--warn)", "did not reach 4"], ["var(--cross)", "reached 4, not 8"], ["var(--good)", "reached 8"]].map(([bg, l]) => (
-                <span key={l} className="flex items-center gap-4">
-                  <span className="w-8 h-8 rounded-1" style={{ background: bg }} />
-                  {l}
-                </span>
-              ))}
-            </div>
-          </Section>
-        )}
 
         {cohort !== "entry" && (
           <Section help="map.region-work" title="What this suggests for programmes"
@@ -248,31 +249,37 @@ export default function RegionPanel({
           {DIM === "Wealth" && poorest && richest && <Cue className="mt-8">{CUES.wealthGap(region, poorest[reachKey], richest[reachKey], rungLabel)}</Cue>}
         </Section>
 
-        <Section help="map.region-circumstances" title="The region's circumstances" how="How common each circumstance is among women in this region (dot) against Ethiopia (tick). Only circumstances that are among the study's 21 predictors are shown.">
-          <div className="flex flex-col gap-4">
-            {data.profile_meta
-              .filter((m) => STUDY_CIRCUMSTANCES.includes(m.key))
-              .map((m) => {
-                const v = prof[m.key];
-                const n = profNat[m.key];
-                if (v == null) return null;
-                return (
-                  <div key={m.key} className="grid grid-cols-[150px_minmax(0,1fr)_36px] items-center gap-8">
-                    <span className="text-10.5 truncate" title={m.label}>{m.label}</span>
-                    <span className="relative block h-11">
-                      <span className="absolute top-1/2 left-0 right-0 h-px bg-border2" />
-                      {n != null && <span className="absolute top-0 bottom-0 w-px bg-text opacity-60" style={{ left: `${n * 100}%` }} />}
-                      <span
-                        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full border border-panel transition-all duration-500"
-                        style={{ left: `${v * 100}%`, background: "var(--accent)" }}
-                      />
-                    </span>
-                    <span className="text-right font-mono text-10">{pct(v)}</span>
-                  </div>
-                );
-              })}
-          </div>
-        </Section>
+        {more ? (
+          <Section help="map.region-circumstances" title="The region's circumstances" how="How common each circumstance is among women in this region (dot) against Ethiopia (tick). Only circumstances that are among the study's 21 predictors are shown.">
+            <div className="flex flex-col gap-4">
+              {data.profile_meta
+                .filter((m) => STUDY_CIRCUMSTANCES.includes(m.key))
+                .map((m) => {
+                  const v = prof[m.key];
+                  const n = profNat[m.key];
+                  if (v == null) return null;
+                  return (
+                    <div key={m.key} className="grid grid-cols-[150px_minmax(0,1fr)_36px] items-center gap-8">
+                      <span className="text-10.5 truncate" title={m.label}>{m.label}</span>
+                      <span className="relative block h-11">
+                        <span className="absolute top-1/2 left-0 right-0 h-px bg-border2" />
+                        {n != null && <span className="absolute top-0 bottom-0 w-px bg-text opacity-60" style={{ left: `${n * 100}%` }} />}
+                        <span
+                          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full border border-panel transition-all duration-500"
+                          style={{ left: `${v * 100}%`, background: "var(--accent)" }}
+                        />
+                      </span>
+                      <span className="text-right font-mono text-10">{pct(v)}</span>
+                    </div>
+                  );
+                })}
+            </div>
+          </Section>
+        ) : (
+          <button type="button" onClick={() => setMore(true)} className="mx-14 my-10 self-start text-10.5 text-accent hover:underline">
+            More: the region&apos;s circumstances
+          </button>
+        )}
 
         <div className="px-14 py-10 text-9.5 text-faint leading-relaxed">
           Survey-weighted, Ethiopia DHS 2024–25; intervals are 95% from a cluster bootstrap within the region. Associations, not causes.

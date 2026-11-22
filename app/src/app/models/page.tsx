@@ -10,6 +10,8 @@ import { CUES } from "@/lib/cues";
 import { DirectionPanel, ReviewMatrixPanel } from "@/components/nb4/Nb4Panels";
 import { useJSON } from "@/lib/data";
 import { asset } from "@/lib/paths";
+import { useStudio } from "@/lib/studio";
+import Link from "next/link";
 
 /**
  * Model analysis: the study's own results for ANC8+, copied from its saved tables
@@ -54,6 +56,7 @@ const ci = (c: [number, number], d = 3) => `${c[0].toFixed(d)}–${c[1].toFixed(
 const MODELS = ["Logistic regression", "Random Forest", "XGBoost"] as const;
 
 export default function ModelAnalysisPage() {
+  const studio = useStudio();
   const study = useJSON<Study>("/data/study.json");
   const [shapCohort, setShapCohort] = useState<"full" | "entry">("full");
   const [permModel, setPermModel] = useState<(typeof MODELS)[number]>("XGBoost");
@@ -131,25 +134,7 @@ export default function ModelAnalysisPage() {
             className="w-full h-auto bg-white" />
         </Panel>
 
-        <Panel help="analysis.first-visit"
-          title="What early initiation adds · ANC entry"
-          how={`Manuscript Table 3. The ${S.cohorts.entry.heldout} held-out women who started ANC, each model without and with whether the first visit was by 12 weeks. Differences with 95% intervals from the paired bootstrap.`}
-        >
-          <Table<Entry>
-            rows={S.entry_performance}
-            rowKey={(r) => r.model}
-            minWidth={560}
-            columns={[
-              { header: "Model", cell: (r) => r.model },
-              { header: "AP without → with", mono: true, cell: (r) => `${n3(r.baseline.ap)} → ${n3(r.extended.ap)}` },
-              { header: "Gain in AP (95% CI)", mono: true, cell: (r) => <>{sgn(r.delta_ap)} <span className="text-faint">({sgn(r.delta_ap_ci[0])} to {sgn(r.delta_ap_ci[1])})</span></> },
-              { header: "Gain in AUROC", mono: true, cell: (r) => <>{sgn(r.delta_auroc)} <span className="text-faint">({sgn(r.delta_auroc_ci[0])} to {sgn(r.delta_auroc_ci[1])})</span></> },
-            ]}
-          />
-          <div className="px-14 py-10">
-            <Note tone="accent">Every interval includes zero. The gain is consistent in direction but uncertain in size.</Note>
-          </div>
-        </Panel>
+        <DirectionPanel />
       </div>
 
       <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
@@ -186,10 +171,11 @@ export default function ModelAnalysisPage() {
         </Panel>
       </div>
 
-      <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
-        <DirectionPanel />
-        <ReviewMatrixPanel />
-      </div>
+      <ReviewMatrixPanel />
+
+      <Link href={studio.href("/explore/cohorts")} className="text-10.5 text-accent hover:underline self-start">
+        What early initiation adds to the models (manuscript Table 3): see Cohorts
+      </Link>
     </Screen>
   );
 }

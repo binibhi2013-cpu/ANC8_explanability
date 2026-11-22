@@ -55,6 +55,7 @@ function AggregateMode() {
   const [measure, setMeasure] = useState<Measure>("anc4");
   const [asRate, setAsRate] = useState(false);
   const [horizon, setHorizon] = useState(12);
+  const [more, setMore] = useState(false);
 
   useEffect(() => {
     if (source === "upload") return;
@@ -223,6 +224,11 @@ function AggregateMode() {
             <DataNote>Five or more years of monthly facility reports would let the seasonal forecasters show their strength; with a few years, simple methods usually win.</DataNote>
           </Panel>
 
+          {!more ? (
+            <button type="button" onClick={() => setMore(true)} className="text-10.5 text-accent hover:underline self-start">
+              More: how each forecaster did, and the seasonal pattern
+            </button>
+          ) : (
           <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
             <Panel help="data.forecasters"
               title="How each forecaster did on this series"
@@ -249,6 +255,7 @@ function AggregateMode() {
               </Panel>
             )}
           </div>
+          )}
         </>
       )}
     </>
