@@ -1,0 +1,9 @@
+Region,Travel group,Resolved n,PSUs,Any ANC %,95% CI lower,95% CI upper
+South Ethiopia,<=120 min,426,61,78.7,72.0,84.1
+Afar,<=120 min,446,51,79.4,70.3,86.3
+Somali,<=120 min,540,56,36.7,28.6,45.6
+Tigray,<=120 min,496,69,89.0,85.4,91.8
+South Ethiopia,>120 min,150,28,63.4,50.2,74.8
+Afar,>120 min,205,29,38.9,27.2,52.1
+Somali,>120 min,129,26,20.2,11.1,34.0
+Tigray,>120 min,114,27,79.5,70.5,86.3

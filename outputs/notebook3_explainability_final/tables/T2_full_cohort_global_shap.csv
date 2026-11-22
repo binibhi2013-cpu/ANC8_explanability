@@ -1,0 +1,22 @@
+﻿population,algorithm,rank,predictor,predictor_label,weighted_mean_absolute_shap
+Full cohort,XGBoost,1,wealth_quintile,Household wealth,0.5183207348907117
+Full cohort,XGBoost,2,travel_time_min,Travel time to nearest hospital/health centre,0.32229481890163353
+Full cohort,XGBoost,3,region,Region,0.2080784211036485
+Full cohort,XGBoost,4,religion_group,Religion,0.11998025109448254
+Full cohort,XGBoost,5,pregnancy_intention,Pregnancy intention,0.11337923119768581
+Full cohort,XGBoost,6,maternal_occupation_group,Maternal occupation,0.10827669121921114
+Full cohort,XGBoost,7,v012,Maternal age at interview,0.08100001428203189
+Full cohort,XGBoost,8,partner_education,Partner education,0.07851434177565866
+Full cohort,XGBoost,9,household_size,Household size,0.06153553028550412
+Full cohort,XGBoost,10,traditional_media_weekly_count,Weekly traditional-media count,0.06005084115649361
+Full cohort,XGBoost,11,maternal_education,Maternal education,0.05988728386262647
+Full cohort,XGBoost,12,pregnancy_order_group,Pregnancy order,0.05432817929818366
+Full cohort,XGBoost,13,partner_occupation_group,Partner occupation,0.05148172433820926
+Full cohort,XGBoost,14,preceding_pregnancy_interval_group,Preceding pregnancy interval,0.04913675995453247
+Full cohort,XGBoost,15,transport_mode_group,Transport mode to nearest hospital/health centre,0.047087397256903085
+Full cohort,XGBoost,16,internet_exposure,Internet exposure,0.04047716158410584
+Full cohort,XGBoost,17,previous_pregnancy_history,Previous pregnancy history,0.03191567323990723
+Full cohort,XGBoost,18,healthcare_decision_participation,Healthcare decision participation,0.015531068946002011
+Full cohort,XGBoost,19,health_insurance,Health insurance,0.011302248802176087
+Full cohort,XGBoost,20,residence,Urban/rural residence,0.007589036407213581
+Full cohort,XGBoost,21,maternal_current_union_status,Current union status,0.0010531727244241288

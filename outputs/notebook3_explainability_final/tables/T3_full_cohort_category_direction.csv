@@ -1,0 +1,42 @@
+﻿population,algorithm,predictor,predictor_label,category,n_women,weighted_mean_signed_shap
+Full cohort,XGBoost,wealth_quintile,Household wealth,Poorest,522,-0.8738474016819643
+Full cohort,XGBoost,wealth_quintile,Household wealth,Poorer,275,-0.5686208424426418
+Full cohort,XGBoost,wealth_quintile,Household wealth,Middle,169,-0.04987930409771009
+Full cohort,XGBoost,wealth_quintile,Household wealth,Richer,150,0.11594922238026364
+Full cohort,XGBoost,wealth_quintile,Household wealth,Richest,259,0.7435904022601215
+Full cohort,XGBoost,region,Region,Addis Ababa,65,0.6448174753413927
+Full cohort,XGBoost,region,Region,Afar,148,0.5702927493811437
+Full cohort,XGBoost,region,Region,Amhara,88,0.193164223580473
+Full cohort,XGBoost,region,Region,South West Ethiopia,91,-0.09333883153993847
+Full cohort,XGBoost,region,Region,Harari,72,-0.10263135614024622
+Full cohort,XGBoost,region,Region,Benishangul-Gumuz,88,-0.11274039653420594
+Full cohort,XGBoost,region,Region,Gambella,74,-0.12294130476595613
+Full cohort,XGBoost,region,Region,Dire Dawa,61,-0.13380384990366817
+Full cohort,XGBoost,region,Region,Oromia,147,-0.13804822012193388
+Full cohort,XGBoost,region,Region,South Ethiopia,110,-0.1850597809016932
+Full cohort,XGBoost,region,Region,Tigray,103,-0.22901247734358376
+Full cohort,XGBoost,region,Region,Central Ethiopia,103,-0.2675385212392995
+Full cohort,XGBoost,region,Region,Sidama,92,-0.2923580925079384
+Full cohort,XGBoost,region,Region,Somali,133,-0.3672659604841314
+Full cohort,XGBoost,religion_group,Religion,Protestant,317,-0.1586085485535761
+Full cohort,XGBoost,religion_group,Religion,Muslim,647,-0.09287022659656831
+Full cohort,XGBoost,religion_group,Religion,Orthodox,350,0.13220005792046655
+Full cohort,XGBoost,religion_group,Religion,Other religion,61,-0.09733869389435346
+Full cohort,XGBoost,pregnancy_intention,Pregnancy intention,Wanted then,1180,0.06725397763285058
+Full cohort,XGBoost,pregnancy_intention,Pregnancy intention,Wanted later,138,-0.42590939414362483
+Full cohort,XGBoost,pregnancy_intention,Pregnancy intention,Wanted no more,57,-0.44170669933427553
+Full cohort,XGBoost,maternal_occupation_group,Maternal occupation,Not working,936,-0.09279209526727525
+Full cohort,XGBoost,maternal_occupation_group,Maternal occupation,Sales/services,149,-0.008050023713515136
+Full cohort,XGBoost,maternal_occupation_group,Maternal occupation,Agriculture,159,0.3150607696447737
+Full cohort,XGBoost,maternal_occupation_group,Maternal occupation,Professional/clerical,54,-0.011232536843364681
+Full cohort,XGBoost,maternal_occupation_group,Maternal occupation,Manual/domestic,77,-0.01692299162277026
+Full cohort,XGBoost,partner_education,Partner education,Higher,171,0.1959817602639626
+Full cohort,XGBoost,partner_education,Partner education,Secondary,198,-0.0017818385910751643
+Full cohort,XGBoost,partner_education,Partner education,Primary,439,-0.02719097415745997
+Full cohort,XGBoost,partner_education,Partner education,No education,475,-0.14513279211874208
+Full cohort,XGBoost,partner_education,Partner education,Not applicable,80,-0.006451472917805345
+Full cohort,XGBoost,partner_education,Partner education,Unknown,12,-0.012974634085496602
+Full cohort,XGBoost,traditional_media_weekly_count,Weekly traditional-media count,0,1049,-0.054442027804774744
+Full cohort,XGBoost,traditional_media_weekly_count,Weekly traditional-media count,1,239,0.09835700269919502
+Full cohort,XGBoost,traditional_media_weekly_count,Weekly traditional-media count,2,77,-0.005106413889963631
+Full cohort,XGBoost,traditional_media_weekly_count,Weekly traditional-media count,3,10,-0.015184317564402637

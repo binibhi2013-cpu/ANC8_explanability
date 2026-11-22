@@ -1,0 +1,44 @@
+﻿population,algorithm,specification,rank,predictor,predictor_label,weighted_mean_absolute_shap
+ANC-entry,XGBoost,Baseline,1,wealth_quintile,Household wealth,0.4097573521340377
+ANC-entry,XGBoost,Baseline,2,travel_time_min,Travel time to nearest hospital/health centre,0.24299925065493844
+ANC-entry,XGBoost,Baseline,3,region,Region,0.1977933941722736
+ANC-entry,XGBoost,Baseline,4,maternal_occupation_group,Maternal occupation,0.11362712851668737
+ANC-entry,XGBoost,Baseline,5,religion_group,Religion,0.11343886790963457
+ANC-entry,XGBoost,Baseline,6,pregnancy_intention,Pregnancy intention,0.10180687458411812
+ANC-entry,XGBoost,Baseline,7,partner_education,Partner education,0.08498706436489693
+ANC-entry,XGBoost,Baseline,8,preceding_pregnancy_interval_group,Preceding pregnancy interval,0.07819429834910056
+ANC-entry,XGBoost,Baseline,9,traditional_media_weekly_count,Weekly traditional-media count,0.0741288198927435
+ANC-entry,XGBoost,Baseline,10,household_size,Household size,0.06962902479721995
+ANC-entry,XGBoost,Baseline,11,internet_exposure,Internet exposure,0.060039529955956315
+ANC-entry,XGBoost,Baseline,12,v012,Maternal age at interview,0.05555437079864445
+ANC-entry,XGBoost,Baseline,13,transport_mode_group,Transport mode to nearest hospital/health centre,0.04181267444593639
+ANC-entry,XGBoost,Baseline,14,maternal_education,Maternal education,0.04007931618133554
+ANC-entry,XGBoost,Baseline,15,partner_occupation_group,Partner occupation,0.03616911356290179
+ANC-entry,XGBoost,Baseline,16,healthcare_decision_participation,Healthcare decision participation,0.03455175621661674
+ANC-entry,XGBoost,Baseline,17,pregnancy_order_group,Pregnancy order,0.027892797765480905
+ANC-entry,XGBoost,Baseline,18,previous_pregnancy_history,Previous pregnancy history,0.01987063365390629
+ANC-entry,XGBoost,Baseline,19,health_insurance,Health insurance,0.006789833863606213
+ANC-entry,XGBoost,Baseline,20,maternal_current_union_status,Current union status,0.0018407584798940332
+ANC-entry,XGBoost,Baseline,21,residence,Urban/rural residence,0.0009724940647337034
+ANC-entry,XGBoost,Extended,1,early_anc,Early ANC initiation,0.7588317501614572
+ANC-entry,XGBoost,Extended,2,wealth_quintile,Household wealth,0.2691170827209525
+ANC-entry,XGBoost,Extended,3,travel_time_min,Travel time to nearest hospital/health centre,0.21076669152958144
+ANC-entry,XGBoost,Extended,4,region,Region,0.14171313818735445
+ANC-entry,XGBoost,Extended,5,maternal_occupation_group,Maternal occupation,0.1360321374910564
+ANC-entry,XGBoost,Extended,6,religion_group,Religion,0.1227883847869162
+ANC-entry,XGBoost,Extended,7,pregnancy_intention,Pregnancy intention,0.10350904082962287
+ANC-entry,XGBoost,Extended,8,partner_education,Partner education,0.09810679899435507
+ANC-entry,XGBoost,Extended,9,traditional_media_weekly_count,Weekly traditional-media count,0.08579122892171909
+ANC-entry,XGBoost,Extended,10,internet_exposure,Internet exposure,0.07967878666144985
+ANC-entry,XGBoost,Extended,11,healthcare_decision_participation,Healthcare decision participation,0.0658906467054423
+ANC-entry,XGBoost,Extended,12,preceding_pregnancy_interval_group,Preceding pregnancy interval,0.049141007094281
+ANC-entry,XGBoost,Extended,13,transport_mode_group,Transport mode to nearest hospital/health centre,0.046308108579218916
+ANC-entry,XGBoost,Extended,14,v012,Maternal age at interview,0.046254672037308084
+ANC-entry,XGBoost,Extended,15,partner_occupation_group,Partner occupation,0.04160241639957541
+ANC-entry,XGBoost,Extended,16,household_size,Household size,0.03228258905510011
+ANC-entry,XGBoost,Extended,17,residence,Urban/rural residence,0.032254458705915284
+ANC-entry,XGBoost,Extended,18,maternal_education,Maternal education,0.030482480707714036
+ANC-entry,XGBoost,Extended,19,previous_pregnancy_history,Previous pregnancy history,0.02802253791345562
+ANC-entry,XGBoost,Extended,20,pregnancy_order_group,Pregnancy order,0.025934718358048205
+ANC-entry,XGBoost,Extended,21,health_insurance,Health insurance,0.008214659820118923
+ANC-entry,XGBoost,Extended,22,maternal_current_union_status,Current union status,0.007078948690149115

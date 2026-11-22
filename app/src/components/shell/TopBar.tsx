@@ -8,6 +8,7 @@ import { MODES, NAV, allNavItems, modeForPath } from "@/lib/nav";
 import { REGIONS } from "@/lib/regions";
 import { useStudio } from "@/lib/studio";
 import { useTheme } from "./theme-provider";
+import { MOH_LOGO, MOH_NAME } from "@/lib/project";
 
 type Hit = { key: string; label: string; hint: string; go: () => void };
 
@@ -81,6 +82,10 @@ export default function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
       </button>
 
       <div className="flex items-center gap-8 min-w-0 shrink overflow-hidden">
+        {MOH_LOGO && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={MOH_LOGO} alt={MOH_NAME} title={MOH_NAME} className="h-24 w-auto bg-white rounded-2 p-1 flex-none" />
+        )}
         <div className="w-18 h-18 bg-white text-top text-9.5 font-bold flex items-center justify-center tracking-tight rounded-2 flex-none">
           A8
         </div>

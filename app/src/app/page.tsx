@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Flame, Map as MapIcon, SlidersHorizontal, Upload } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Funnel from "@/components/charts/Funnel";
-import { Panel, PanelLoading, Screen, StatTile, InlineError } from "@/components/studio/ui";
+import { Cue, Panel, PanelLoading, Screen, StatTile, InlineError } from "@/components/studio/ui";
 import { useJSON } from "@/lib/data";
 import { useStudio } from "@/lib/studio";
 import { useMemo } from "react";
@@ -12,28 +12,20 @@ import { useRouter } from "next/navigation";
 import MiniMap, { useRegionPaths } from "@/components/map/MiniMap";
 import { useRenderTheme } from "@/components/shell/theme-provider";
 import { NO_DATA, classify, colorOf } from "@/lib/colors";
+import { CUES } from "@/lib/cues";
+import { useNb4 } from "@/lib/nb4";
 import { REGION_NAMES } from "@/lib/regions";
 import type { RegionsData } from "@/lib/regionsData";
-import { EARLY, leverWeight, type ScenarioData } from "@/lib/scenario";
-import { simulate, summarise, type WarData } from "@/lib/war";
 
 type Cascade = {
   reach1: number; reach4: number; reach8: number; never: number;
   start_lt4: number; four_lt8: number; continue_1_to_4: number; continue_4_to_8: number; n: number;
 };
 
+type Study = { what_if: { model: string; later: number; early: number; difference_pp: number }[] };
+
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 
-const TOOLS = [
-  { path: "/map", icon: MapIcon, title: "Map & regions",
-    body: "Every region shaded by where it loses women. Click one for its analysis and what to work on." },
-  { path: "/planner", icon: SlidersHorizontal, title: "Scenario planner",
-    body: "Move a factor a health system can change and see ANC1+, ANC4+ and ANC8+ respond, region by region." },
-  { path: "/war", icon: Flame, title: "Conflict simulator",
-    body: "What the Tigray war did to antenatal care, and what the same shock would do elsewhere." },
-  { path: "/your-data", icon: Upload, title: "Your data",
-    body: "Load your own ANC records: see the trend, a forecast, and which women to follow up." },
-];
 
 export default function Overview() {
   const studio = useStudio();
@@ -43,22 +35,24 @@ export default function Overview() {
     <Screen>
       {policy.state === "error" && <InlineError message={policy.error} />}
       {policy.state === "ready" && (
-        <div data-help="overview.tiles" className="grid gap-10 grid-cols-2 lg:grid-cols-4">
-          <StatTile label="Reach any ANC" value={pct(policy.data.cascade.reach1)} sub="at least one contact (ANC1+)" />
-          <StatTile label="Reach four contacts" value={pct(policy.data.cascade.reach4)} sub="the earlier standard (ANC4+)" />
-          <StatTile label="Reach eight contacts" value={pct(policy.data.cascade.reach8)}
-                    sub="the WHO recommendation (ANC8+)" tone="bad" />
-          <StatTile label="Lost between 4 and 8" value={pct(1 - policy.data.cascade.continue_4_to_8)}
-                    sub="of women who reach four never reach eight" tone="warn" />
-        </div>
+        <>
+          <div data-help="overview.tiles" className="grid gap-10 grid-cols-2 lg:grid-cols-4">
+            <StatTile label="Reach any ANC" value={pct(policy.data.cascade.reach1)} sub="at least one contact (ANC1+)" />
+            <StatTile label="Reach four contacts" value={pct(policy.data.cascade.reach4)} sub="the earlier standard (ANC4+)" />
+            <StatTile label="Reach eight contacts" value={pct(policy.data.cascade.reach8)}
+                      sub="the WHO recommendation (ANC8+)" tone="bad" />
+            <StatTile label="Lost between 4 and 8" value={pct(1 - policy.data.cascade.continue_4_to_8)}
+                      sub="of women who reach four never reach eight" tone="warn" />
+          </div>
+        </>
       )}
 
-      <ActOn />
+      <KeyFindingAndMap />
 
       <div className="grid gap-10 md:gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Panel help="overview.ladder"
           title="The antenatal care ladder"
-          how="Each bar is the share of all women with a recent pregnancy who reached that rung. Between the bars: of the women on the rung above, how many continued and how many were lost."
+          how="Each bar is the share of all women with a recent pregnancy who reached that rung. Between the bars: of the women on the rung above, how many continued and how many did not."
         >
           {policy.state === "ready" ? (
             <div className="p-14">
@@ -76,29 +70,7 @@ export default function Overview() {
           )}
         </Panel>
 
-        <Panel help="overview.tools" title="Planning tools">
-          <div className="grid sm:grid-cols-2">
-            {TOOLS.map((t, i) => {
-              const Icon = t.icon;
-              return (
-                <Link
-                  key={t.path}
-                  href={studio.href(t.path)}
-                  className={`group block px-14 py-12 border-border hover:bg-panel2 hover:no-underline text-text ${
-                    i % 2 === 0 ? "sm:border-r" : ""
-                  } ${i < 2 ? "border-b" : "border-b sm:border-b-0"} last:border-b-0`}
-                >
-                  <div className="flex items-center gap-7">
-                    <Icon className="size-14 text-accent" />
-                    <span className="text-12 font-semibold flex-1">{t.title}</span>
-                    <ArrowRight className="size-12 text-faint group-hover:text-accent" />
-                  </div>
-                  <div className="text-11 text-dim mt-5 leading-relaxed">{t.body}</div>
-                </Link>
-              );
-            })}
-          </div>
-        </Panel>
+        <ActOn cascade={policy.state === "ready" ? policy.data.cascade : null} />
       </div>
       <Link href={studio.href("/about")} className="text-10.5 text-accent hover:underline self-start">
         About the study
@@ -107,102 +79,170 @@ export default function Overview() {
   );
 }
 
-const fmtN = (v: number) => (v >= 1e6 ? `${(v / 1e6).toFixed(1)} million` : v >= 1e4 ? `${Math.round(v / 1e3)} thousand` : Math.round(v).toLocaleString());
-
 /**
- * Four things to act on, each computed from the studio's own data and each a link to
- * the screen that shows it: where the ladder loses most, where the most women never
- * start, the strongest lever the data support, and what a conflict would cost.
+ * The key finding from our model (notebook 3, table T8, ANC entry cohort) beside the
+ * ANC8+ map of the full cohort, with its legend and every region's value.
  */
-function ActOn() {
+function KeyFindingAndMap() {
+  const nb4 = useNb4();
   const studio = useStudio();
   const router = useRouter();
   const theme = useRenderTheme();
   const reg = useJSON<RegionsData>("/data/regions.json");
-  const sc = useJSON<ScenarioData>("/data/scenarios.json");
-  const war = useJSON<WarData>("/data/war.json");
+  const study = useJSON<Study>("/data/study.json");
   const geo = useJSON<FeatureCollection>("/geo/regions.geojson");
   const paths = useRegionPaths(geo.data);
 
-  const items = useMemo(() => {
-    if (!reg.data || !sc.data || !war.data) return null;
-    const R = reg.data;
-    const nat = R.cohorts.recent.national;
-    const births = (r: string) => R.population.regions[r]?.births ?? 0;
-    const never = REGION_NAMES.map((r) => ({ r, n: births(r) * R.cohorts.recent.regions[r].never }))
-      .sort((a, b) => b.n - a.n)[0];
-    const natIdx = sc.data.regions.length - 1;
-    const levers = [...sc.data.levers.filter((l) => l.supported).map((l) => l.key), EARLY]
-      .map((k) => ({ k, v: leverWeight(sc.data!, k, natIdx).anc8?.v ?? 0 }))
-      .sort((a, b) => b.v - a.v);
-    const top = levers[0];
-    const label = top.k === EARLY ? "an earlier first visit" : sc.data.levers.find((l) => l.key === top.k)!.label.toLowerCase();
-    const second = levers.find((l) => l.k !== EARLY);
-    const secondLabel = second ? sc.data.levers.find((l) => l.key === second.k)!.label.toLowerCase() : "";
-    // a Tigray-like siege in Amhara, the region with the most births in the north
-    const a = R.cohorts.recent.regions.Amhara;
-    const base = { anc1: a.reach1, anc4: a.reach4, anc8: a.reach8 };
-    const s = { startQ: 1, durationQ: 8, intensity: 1, pattern: "siege" as const, restored: true,
-      tau: war.data.fit.tau, kappa: war.data.backtest.kappa_fit ?? 2, horizonQ: 24 };
-    const lost = summarise(simulate(war.data, s, base), base, births("Amhara"), s).lost.anc1;
-    return [
-      { tone: "var(--warn)", head: `${Math.round((1 - nat.continue_4_to_8) * 100)}% of women who reach four contacts stop before eight`,
-        body: "The biggest loss on the ladder is not starting ANC but staying in it: retention between the fourth and eighth contact.",
-        href: "/explore/ladder" },
-      { tone: "var(--bad)", head: `${never.r}: ${fmtN(never.n)} women a year receive no ANC at all`,
-        body: "More women never start antenatal care here than in any other region. Open it on the map for what drives it.",
-        href: `/map?region=${encodeURIComponent(never.r)}&metric=never` },
-      { tone: "var(--good)", head: `${label[0].toUpperCase()}${label.slice(1)} for half the women it applies to: +${(top.v * 50).toFixed(1)} points of ANC8+`,
-        body: `Of the levers the data support, ${label} moves ANC8+ most${second ? `; next is ${secondLabel}` : ""}. Association-based.`,
-        href: `/planner?lv=${top.k}:50&rung=anc8` },
-      { tone: "var(--cross)", head: `A two-year siege in Amhara: about ${fmtN(lost)} more women with no ANC`,
-        body: "The conflict simulator, built from the Tigray war and checked on Amhara, over six years including recovery.",
-        href: "/war?hit=Amhara&rung=anc1" },
-    ];
-  }, [reg.data, sc.data, war.data]);
-
-  const fills = useMemo(() => {
-    if (!reg.data) return {};
-    const vals = REGION_NAMES.map((r) => reg.data!.cohorts.recent.regions[r]?.reach8 ?? null);
+  const map = useMemo(() => {
+    if (!reg.data) return null;
+    const vals = REGION_NAMES.map((r) => reg.data!.cohorts.full.regions[r]?.reach8 ?? null);
     const cls = classify(vals, "good", theme);
-    return Object.fromEntries(REGION_NAMES.map((r, i) => [r, colorOf(vals[i], cls, theme)]));
+    const fills = Object.fromEntries(REGION_NAMES.map((r, i) => [r, colorOf(vals[i], cls, theme)]));
+    const edges = [cls.min, ...cls.breaks, cls.max];
+    const legend = cls.colors.map((c, i) => ({ c, label: `${pct(edges[i])}–${pct(edges[i + 1])}` }));
+    const rows = REGION_NAMES.map((r, i) => ({ r, v: vals[i], fill: fills[r] }))
+      .sort((a, b) => (b.v ?? -1) - (a.v ?? -1));
+    return { fills, legend, rows, national: reg.data.cohorts.full.national.reach8 };
   }, [reg.data, theme]);
 
+  const wi = study.data?.what_if ?? [];
+  const lr = wi.find((w) => w.model === "Logistic regression");
+  const diffs = wi.map((w) => w.difference_pp);
+
   return (
-    <div className="grid gap-10 md:gap-14 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-      <Panel help="overview.act-on" title="Four things to act on" how="Each is computed from the studio's data and opens the screen that shows it.">
-        {items ? (
-          <div className="grid sm:grid-cols-2">
-            {items.map((it, i) => (
-              <Link key={i} href={studio.href(it.href)}
-                className={`group block px-14 py-12 border-border hover:bg-panel2 hover:no-underline text-text ${i % 2 === 0 ? "sm:border-r" : ""} ${i < 2 ? "border-b" : "border-b sm:border-b-0"} last:border-b-0`}>
-                <div className="flex gap-8">
-                  <div className="w-3 rounded-2 flex-none" style={{ background: it.tone }} />
-                  <div className="min-w-0">
-                    <div className="text-12 font-semibold leading-snug flex items-start gap-6">
-                      <span className="flex-1">{it.head}</span>
-                      <ArrowRight className="size-12 text-faint group-hover:text-accent flex-none mt-2" />
-                    </div>
-                    <div className="text-10.5 text-dim mt-4 leading-relaxed">{it.body}</div>
-                  </div>
+    <div className="grid gap-10 md:gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <Panel help="overview.key-finding" title="Key finding from our model"
+        how="Notebook 3, table T8. Each of the 984 held-out women who started ANC was scored twice by the same model: once with her first visit set to early (by 12 weeks) and once set to later, with everything else unchanged.">
+        {lr ? (
+          <div className="px-14 py-12 flex flex-col gap-10">
+            <div className="text-12.5 leading-relaxed">
+              Among women who started ANC, the model predicts{" "}
+              <b className="font-mono">{pct(lr.early)}</b> reach eight contacts with an early first visit, against{" "}
+              <b className="font-mono">{pct(lr.later)}</b> with a later one.
+            </div>
+            <div className="grid grid-cols-3 gap-8">
+              {wi.map((w) => (
+                <div key={w.model} className="border border-border rounded-2 px-8 py-6">
+                  <div className="text-9.5 uppercase tracking-label text-faint font-semibold truncate">{w.model}</div>
+                  <div className="font-mono text-14 font-semibold mt-2">+{w.difference_pp.toFixed(1)} pts</div>
+                  <div className="font-mono text-9.5 text-dim">{pct(w.later)} → {pct(w.early)}</div>
                 </div>
-              </Link>
-            ))}
+              ))}
+            </div>
+            <div className="text-10.5 text-dim leading-relaxed">
+              {Math.round(Math.min(...diffs))} to {Math.round(Math.max(...diffs))} points across the three models.
+              This is a model contrast, not the effect of an intervention: an early first visit may also reflect better
+              access and care-seeking.
+            </div>
+            {nb4.data && (
+              <div className="text-10.5 leading-relaxed border-l-2 border-good pl-8">
+                <span className="font-semibold">What women actually did:</span>{" "}
+                <b className="font-mono">{pct(nb4.data.timing["Early initiation"].anc8)}</b> of early starters reached ANC8+, against{" "}
+                <b className="font-mono">{pct(nb4.data.timing["Later initiation"].anc8)}</b> of later starters; but{" "}
+                <b className="font-mono">{pct(1 - nb4.data.timing["Early initiation"].anc8)}</b> of early starters still did not reach eight (notebook 4).
+              </div>
+            )}
+            <Cue>{CUES.earlyVisit}</Cue>
           </div>
         ) : (
           <PanelLoading rows={4} />
         )}
       </Panel>
-      <Panel help="overview.minimap" title="ANC8+ by region" how="The share of women reaching eight contacts (24-month cohort), five classes, darker is more. Click a region to open it on the map.">
-        {paths.length ? (
-          <div className="px-14 py-10">
-            <MiniMap paths={paths} fills={fills} noData={NO_DATA[theme]} title="ANC8+ by region"
-              onSelect={(r) => router.push(studio.href(`/map?region=${encodeURIComponent(r)}&metric=anc8`))} />
+      <Panel help="overview.minimap" title="ANC8+ by region"
+        how="The share of women reaching eight contacts (full cohort, 6,893 women), in five classes; the legend gives each class's range. Click a region to open it on the map.">
+        {paths.length && map ? (
+          <div className="px-14 py-10 grid gap-12 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] items-start">
+            <div>
+              <MiniMap paths={paths} fills={map.fills} noData={NO_DATA[theme]} title="ANC8+ by region"
+                onSelect={(r) => router.push(studio.href(`/map?region=${encodeURIComponent(r)}&metric=anc8`))} />
+              <div className="flex mt-6 gap-1" aria-label="Legend">
+                {map.legend.map((l) => (
+                  <div key={l.c} className="flex-1 min-w-0">
+                    <div className="h-8 rounded-1" style={{ background: l.c }} />
+                    <div className="text-8.5 font-mono text-faint mt-2 leading-tight truncate" title={l.label}>{l.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="flex justify-between text-9.5 uppercase tracking-label text-faint font-semibold pb-3 border-b border-border">
+                <span>Region</span><span>ANC8+</span>
+              </div>
+              {map.rows.map((row) => (
+                <button key={row.r} type="button"
+                  onClick={() => router.push(studio.href(`/map?region=${encodeURIComponent(row.r)}&metric=anc8`))}
+                  className="flex items-center gap-6 py-2 text-10.5 text-left hover:text-accent">
+                  <span className="w-8 h-8 rounded-1 flex-none" style={{ background: row.fill }} />
+                  <span className="flex-1 truncate">{row.r}</span>
+                  <span className="font-mono">{row.v == null ? "–" : pct(row.v)}</span>
+                </button>
+              ))}
+              <div className="flex items-center gap-6 pt-3 mt-2 border-t border-border text-10.5 font-semibold">
+                <span className="w-8 flex-none" />
+                <span className="flex-1">Ethiopia</span>
+                <span className="font-mono">{pct(map.national)}</span>
+              </div>
+            </div>
           </div>
         ) : (
           <PanelLoading rows={4} />
         )}
       </Panel>
     </div>
+  );
+}
+
+/**
+ * Four things to act on: the supervisor's clickable cards, filled with the study's own
+ * findings (notebook 4 and the ladder). Each card names its number, the study's cue for
+ * it, and opens the screen that shows it.
+ */
+function ActOn({ cascade }: { cascade: Cascade | null }) {
+  const studio = useStudio();
+  const nb4 = useNb4();
+  const d = nb4.data;
+  if (!cascade || !d) {
+    return <Panel help="overview.act-on" title="Four things to act on"><PanelLoading rows={4} /></Panel>;
+  }
+  const wealth = d.equity.wealth.stages.anc8 ?? [];
+  const poorest = wealth.find((r) => r.level === "Poorest")?.pct ?? 0;
+  const richest = wealth.find((r) => r.level === "Richest")?.pct ?? 0;
+  const somali = d.regions.Somali?.any_anc?.pct ?? 0;
+  const afar = d.region_travel.entry.Afar;
+  const items = [
+    { tone: "var(--warn)", href: "/explore/ladder",
+      head: `${pct(1 - cascade.continue_4_to_8)} of women who reach four contacts do not reach eight`,
+      body: CUES.lost48(1 - cascade.continue_4_to_8).split(". ").slice(1).join(". ") },
+    { tone: "var(--bad)", href: "/map?region=Somali&metric=never",
+      head: `${pct(1 - cascade.reach1)} of women had no ANC; in Somali only ${pct(somali)} start care`,
+      body: CUES.region },
+    { tone: "var(--accent)", href: "/explore/ladder",
+      head: `After four contacts, ${pct(poorest)} of the poorest reach eight, against ${pct(richest)} of the richest`,
+      body: CUES.signal("wealth") },
+    { tone: "var(--rung4)", href: "/map?region=Afar",
+      head: `Afar: ${pct(afar["<=120 min"].pct)} start ANC within two hours of care, ${pct(afar[">120 min"].pct)} beyond`,
+      body: CUES.signal("travel") },
+  ];
+  return (
+    <Panel help="overview.act-on" title="Four things to act on" how="Each card is a finding from the study with the study's own programme-review cue. Click a card to open the screen that shows it. Associations, not causes.">
+      <div className="grid sm:grid-cols-2">
+        {items.map((it, i) => (
+          <Link
+            key={i}
+            href={studio.href(it.href)}
+            className={`group block px-14 py-12 border-border hover:bg-panel2 hover:no-underline text-text ${
+              i % 2 === 0 ? "sm:border-r" : ""
+            } ${i < 2 ? "border-b" : "border-b sm:border-b-0"} last:border-b-0`}
+            style={{ boxShadow: `inset 3px 0 0 ${it.tone}` }}
+          >
+            <div className="text-12 font-semibold leading-snug flex items-start gap-6">
+              <span className="flex-1">{it.head}</span>
+              <ArrowRight className="size-12 text-faint group-hover:text-accent flex-none mt-2" />
+            </div>
+            <div className="text-10.5 text-dim mt-4 leading-relaxed">{it.body}</div>
+          </Link>
+        ))}
+      </div>
+    </Panel>
   );
 }

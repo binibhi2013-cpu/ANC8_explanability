@@ -15,7 +15,7 @@ export interface TopicEntry {
 
 export const HELP_GROUPS: { key: HelpGroup; label: string }[] = [
   { key: "start", label: "Start here" },
-  { key: "plan", label: "Planning tools" },
+  { key: "plan", label: "Screens" },
   { key: "explore", label: "Exploratory analysis" },
   { key: "models", label: "Models" },
 ];
@@ -28,18 +28,14 @@ export const TOPIC_LIST: TopicEntry[] = [
   { key: "basics-charts", label: "Reading the charts", group: "start", blurb: "Every kind of chart in the studio, and how to read it" },
   { key: "basics-models", label: "How models are judged", group: "start", blurb: "Predictions, held-out women, chance, AP, AUROC, calibration" },
   { key: "terms", label: "Words, A to Z", group: "start", blurb: "Every term the studio uses, in plain language" },
-  { key: "overview", label: "Overview", group: "plan", blurb: "The ladder at a glance and four things to act on" },
+  { key: "overview", label: "Overview", group: "plan", blurb: "The ladder at a glance and the key finding from our model" },
   { key: "map", label: "Map & regions", group: "plan", blurb: "Where women are lost, and one region's full analysis" },
-  { key: "planner", label: "Scenario planner", group: "plan", blurb: "What changes if programmes reach more women" },
-  { key: "war", label: "Conflict simulator", group: "plan", blurb: "What a war like Tigray's would do elsewhere" },
-  { key: "data", label: "Your data", group: "plan", blurb: "Trends and forecasts from your own ANC counts" },
+  { key: "data", label: "Your data", group: "plan", blurb: "A tool, not a study finding: trends and forecasts from ANC counts" },
   { key: "ladder", label: "The ANC ladder (screen)", group: "explore", blurb: "Who reaches each rung, and where they stop" },
-  { key: "models", label: "Models compared", group: "explore", blurb: "Every model at every rung" },
-  { key: "cohorts", label: "Cohorts & horizons", group: "explore", blurb: "Does the answer change with who is counted, and when?" },
-  { key: "analysis", label: "Model analysis", group: "models", blurb: "One model at a time: accuracy, honesty, how it was built" },
+  { key: "cohorts", label: "Cohorts & horizons", group: "explore", blurb: "Full cohort and ANC entry, and what the first visit adds" },
+  { key: "analysis", label: "Model analysis", group: "models", blurb: "Our three models for ANC8+: performance, calibration, SHAP" },
   { key: "predict", label: "Predict", group: "models", blurb: "Score one woman and see why" },
-  { key: "screener", label: "First-visit screener", group: "models", blurb: "Twelve questions that rank a register for follow-up" },
-  { key: "about", label: "About the study", group: "models", blurb: "The study on one page, and where each finding lives" },
+  { key: "about", label: "About the study", group: "models", blurb: "The study on one page, from the manuscript abstract" },
 ];
 
 export const TOPIC_KEYS = TOPIC_LIST.map((t) => t.key);

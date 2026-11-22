@@ -561,3 +561,10 @@ path.leaflet-interactive,
 .recharts-wrapper .recharts-surface:focus,
 .recharts-wrapper:focus,
 .recharts-surface:focus { outline: none; }
+
+/* The presentation outlines the panel its step is about, briefly. */
+[data-tour-focus="on"] {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  transition: outline-color 0.3s;
+}

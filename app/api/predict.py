@@ -1,12 +1,12 @@
 """Vercel serverless function: score one woman with every deployed model.
 
 POST /api/predict
-    {"answers": {...}, "generations": ["lib_s21_anc8plus"]}
+    {"answers": {...}, "generations": ["v1"]}
 
-    {"answers": {...}, "models": {"lib_s21_anc4plus": ["XGBoost"]}}   one model
+    {"answers": {...}, "models": {"v1": ["XGBoost"]}}   one model
 
 Bundles (the keys are file identifiers):
-    lib_s21_<outcome>   the study's models before ANC starts: logistic regression,
+    v1             the study's own full-cohort ANC8+ models: logistic regression,
                    random forest and XGBoost on the 21 predictors, at one rung
     v1_anc_entry   the 21-predictor models of ANC8+ at ANC entry -- six models
                    for women who have already started ANC, with and without
@@ -45,7 +45,7 @@ ENABLE_HEAVY = os.environ.get("ENABLE_HEAVY_MODELS", "0") == "1"
 _CACHE: dict = {}
 
 # Only these files are ever opened: the bundle key arrives in the request.
-BUNDLES = ("v1_anc_entry",) + tuple(f"lib_s21_{o}" for o in ("anc1plus", "anc4plus", "anc8plus"))
+BUNDLES = ("v1", "v1_anc_entry")
 
 
 def load_bundle(generation: str):
@@ -103,7 +103,7 @@ def score_generation(generation: str, answers: dict, only=None) -> dict:
 def build_response(payload: dict) -> dict:
     answers = payload.get("answers", {}) or {}
     only = payload.get("models") or {}
-    generations = payload.get("generations") or list(only) or ["lib_s21_anc8plus", "v1_anc_entry"]
+    generations = payload.get("generations") or list(only) or ["v1", "v1_anc_entry"]
     return {"result": {gen: score_generation(gen, answers, only.get(gen)) for gen in generations}}
 
 
