@@ -74,8 +74,11 @@ export default function LadderPage() {
     return { hist, surv, n: c[place]?.n ?? 0 };
   }, [exp.data, cohort, place]);
 
-  const dims = reg.data ? Object.keys(reg.data.subgroups[cohort]?.[place] ?? {}) : [];
-  const subRows = reg.data?.subgroups[cohort]?.[place]?.[dims.includes(dim) ? dim : dims[0]] ?? [];
+  // Only groupings that are among the study's 21 predictors (not age at the birth or
+  // health-post access), and only groups of at least 25 women.
+  const STUDY_DIMS = ["Wealth", "Education", "Residence", "Pregnancy wanted", "Pregnancy number", "Health insurance"];
+  const dims = reg.data ? Object.keys(reg.data.subgroups[cohort]?.[place] ?? {}).filter((d) => STUDY_DIMS.includes(d)) : [];
+  const subRows = (reg.data?.subgroups[cohort]?.[place]?.[dims.includes(dim) ? dim : dims[0]] ?? []).filter((r) => !r.small);
   const rungs = cohortRungs(cohort);
 
   const domainData = useMemo(() => {
@@ -172,8 +175,8 @@ export default function LadderPage() {
         </Panel>
 
         <Panel help="ladder.survival"
-          title="Still in care after each contact"
-          how="The share of all women who had at least that many contacts. The curve falls where women leave: the steep first step is women who never start, the drop after 4 is the loss the eight-contact standard exposes."
+          title="Women with at least each number of contacts"
+          how="The share of all women who had at least that many contacts. This is one count per woman, not follow-up over time: the steep first step is women with no ANC, the drop after 4 is the gap the eight-contact standard exposes."
         >
           {contacts ? (
             <>
@@ -218,7 +221,7 @@ export default function LadderPage() {
 
       <Panel help="ladder.groups"
         title={`The ladder, group by group · ${place}`}
-        how="Each row is one group of women. The three dots are the share reaching ANC1+, ANC4+ and ANC8+; the longer the line, the more women the group loses on the way up. Faded rows rest on fewer than 25 women."
+        how="Each row is one group of women. The three dots are the share reaching ANC1+, ANC4+ and ANC8+; the longer the line, the more women the group loses on the way up. Groups with fewer than 25 women are not shown."
         actions={
           <Picker
             label="Group by"
@@ -249,7 +252,7 @@ export default function LadderPage() {
         )}
       </Panel>
 
-      <div className="grid gap-10 md:gap-14 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+      <div className="grid gap-10 md:gap-14">
         <Panel help="ladder.regions"
           title="Where each region keeps and loses women"
           how="Each column is shaded on its own five classes: darker is better on that step. Continuation 1→4 is the share of women who started ANC and reached four; 4→8 the share of those who reached four and went on to eight. Click a region to follow it through the page."
@@ -290,130 +293,8 @@ export default function LadderPage() {
           )}
         </Panel>
 
-        <div className="flex flex-col gap-10 md:gap-14 min-w-0">
-          <Panel help="ladder.predictable"
-            title="How predictable each rung is"
-            how="The ring is what guessing gives (the share of women who reach the rung); the dot is the best model's average precision on the 1,375 held-out women. The distance between them is what the predictors add. ANC8+ is the hardest to predict, and the rung where prediction adds most relative to chance."
-          >
-            {ana.data?.ladder?.performance ? (
-              <DotRows
-                rows={ana.data.ladder.performance.map((r) => ({
-                  key: String(r.outcome),
-                  label: String(r.rung),
-                  sub: String(r.best_model),
-                  values: { chance: Number(r.weighted_prevalence), ap: Number(r.AP) },
-                  display: `AUC ${Number(r.AUROC).toFixed(2)}`,
-                }))}
-                series={[
-                  { key: "chance", label: "Chance (prevalence)", color: "var(--faint)", hollow: true },
-                  { key: "ap", label: "Best model (average precision)", color: "var(--accent)" },
-                ]}
-                domain={[0, 1]}
-                ticks={[0, 0.25, 0.5, 0.75, 1]}
-                format={(v) => v.toFixed(2)}
-                labelWidth={150}
-                valueWidth={66}
-              />
-            ) : (
-              <PanelLoading rows={3} />
-            )}
-            <DataNote>The survey asks how many contacts, not when each happened; visit dates from facility registers would let the models learn when women drop out, not only whether.</DataNote>
-          </Panel>
-
-          <Panel help="ladder.domains"
-            title="What matters at each rung"
-            how="Each line is a group of predictors; its height is that group's share of what the model uses at the rung. A line that rises matters more for going further up the ladder. Hover a name to pick its line out."
-            actions={
-              <Segmented label="Measured by" options={METHODS} value={method} onChange={setMethod} />
-            }
-          >
-            {domainData.domains.length ? (
-              <>
-                <ChartBox height={210} className="pt-10 pr-14">
-                  <LineChart data={domainData.data} margin={{ left: -8, right: 6, top: 6, bottom: 0 }}>
-                    <CartesianGrid {...GRID} vertical={false} />
-                    <XAxis {...AXIS} dataKey="rung" padding={{ left: 20, right: 20 }} />
-                    <YAxis {...AXIS} tickFormatter={(v) => pct(v)} width={44} ticks={domainData.ticks}
-                      domain={[0, domainData.ticks[domainData.ticks.length - 1]]} />
-                    <Tooltip
-                      content={tip<Record<string, number | string>>((d) => (
-                        <TipPanel
-                          title={String(d.rung)}
-                          rows={domainData.domains
-                            .map((k) => ({ label: k, value: pct(Number(d[k]), 0), color: DOMAIN_COLORS[k] ?? "var(--dim)", v: Number(d[k]) }))
-                            .sort((a, b) => b.v - a.v)}
-                        />
-                      ))}
-                    />
-                    {domainData.domains.map((k) => (
-                      <Line
-                        key={k}
-                        dataKey={k}
-                        stroke={DOMAIN_COLORS[k] ?? "var(--dim)"}
-                        strokeWidth={focus === k ? 3 : 2}
-                        strokeOpacity={focus && focus !== k ? 0.15 : 1}
-                        dot={{ r: 3, strokeWidth: 0, fill: DOMAIN_COLORS[k] ?? "var(--dim)" }}
-                        isAnimationActive
-                        animationDuration={450}
-                      />
-                    ))}
-                  </LineChart>
-                </ChartBox>
-                <SeriesLegend
-                  items={domainData.domains.map((k) => ({ key: k, label: k, color: DOMAIN_COLORS[k] ?? "var(--dim)" }))}
-                  focus={focus}
-                  onFocus={setFocus}
-                />
-              </>
-            ) : (
-              <PanelLoading rows={4} />
-            )}
-          </Panel>
-        </div>
       </div>
 
-      <Panel help="ladder.patterns"
-        title="Predictors that open the door, and predictors that keep women coming"
-        how="For each predictor, how much its share of the model changes from ANC1+ to ANC8+. Bars to the left (access-limited) matter most for starting at all; bars to the right (engagement-limited) matter more the further up the ladder a woman goes. The count is how many of three explanation methods agree."
-      >
-        {ana.data?.ladder?.patterns ? (
-          <>
-            <div className="grid md:grid-cols-2">
-              {(["access-limited", "engagement-limited"] as const).map((p) => (
-                <div key={p} className="min-w-0 md:first:border-r border-border">
-                  <div className="px-16 pt-10 text-10 font-semibold uppercase tracking-label" style={{ color: p === "access-limited" ? "var(--rung1)" : "var(--rung8)" }}>
-                    {p === "access-limited" ? "Matter most for starting" : "Matter more further up"}
-                  </div>
-                  <RankedBars
-                    signed={false}
-                    labelWidth={200}
-                    rows={ana.data!.ladder!.patterns!
-                      .filter((r) => r.pattern === p)
-                      .sort((a, b) => Math.abs(b.mean_share_shift) - Math.abs(a.mean_share_shift))
-                      .slice(0, 10)
-                      .map((r) => ({
-                        key: r.predictor,
-                        label: label(r.predictor),
-                        sub: `${r.domain} · ${r.methods_agreeing}/${r.methods_total} methods agree`,
-                        value: Math.abs(r.mean_share_shift),
-                        display: `${(r.mean_share_shift * 100).toFixed(1)} pt`,
-                        color: p === "access-limited" ? "var(--rung1)" : "var(--rung8)",
-                      }))}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="px-14 pb-12">
-              <Note tone="accent">
-                These are associations in the survey, not causes: a predictor that matters further up the ladder is where women who
-                stay differ from women who stop.
-              </Note>
-            </div>
-          </>
-        ) : (
-          <PanelLoading rows={6} />
-        )}
-      </Panel>
     </Screen>
   );
 }

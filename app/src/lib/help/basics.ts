@@ -33,7 +33,7 @@ export const BASICS: HelpTopic[] = [
         title: "Your first five minutes",
         steps: [
           "Open the **Overview** (Plan › Overview). The four numbers along the top are the whole story in brief: how many women start care, reach four visits, and reach the eight the WHO recommends.",
-          "Click any of the **Four things to act on**. Each opens the screen that shows it, already set up.",
+          "Read the **Key finding from our model** and click a region on the small map to open it.",
           "Open **Map & regions** and click a region. A panel slides in with everything the studio knows about that region.",
           "Hover the (i) on any panel you do not understand, then **Read more in Help**.",
           "Press **Present** in the top bar for a guided tour of the whole studio, one screen at a time.",
@@ -42,12 +42,11 @@ export const BASICS: HelpTopic[] = [
       {
         title: "Which screen answers my question?",
         steps: [
-          "Where are women lost, and what should a region work on? **Map & regions**.",
-          "What if more women were insured, or lived within an hour of a health centre? **Scenario planner**.",
-          "What would a war do to antenatal care in another region? **Conflict simulator**.",
-          "What will next year's numbers look like at my facilities? **Your data**.",
-          "Which women at their first visit should we follow up? **First-visit screener**.",
-          "How good is the prediction, and can I trust it? **Model analysis** and **Models compared**.",
+          "Where are women lost in each region? **Map & regions**.",
+          "Who reaches each rung, by group and region? **The ANC ladder**.",
+          "How good are our models, and what do they lean on? **Model analysis**.",
+          "What does an early first visit add? **Cohorts & horizons** and the Overview's key finding.",
+          "What will next year's numbers look like at my facilities? **Your data** (a tool, not a study finding).",
         ],
       },
     ],
@@ -122,9 +121,9 @@ export const BASICS: HelpTopic[] = [
         title: "The four modes",
         shows: "The buttons in the top bar group the screens by what you are doing.",
         read: [
-          "**Plan**: the working tools for deciding where and how to act (Overview, Map, Scenario planner, Conflict simulator, Your data).",
-          "**Explore**: the analysis underneath the plans (the ladder, predictor selection, models compared, cohorts).",
-          "**Models**: the prediction models themselves (Model analysis, Predict, the First-visit screener).",
+          "**Plan**: the main screens (Overview, Map & regions, Your data).",
+          "**Explore**: the descriptive analysis (the ANC ladder, cohorts).",
+          "**Models**: the study's prediction models (Model analysis, Predict).",
           "**Help**: this guide.",
         ],
       },
@@ -135,7 +134,7 @@ export const BASICS: HelpTopic[] = [
         read: [
           "It reads **Ethiopia** until you pick a region, by clicking one on a map, a ranked list or a heatmap, or by finding it with the finder.",
           "From any screen, **Change** in the Scope box, the scope button in the screen's header, or the scope in the status bar opens the scope picker: every region with its women and its reach at the rung, a search box, and switches for the rung (ANC1+, ANC4+, ANC8+) and the cohort. On a phone, the header button is the quickest.",
-          "Once a region is chosen, every screen that can show one region does: the ladder, the planner, the cohorts and the lab. The picker says when a screen describes the whole country instead.",
+          "Once a region is chosen, every screen that can show one region does: the map, the ladder and the cohorts. The picker says when a screen describes the whole country instead.",
           "The small × next to the region name goes back to the whole country.",
         ],
       },
@@ -157,7 +156,7 @@ export const BASICS: HelpTopic[] = [
         shows: "The search box in the middle of the top bar jumps to a region, a screen or a Help answer.",
         read: [
           "Press **Ctrl K** (Cmd K on a Mac) from anywhere, or click the box.",
-          "Type part of a name: a region (\"Som\" finds Somali), a screen (\"budget\" finds the planner) or a question (\"AUROC\" finds its explanation).",
+          "Type part of a name: a region (\"Som\" finds Somali), a screen (\"map\" finds Map & regions) or a question (\"AUROC\" finds its explanation).",
           "Use the arrow keys and Enter, or click a result.",
         ],
       },
@@ -181,9 +180,9 @@ export const BASICS: HelpTopic[] = [
       {
         id: "links",
         title: "Every view is a link",
-        shows: "The address in your browser holds the state of the screen: the region, rung, cohort, map layer, scenario levers, war settings and so on.",
+        shows: "The address in your browser holds the state of the screen: the region, rung, cohort, map layer and so on.",
         read: [
-          "Copy the address to send a colleague exactly what you see, for example a planner scenario prepared for a meeting.",
+          "Copy the address to send a colleague exactly what you see, for example one region prepared for a meeting.",
           "The browser's **Back** button undoes the last click.",
           "A bookmark brings the same view back later.",
         ],
@@ -203,7 +202,7 @@ export const BASICS: HelpTopic[] = [
       {
         id: "privacy",
         title: "Your files stay on your computer",
-        shows: "The Your data and First-visit screener screens read files you load, in the browser.",
+        shows: "The Your data screen reads files you load, in the browser.",
         read: [
           "Nothing you load is uploaded or stored anywhere. Close the tab and it is gone.",
           "The studio also works with no internet, except for the background map tiles.",
@@ -227,9 +226,9 @@ export const BASICS: HelpTopic[] = [
     key: "basics-ladder",
     label: "The ANC ladder",
     group: "start",
-    blurb: "Antenatal care, contacts, the three rungs and the three cohorts",
+    blurb: "Antenatal care, contacts, the three rungs and the two cohorts",
     purpose:
-      "Almost every number in the studio is about how far women get along one ladder of antenatal care. This page explains the ladder, its three rungs, where women are lost, and the three ways of choosing which women to count.",
+      "Almost every number in the studio is about how far women get along one ladder of antenatal care. This page explains the ladder, its three rungs, where women are lost, and the two ways of choosing which women to count.",
     cards: [
       {
         id: "anc",
@@ -263,11 +262,11 @@ export const BASICS: HelpTopic[] = [
         title: "Where women are lost",
         shows: "Every woman falls into exactly one of four groups, so the four always add up to 100%.",
         read: [
-          "**Never start**: no antenatal care at all (red in the studio).",
-          "**Start, stop before four**: one to three contacts (orange).",
-          "**Reach four, stop before eight**: four to seven contacts (purple).",
-          "**Reach eight**: the goal (green).",
-          "The biggest group nationally is the third one. The largest loss is not women who never come, but women who come four times and stop.",
+          "**No ANC**: no antenatal care at all (red in the studio).",
+          "**Started, did not reach four**: one to three contacts (orange).",
+          "**Reached four, did not reach eight**: four to seven contacts (purple).",
+          "**Reached eight**: the goal (green).",
+          "The biggest group nationally is the third one. The survey records how many contacts each woman had, not when she stopped, so these are counts, not dropout.",
           "**Continuation** is the share of women on one rung who go on to the next: \"4→8\" is, of the women who reached four, the share who reached eight.",
         ],
         tryIt: [{ text: "A region's losses, on the map", href: "/map?region=Somali&metric=never" }],
@@ -276,17 +275,16 @@ export const BASICS: HelpTopic[] = [
       },
       {
         id: "cohorts",
-        title: "The three cohorts",
+        title: "The two cohorts",
         shows: "A cohort is the group of women a number is about. The sidebar's Cohort switch changes it everywhere.",
         read: [
           "**Full cohort** (6,893 women): every woman whose most recent pregnancy has a recorded contact count. Use it by default.",
           "**ANC entry** (5,001): only women who had at least one contact. Use it to ask what keeps women coming once they have started, or to predict from the first visit.",
-          "**Last 24 months** (5,037): births in the two years before the interview. This is how the official survey report counts, so use it to compare with that report.",
           "The same rung can read differently in different cohorts. In the entry cohort ANC4+ is higher because women who never started are left out.",
         ],
         tryIt: [{ text: "Compare the cohorts", href: "/explore/cohorts" }],
-        terms: ["cohort", "window24"],
-        shot: "cohorts.tiles",
+        terms: ["cohort"],
+        shot: false,
       },
       {
         id: "regions",
@@ -304,7 +302,7 @@ export const BASICS: HelpTopic[] = [
     key: "basics-numbers",
     label: "Reading the numbers",
     group: "start",
-    blurb: "Shares, points, intervals, women per year, associations",
+    blurb: "Shares, points, intervals, associations",
     purpose:
       "The studio's numbers are of a few kinds. Knowing which kind you are reading avoids the most common misreadings, above all mixing up percent with percentage points, and association with cause.",
     before: ["basics-ladder"],
@@ -340,32 +338,10 @@ export const BASICS: HelpTopic[] = [
           "On charts an interval is a thin line through a dot (a whisker) or a shaded band around a line.",
           "The studio builds intervals by re-drawing the survey's clusters (villages and neighbourhoods) many times and seeing how much the answer moves. This is called a **bootstrap**.",
           "Two intervals that overlap a lot mean the two values cannot be told apart.",
-          "Faded bars, rows or dots, and an asterisk (*), mark groups of fewer than 25 women: read them as a direction, not a number.",
+          "Groups of fewer than 25 women are not shown.",
         ],
         terms: ["ci", "bootstrap", "cluster"],
         shot: "cohorts.ladder",
-      },
-      {
-        id: "per-year",
-        title: "Women per year",
-        shows: "Some numbers are counts of women, for example \"1.2 million women a year do not reach eight contacts\".",
-        read: [
-          "They are the share times the number of births in the region each year, from UN population estimates.",
-          "They say how big a gap is in people, which a share cannot: 30% of a small region can be fewer women than 10% of Oromia.",
-          "Large counts are shortened: 12k is twelve thousand, 1.2M is 1.2 million.",
-        ],
-        shot: false,
-      },
-      {
-        id: "gap",
-        title: "Better or worse than its circumstances",
-        shows: "Some panels compare a region with what its women's circumstances would predict.",
-        read: [
-          "A model predicts each woman's chance from her own circumstances (wealth, schooling, age, distance and so on). Averaging those predictions over a region gives what the region \"should\" reach given who lives there.",
-          "Actual minus expected is the **gap**. Positive (green): the region does better than its population suggests, a place to learn from. Negative (red): something about the region itself, such as its services, conflict or geography, holds women back.",
-        ],
-        terms: ["regional-gap"],
-        shot: "planner.gap",
       },
       {
         id: "association",
@@ -374,7 +350,7 @@ export const BASICS: HelpTopic[] = [
         read: [
           "\"Insured women reach eight contacts more often\" is an association. It does not prove insurance causes it: insured women may also be richer or live nearer care.",
           "The models try to account for the other circumstances they know about, but they cannot account for what the survey did not ask.",
-          "The scenario planner therefore says what the model **expects** if circumstances changed, not what a programme **would cause**. Results from real programmes would be needed for that.",
+          "The early-visit contrast on the Overview therefore says what the model **expects**, not what a programme **would cause**.",
           "A prediction describes **women like her**, not her. It is a guide to where to look, not a verdict on a person.",
         ],
         terms: ["association"],
@@ -456,10 +432,10 @@ export const BASICS: HelpTopic[] = [
         read: [
           "Hover anywhere on the chart for the exact values at that point.",
           "A shaded band around a line is its uncertainty: the wider the band, the less sure.",
-          "A dashed line is usually a comparison: \"without conflict\", \"Ethiopia\", \"a forecast\". The key below the chart names each line.",
+          "A dashed line is usually a comparison: \"Ethiopia\" or \"a forecast\". The key below the chart names each line.",
           "Where a chart has several lines, hover a name in the key below it to pick its line out.",
         ],
-        shot: "war.trajectory",
+        shot: false,
       },
       {
         id: "funnel",

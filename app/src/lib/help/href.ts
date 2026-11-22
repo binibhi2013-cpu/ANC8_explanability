@@ -16,6 +16,5 @@ export function termHref(id: string): string {
 /** The help topic for a screen: its nav key, except the screener, which shares a path. */
 export function topicForScreen(navKey: string | undefined, pathname: string, mode: string | null): string | null {
   if (pathname.startsWith("/help")) return null;
-  if (pathname.replace(/\/+$/, "") === "/your-data" && mode === "register") return "screener";
   return navKey ?? null;
 }

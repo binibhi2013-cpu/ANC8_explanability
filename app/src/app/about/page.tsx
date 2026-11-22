@@ -1,50 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import { Panel, Screen, SectionRule, StatTile } from "@/components/studio/ui";
-import { MODELS_INDEX, type ModelsIndex } from "@/lib/modelCards";
-import { useJSON } from "@/lib/data";
-import { asset } from "@/lib/paths";
-import { COHORTS, useStudio } from "@/lib/studio";
+import { useStudio } from "@/lib/studio";
 
 /**
- * The study on one page. It says what was done and points to the tool that shows each
- * finding, so nothing is explained twice: the tools carry the evidence, this page is
- * the map to them.
+ * The study on one page, written from the manuscript's abstract and results. Each
+ * finding links to the screen that shows it. The Library (the supervisor's reports) is
+ * replaced by the study's own documents.
  */
 
-interface Regions {
-  cohorts: Record<string, { national: Record<string, number> }>;
-}
-interface War {
-  did_check: Record<string, { did: number }>;
-}
-interface Scen {
-  levers: { key: string; supported: boolean }[];
-}
+const TITLE = "Predicting attainment of eight antenatal care contacts and the added value of early initiation in Ethiopia";
+
+const ABSTRACT = [
+  "Population-level prediction of attainment of the WHO-recommended eight antenatal care contacts (ANC8+) remains understudied in Ethiopia. We evaluated prediction of eight-contact attainment and the incremental value of early initiation using the 2024-25 Ethiopia Demographic and Health Survey.",
+  "Analyses included 6,893 women with a live birth or stillbirth within 36 months before interview, including women receiving no antenatal care. Logistic regression, random forest and extreme gradient boosting (XGBoost) used 21 background predictors, with sampling clusters preserved within survey strata during development and held-out evaluation. Performance was survey-weighted. Among 5,001 antenatal care users, paired comparisons assessed adding early initiation.",
+  "Eight-contact attainment was 19.2%. Held-out average precision ranged from 0.397 to 0.438, and AUROC from 0.748 to 0.762. XGBoost outperformed random forest in average precision and Brier score, but its advantage over logistic regression remained uncertain. Wealth and region were leading predictors. Early initiation increased average precision by 0.022 to 0.034, although its incremental predictive benefit remained uncertain across models. All models showed overall overprediction.",
+  "These findings support further investigation of population-level ANC8 prediction; independent validation and calibration assessment are needed before programme application.",
+];
 
 const TERMS: [string, string][] = [
   ["Rung", "One step of the ladder: ANC1+, ANC4+ or ANC8+ contacts."],
-  ["Cohort", "Which women are counted: everyone, those who started ANC, or births in the last 24 months."],
-  ["Held-out women", "1,375 women the models never saw until the final score."],
-  ["Average precision", "How well a model ranks the women who reach the rung. Chance equals the share who reach it."],
-  ["AUROC", "The chance that a woman who reached the rung is scored above one who did not. 0.5 is a coin toss."],
-  ["Chance, prevalence", "The score of a model that knows nothing but the overall rate."],
-  ["Calibration", "Whether a predicted 30% happens 30% of the time. A slope of 1 is honest."],
-  ["PSU bootstrap", "Resampling whole survey clusters to get honest 95% intervals."],
-  ["G-computation", "Re-scoring every woman as if a factor changed, then averaging. The planner's method."],
-  ["SHAP", "A share of each prediction credited to each predictor."],
+  ["Cohort", "Which women are counted: everyone (full cohort, 6,893) or women who started ANC (ANC entry, 5,001)."],
+  ["Held-out women", "1,375 women (984 at ANC entry) from sampling clusters the models never saw until the final score."],
+  ["Average precision", "How well a model ranks the women who reach ANC8+. Chance equals the share who reach it."],
+  ["AUROC", "The chance that a woman who reached ANC8+ is scored above one who did not. 0.5 is a coin toss."],
+  ["Brier score", "The average squared gap between predicted probability and what happened. Lower is better."],
+  ["Calibration", "Whether a predicted 30% happens 30% of the time. Below zero in the large means overprediction."],
+  ["PSU bootstrap", "Resampling whole survey clusters within strata to get 95% intervals."],
+  ["SHAP", "How far each predictor moves a model's prediction, credited predictor by predictor."],
+  ["Permutation importance", "The drop in average precision when one predictor's values are shuffled."],
 ];
 
-const DOCS: [string, string][] = [
-  ["brief", "Brief"], ["findings", "Findings"], ["methods", "Methods"], ["data", "Data"],
-  ["predictors", "Predictors"], ["horizons", "Horizons"], ["wartime", "Wartime"],
-  ["limitations", "Limitations"], ["insights", "Insights"], ["glossary", "Glossary"],
-  ["record", "Analysis record"], ["decisions", "Decisions"],
+/** The study's own documents. Download links are added once the authors decide to share the files publicly. */
+const DOCUMENTS: [string, string][] = [
+  ["Manuscript", "Main text, Tables 1-4 and Figures 1-4 (submitted)"],
+  ["Supplementary material", "Tables S1-S9 and Figure S1: variable coding, grids, full results"],
 ];
-
-const p0 = (v: number) => `${Math.round(v * 100)}%`;
 
 function Row({ text, to, go }: { text: React.ReactNode; to: string; go: string }) {
   const studio = useStudio();
@@ -61,65 +54,53 @@ function Row({ text, to, go }: { text: React.ReactNode; to: string; go: string }
 }
 
 export default function AboutPage() {
-  const reg = useJSON<Regions>("/data/regions.json").data;
-  const war = useJSON<War>("/data/war.json").data;
-  const scen = useJSON<Scen>("/data/scenarios.json").data;
-  const mod = useJSON<ModelsIndex>(MODELS_INDEX).data;
-
-  const nat = reg?.cohorts.full.national;
-  const recent = reg?.cohorts.recent.national;
-  const supported = scen?.levers.filter((l) => l.supported).length;
-  const aps8 = ["logistic-regression", "random-forest", "xgboost"]
-    .map((s) => mod?.summary[`s21.${s}`]?.anc8?.ap).filter((v): v is number => v != null);
-  const spread8 = aps8.length === 3 ? Math.max(...aps8) - Math.min(...aps8) : undefined;
-  const n = (v: number | undefined, f: (x: number) => string) => (v == null ? "…" : f(v));
-
   return (
     <Screen>
       <div className="grid gap-10 grid-cols-2 xl:grid-cols-4">
-        <StatTile label="Survey" value="EDHS 2024–25" sub="Ethiopia Demographic and Health Survey" />
-        <StatTile label="Women" value={COHORTS[0].n.toLocaleString("en-US")} sub="most recent birth, contacts recorded" />
-        <StatTile label="Cohorts" value="3" sub={COHORTS.map((c) => `${c.short} ${c.n.toLocaleString("en-US")}`).join(" · ")} />
-        <StatTile label="Held-out" value={(mod?.meta.n_heldout ?? 1375).toLocaleString("en-US")} sub="scored once, survey-weighted" />
+        <StatTile label="Survey" value="EDHS 2024–25" sub="Ethiopia Demographic and Health Survey, women's file" />
+        <StatTile label="Women" value="6,893" sub="birth or stillbirth in the last 36 months" />
+        <StatTile label="Outcome" value="ANC8+" sub="19.2% reached eight or more contacts" tone="bad" />
+        <StatTile label="Models" value="3" sub="logistic regression, random forest, XGBoost · 21 predictors" />
       </div>
 
+      <Panel help="about.findings" title="Abstract">
+        <div className="px-14 py-12 flex flex-col gap-8 max-w-[860px]">
+          <div className="text-13 font-semibold leading-snug">{TITLE}</div>
+          {ABSTRACT.map((p, i) => (
+            <p key={i} className="text-11.5 leading-relaxed text-dim">{p}</p>
+          ))}
+        </div>
+      </Panel>
+
       <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
-        <Panel help="about.findings" title="Where to see each finding" how="Each line is a finding, and the tool that shows it. Numbers come from the studio's data files.">
-          <Row to="/help" go="Help" text="New to the studio? Every tool explained in plain language, with screenshots." />
-          <Row to="/explore/ladder" go="The ANC ladder"
-            text={<><b className="font-mono">{n(nat?.continue_4_to_8, (v) => p0(1 - v))}</b> of women who reach four contacts stop before eight.</>} />
-          <Row to="/explore/cohorts" go="Cohorts"
-            text={<>The 24-month cohort reproduces the EDHS report: ANC4+ <b className="font-mono">{n(recent?.reach4, p0)}</b>.</>} />
-          <Row to="/war" go="Conflict simulator"
-            text={<>The Tigray war cut first contact by about <b className="font-mono">{n(war?.did_check.anc1.did, (v) => `${Math.round(v * 100)}`)}</b> points.</>} />
-          <Row to="/planner" go="Scenario planner"
-            text={<><b className="font-mono">{supported ?? "…"}</b> levers are supported by the data; the rest are shown but not backed.</>} />
-          <Row to="/your-data?mode=register" go="First-visit screener" text="Twelve questions match the 21-predictor model." />
-          <Row to="/models" go="Model analysis"
-            text={<>The three models on the 21 finish within <b className="font-mono">{n(spread8, (v) => v.toFixed(2))}</b> average precision of each other at ANC8+.</>} />
+        <Panel help="about.findings" title="Where to see each finding" how="Each line is a finding from the manuscript, and the screen that shows it.">
+          <Row to="/" go="Overview" text={<>Of women who reached four contacts, <b className="font-mono">63%</b> did not reach eight.</>} />
+          <Row to="/map?metric=anc8" go="Map & regions" text={<>ANC8+ ranges from <b className="font-mono">4%</b> in Somali to <b className="font-mono">66%</b> in Addis Ababa (full cohort).</>} />
+          <Row to="/models" go="Model analysis" text={<>Held-out average precision <b className="font-mono">0.397–0.438</b>, AUROC <b className="font-mono">0.748–0.762</b>; all three models overpredict.</>} />
+          <Row to="/models" go="Model analysis" text="Wealth and region lead permutation importance in all three models; wealth, travel time and region lead SHAP." />
+          <Row to="/explore/cohorts" go="Cohorts" text={<>Adding early initiation raised average precision by <b className="font-mono">0.022–0.034</b>; every interval includes zero.</>} />
+          <Row to="/" go="Overview" text={<>Model contrast: <b className="font-mono">34%</b> predicted ANC8+ with an early first visit against <b className="font-mono">13%</b> with a later one.</>} />
+          <Row to="/help" go="Help" text="New to the dashboard? Every screen explained in plain language." />
         </Panel>
 
         <div className="flex flex-col gap-10 md:gap-14 min-w-0">
-          <Panel help="about.limits" title="Limits" how="What this study cannot support, and where the tool that shows it lives.">
-            <Row to="/planner" go="Scenario planner" text="Scenarios are associations, not causes." />
-            <Row to="/models" go="Model analysis" text="One survey round: accuracy on another round is untested." />
-            <Row to="/explore/cohorts" go="Cohorts" text="Contact counts are recalled, and older births are recalled less well." />
-            <Row to="/war" go="Conflict simulator" text="Conflict elsewhere is assumed to act as it did in Tigray." />
-            <Row to="/your-data?mode=register" go="First-visit screener" text="A score describes women like her, not her." />
+          <Panel help="about.limits" title="Limits" how="From the manuscript's discussion.">
+            <Row to="/models" go="Model analysis" text="Internal validation in one survey round: accuracy in other periods or populations is untested." />
+            <Row to="/models" go="Model analysis" text="All models overpredict: recalibration is needed before any programme use." />
+            <Row to="/" go="Overview" text="Predictors are markers of circumstances, not causes; the early-visit contrast is not an intervention effect." />
+            <Row to="/explore/ladder" go="The ANC ladder" text="Contact counts and first-visit timing are recalled by the women; ANC8+ counts contacts, not their quality." />
           </Panel>
 
-          <Panel help="about.reports" title="Full reports" how="The written study, for reviewers. Plain Markdown files.">
-            <div className="p-14 flex flex-wrap gap-6">
-              {DOCS.map(([k, t]) => (
-                <a
-                  key={k}
-                  href={asset(`/docs/${k}.md`)}
-                  download
-                  className="inline-flex items-center gap-5 border border-border2 bg-panel h-22 px-8 rounded-2 text-10.5 text-dim hover:text-accent hover:no-underline"
-                >
-                  <Download className="size-10" />
-                  {t}
-                </a>
+          <Panel help="about.reports" title="Study documents" how="The study's own written outputs. They replace the earlier library of reports.">
+            <div className="flex flex-col">
+              {DOCUMENTS.map(([t, d]) => (
+                <div key={t} className="flex items-start gap-8 px-14 py-8 border-b border-border last:border-b-0">
+                  <FileText className="size-13 text-accent flex-none mt-1" />
+                  <div className="min-w-0">
+                    <div className="text-11.5 font-semibold">{t}</div>
+                    <div className="text-10.5 text-dim">{d}</div>
+                  </div>
+                </div>
               ))}
             </div>
           </Panel>

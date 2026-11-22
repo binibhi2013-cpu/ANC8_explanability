@@ -451,3 +451,16 @@ export function ComingSoon({ title, note }: { title: string; note?: string }) {
     </div>
   );
 }
+
+/**
+ * A decision cue: what a card's number suggests for programmes. Always worded as a
+ * suggestion tied to the number on the card, never as a cause (see lib/cues.ts).
+ */
+export function Cue({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`flex gap-8 text-10.5 leading-relaxed text-dim bg-panel2 border border-border rounded-2 px-10 py-7 ${className}`}>
+      <span className="text-9 uppercase tracking-label font-semibold text-good flex-none pt-1">For programmes</span>
+      <span className="min-w-0">{children}</span>
+    </div>
+  );
+}

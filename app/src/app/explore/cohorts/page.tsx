@@ -3,30 +3,33 @@
 import { useMemo } from "react";
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import DotRows from "@/components/charts/DotRows";
-import RankedBars from "@/components/charts/RankedBars";
 import { AXIS, ChartBox, GRID, SeriesLegend, TipPanel, tip } from "@/components/charts/rc";
-import { DataNote, InlineError, Note, Panel, PanelLoading, Screen, Segmented, StatTile, Tag } from "@/components/studio/ui";
-import type { Analysis } from "@/lib/analysis";
+import { Cue, DataNote, InlineError, Note, Panel, PanelLoading, Screen, Segmented, StatTile, Tag } from "@/components/studio/ui";
+import { CUES } from "@/lib/cues";
 import { useJSON } from "@/lib/data";
-import { COHORT_COLOR, OUTCOME_OF, RUNG_LABEL, num, pct, setName, signed, type ExploreData } from "@/lib/explore";
-import { label } from "@/lib/labels";
+import { COHORT_COLOR, RUNG_LABEL, pct, signed, type ExploreData } from "@/lib/explore";
 import { REGION_NAMES } from "@/lib/regions";
 import { REACH_OF, type RegionsData } from "@/lib/regionsData";
 import { COHORTS, RUNGS, useStudio, type Cohort, type Rung } from "@/lib/studio";
 
-const HORIZON_SETS = ["21"];
+/** The 24-month cohort and its EDHS-report check are parked until the study decides on
+ *  that cohort. Set to true to show the check again. */
+const SHOW_24_MONTH = false;
+
+type EntryRow = {
+  model: string; baseline: { ap: number }; extended: { ap: number };
+  delta_ap: number; delta_ap_ci: [number, number];
+};
+type Study = { prevalence: { entry_heldout: number }; entry_performance: EntryRow[] };
 
 export default function CohortsPage() {
   const studio = useStudio();
   const reg = useJSON<RegionsData>("/data/regions.json");
   const exp = useJSON<ExploreData>("/data/explore.json");
-  const ana = useJSON<Analysis>("/analysis.json");
+  const study = useJSON<Study>("/data/study.json");
 
   const rung = studio.rung;
   const place = studio.region || "Ethiopia";
-  // ANC entry has no ANC1+ (everyone in it started), and the horizon analyses cover ANC4+ and ANC8+.
-  const hRung: Rung = rung === "anc1" ? "anc8" : rung;
-  const hOut = OUTCOME_OF[hRung];
 
   const reach = (c: Cohort, r: Rung, region: string | null) => {
     if (!reg.data || (c === "entry" && r === "anc1")) return null;
@@ -66,15 +69,13 @@ export default function CohortsPage() {
     };
   }, [reg.data, exp.data]);
 
-  const err = reg.error ?? exp.error ?? ana.error;
+  const err = reg.error ?? exp.error ?? study.error;
   if (err) return <Screen><InlineError message={err} /></Screen>;
 
-  const H = ana.data?.horizons;
-  const boot = H?.bootstrap ?? {};
 
   return (
     <Screen>
-      <div data-help="cohorts.tiles" className="grid gap-10 grid-cols-1 md:grid-cols-3">
+      <div data-help="cohorts.tiles" className="grid gap-10 grid-cols-1 md:grid-cols-2">
         {COHORTS.map((c) => (
           <StatTile
             key={c.key}
@@ -126,7 +127,7 @@ export default function CohortsPage() {
 
         <Panel help="cohorts.contacts"
           title={`Contact counts in each cohort · ${place}`}
-          how="The share of women with each number of contacts, one line per cohort. The full and 24-month cohorts nearly coincide; the ANC-entry line has no zero and so sits higher everywhere else."
+          how="The share of women with each number of contacts, one line per cohort. The ANC-entry line has no zero (every woman in it started ANC) and so sits higher everywhere else."
         >
           {contactLines ? (
             <>
@@ -159,8 +160,8 @@ export default function CohortsPage() {
 
       <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
         <Panel help="cohorts.regions"
-          title={`Region by region, three cohorts · ${RUNG_LABEL[rung]}`}
-          how="Each region's share reaching the rung in the three cohorts. Where the full-cohort dot sits left of the 24-month dot, the older births (24 to 35 months before interview) did worse: in Tigray those pregnancies fell in the war."
+          title={`Region by region, both cohorts · ${RUNG_LABEL[rung]}`}
+          how="Each region's share reaching the rung in the full cohort and among women who started ANC. The ANC-entry share is higher because women with no ANC are not in it."
           actions={
             <Segmented label="Rung" options={RUNGS.map((r) => ({ key: r.key, label: r.label }))} value={rung}
               onChange={(k) => studio.set({ rung: k })} />
@@ -174,7 +175,7 @@ export default function CohortsPage() {
                   key: r,
                   label: r,
                   values: Object.fromEntries(COHORTS.map((c) => [c.key, reach(c.key, rung, r)])),
-                  display: signed(((reach("recent", rung, r) ?? 0) - (reach("full", rung, r) ?? 0)) * 100, 1),
+                  display: pct(reach("full", rung, r)),
                 }))}
               series={COHORTS.map((c) => ({ key: c.key, label: c.label, color: COHORT_COLOR[c.key] }))}
               domain={[0, 1]}
@@ -189,12 +190,12 @@ export default function CohortsPage() {
             <PanelLoading rows={10} />
           )}
           <div className="px-14 pb-12">
-            <Note tone="accent">The number at the right is the 24-month cohort minus the full cohort, in percentage points.</Note>
+            <Note tone="accent">The number at the right is the full cohort&apos;s value.</Note>
           </div>
           <DataNote>Earlier EDHS rounds would give a trend across surveys rather than one reconstructed from birth dates.</DataNote>
         </Panel>
 
-        <Panel help="cohorts.edhs"
+        {SHOW_24_MONTH && <Panel help="cohorts.edhs"
           title="The 24-month cohort reproduces the EDHS report"
           how="ANC4+ by region: rings are the EDHS 2024–25 report's table (women with a live birth in the two years before the survey), dots are this study's 24-month cohort computed from the raw data. Matching them is the check that the cohort, the weights and the contact count are built the way DHS builds them."
           actions={edhs ? <Tag tone="good">mean gap {(edhs.mad * 100).toFixed(1)} pt</Tag> : undefined}
@@ -238,106 +239,42 @@ export default function CohortsPage() {
           ) : (
             <PanelLoading rows={10} />
           )}
-        </Panel>
+        </Panel>}
       </div>
 
       <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
         <Panel help="cohorts.first-visit"
-          title={`What the first visit adds · ${RUNG_LABEL[hRung]}`}
-          how="Predicting at a woman's first ANC visit, rather than before it, adds one fact: whether that visit came in the first trimester. Rings: held-out accuracy without it; dots: with it. Under each set, the held-out gain and its 95% interval from 1,000 resamples."
-          actions={
-            <Segmented label="Rung" options={[{ key: "anc4", label: "ANC4+" }, { key: "anc8", label: "ANC8+" }]} value={hRung}
-              onChange={(k) => studio.set({ rung: k as Rung })} />
-          }
+          title="What the first visit adds · ANC8+"
+          how="Manuscript Table 3 (study file Table_2_anc_entry_probability_performance.csv). The 984 held-out women who started ANC, scored by each model without (ring) and with (dot) whether the first visit came by 12 weeks. Under each model: the gain in average precision and its 95% interval from the paired bootstrap."
         >
-          {H?.heldout ? (
-            <DotRows
-              rows={HORIZON_SETS.map((set) => {
-                const rs = H.heldout!.filter((r) => r.outcome === hOut && r.set === set);
-                const without = rs.find((r) => !r.early_anc);
-                const withE = rs.find((r) => r.early_anc);
-                const b = boot[`${hOut} | ${set} + early ANC vs ${set}`];
-                return {
-                  key: set,
-                  label: setName(set, without?.n_predictors),
-                  sub: b ? `gain ${signed(b.d_AP)} (${signed(b.d_AP_lo)} to ${signed(b.d_AP_hi)})` : undefined,
-                  values: { without: without?.AP, with: withE?.AP },
-                  display: signed((withE?.AP ?? 0) - (without?.AP ?? 0)),
-                };
-              })}
-              series={[
-                { key: "without", label: "Without first-visit timing", color: "var(--dim)", hollow: true },
-                { key: "with", label: "With it", color: "var(--cross)" },
-              ]}
-              reference={{ value: H.heldout.find((r) => r.outcome === hOut)?.prevalence ?? 0, label: "Chance" }}
-              format={(v) => v.toFixed(2)}
-              labelWidth={210}
-            />
+          {study.data ? (
+            <>
+              <DotRows
+                rows={study.data.entry_performance.map((m) => ({
+                  key: m.model,
+                  label: m.model,
+                  sub: `gain ${signed(m.delta_ap, 3)} (${signed(m.delta_ap_ci[0], 3)} to ${signed(m.delta_ap_ci[1], 3)})`,
+                  values: { without: m.baseline.ap, with: m.extended.ap },
+                  display: signed(m.delta_ap, 3),
+                }))}
+                series={[
+                  { key: "without", label: "21 predictors", color: "var(--dim)", hollow: true },
+                  { key: "with", label: "21 + early first visit", color: "var(--cross)" },
+                ]}
+                reference={{ value: study.data.prevalence.entry_heldout, label: "Chance" }}
+                format={(v) => v.toFixed(2)}
+                labelWidth={190}
+              />
+              <div className="px-14 pb-12 flex flex-col gap-8">
+                <Note tone="accent">Every interval includes zero: the point estimates favour adding early initiation, but its added predictive value is uncertain.</Note>
+                <Cue>{CUES.firstVisitAdds(Math.min(...study.data.entry_performance.map((m) => m.delta_ap)), Math.max(...study.data.entry_performance.map((m) => m.delta_ap)))}</Cue>
+              </div>
+            </>
           ) : (
             <PanelLoading rows={3} />
           )}
         </Panel>
-
-        <Panel help="cohorts.train-on"
-          title={`Train on everyone, or only on women who started? · ${RUNG_LABEL[hRung]}`}
-          how="Scored on the same held-out women who started ANC. Rings: a model trained on the whole cohort; dots: trained only on women who started. Accuracy is close; the difference is calibration. Under each row, calibration-in-the-large (0 is perfect): the whole-cohort model underestimates women who have already started."
-        >
-          {H?.cross ? (
-            <DotRows
-              rows={["21"].map((set) => {
-                const f = H.cross!.find((r) => r.outcome === hOut && r.set === set && r.trained_on.startsWith("full"));
-                const e = H.cross!.find((r) => r.outcome === hOut && r.set === set && r.trained_on.startsWith("ANC-entry"));
-                return {
-                  key: set,
-                  label: setName(set, set === "21" ? 21 : 88),
-                  sub: f && e ? `calibration-in-the-large ${num(f.CITL, 2)} → ${num(e.CITL, 2)}` : undefined,
-                  values: { full: f?.AP, entry: e?.AP },
-                  display: signed((e?.AP ?? 0) - (f?.AP ?? 0)),
-                };
-              })}
-              series={[
-                { key: "full", label: "Trained on the full cohort", color: "var(--accent)", hollow: true },
-                { key: "entry", label: "Trained on ANC-entry women", color: "var(--cross)" },
-              ]}
-              format={(v) => v.toFixed(3)}
-              labelWidth={250}
-            />
-          ) : (
-            <PanelLoading rows={2} />
-          )}
-        </Panel>
       </div>
-
-      {H?.tiers && (
-        <Panel help="cohorts.moments"
-          title={`What each moment selects · ${RUNG_LABEL[hRung]}`}
-          how="Forward selection run separately for the two prediction moments. Bars are the accuracy each predictor adds when it joins (step order from the top). At the first visit, its timing (purple) enters near the front of the queue."
-        >
-          <div className="grid md:grid-cols-2">
-            {(["before ANC", "ANC entry"] as const).map((h) => {
-              const rs = H.tiers!.filter((r) => r.outcome === hOut && r.horizon === h).sort((a, b) => a.step - b.step);
-              return (
-                <div key={h} className="min-w-0 md:first:border-r border-border">
-                  <div className="px-16 pt-10 text-10 font-semibold uppercase tracking-label text-dim">
-                    {h === "before ANC" ? "Before ANC starts" : "At the first visit"}
-                  </div>
-                  <RankedBars
-                    labelWidth={220}
-                    rows={rs.map((r) => ({
-                      key: r.predictor,
-                      label: `${r.step}. ${label(r.predictor)}`,
-                      sub: r.tier === "tier 1" ? "strongest few" : "next tier",
-                      value: r.gain,
-                      display: signed(r.gain),
-                      color: r.predictor === "early_anc" ? "var(--cross)" : r.tier === "tier 1" ? "var(--good)" : "var(--accent)",
-                    }))}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </Panel>
-      )}
     </Screen>
   );
 }

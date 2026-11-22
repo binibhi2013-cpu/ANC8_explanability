@@ -1,0 +1,64 @@
+﻿population,algorithm,rank,predictor,predictor_label,mean_ap_decrease,sd_ap_decrease,n_repeats
+Full cohort,Logistic regression,1,region,Region,0.08484947003106243,0.020280828415012442,20
+Full cohort,Logistic regression,2,wealth_quintile,Household wealth,0.056439500148707786,0.029466395465798042,20
+Full cohort,Logistic regression,3,religion_group,Religion,0.01843933570460927,0.00755927838784064,20
+Full cohort,Logistic regression,4,pregnancy_intention,Pregnancy intention,0.013291385666733704,0.009323224234094348,20
+Full cohort,Logistic regression,5,travel_time_min,Travel time to nearest hospital/health centre,0.011593551194186586,0.017736214316127596,20
+Full cohort,Logistic regression,6,previous_pregnancy_history,Previous pregnancy history,0.011095699163052813,0.005753522327378443,20
+Full cohort,Logistic regression,7,pregnancy_order_group,Pregnancy order,0.0076506979952147,0.009193939750930784,20
+Full cohort,Logistic regression,8,maternal_occupation_group,Maternal occupation,0.0071424752623850535,0.011220965042421257,20
+Full cohort,Logistic regression,9,healthcare_decision_participation,Healthcare decision participation,0.007138325704657239,0.004431664918388321,20
+Full cohort,Logistic regression,10,preceding_pregnancy_interval_group,Preceding pregnancy interval,0.005874517318738237,0.00874915932190739,20
+Full cohort,Logistic regression,11,v012,Maternal age at interview,0.0019647263495828128,0.004339377172617102,20
+Full cohort,Logistic regression,12,partner_education,Partner education,0.0008597164132906898,0.013144330650301078,20
+Full cohort,Logistic regression,13,household_size,Household size,0.0008570388168162246,0.001978518378582181,20
+Full cohort,Logistic regression,14,traditional_media_weekly_count,Weekly traditional-media count,0.0003496190237113783,0.0011526467956498611,20
+Full cohort,Logistic regression,15,maternal_current_union_status,Current union status,-0.0001661971982590743,0.0008211642890918032,20
+Full cohort,Logistic regression,16,internet_exposure,Internet exposure,-0.0004249966963572438,0.007983955794382908,20
+Full cohort,Logistic regression,17,partner_occupation_group,Partner occupation,-0.000923830112840407,0.009344795227108519,20
+Full cohort,Logistic regression,18,health_insurance,Health insurance,-0.0015438698692128356,0.003182538374670152,20
+Full cohort,Logistic regression,19,residence,Urban/rural residence,-0.003448741409107606,0.0058843448365012065,20
+Full cohort,Logistic regression,20,transport_mode_group,Transport mode to nearest hospital/health centre,-0.006117256441888766,0.007737990212613907,20
+Full cohort,Logistic regression,21,maternal_education,Maternal education,-0.006556606910509713,0.005159379937682176,20
+Full cohort,Random Forest,1,region,Region,0.06054701856016489,0.007071879250121772,20
+Full cohort,Random Forest,2,wealth_quintile,Household wealth,0.02213539887929416,0.019568570640880436,20
+Full cohort,Random Forest,3,religion_group,Religion,0.01726940968380243,0.005030582011382412,20
+Full cohort,Random Forest,4,previous_pregnancy_history,Previous pregnancy history,0.007587458889512416,0.003307826340633409,20
+Full cohort,Random Forest,5,traditional_media_weekly_count,Weekly traditional-media count,0.006627057120361826,0.006267622206263723,20
+Full cohort,Random Forest,6,household_size,Household size,0.006518023989123387,0.00319245937018216,20
+Full cohort,Random Forest,7,pregnancy_order_group,Pregnancy order,0.005807492349412272,0.0018573480428600085,20
+Full cohort,Random Forest,8,travel_time_min,Travel time to nearest hospital/health centre,0.005042683979293239,0.00590914985467371,20
+Full cohort,Random Forest,9,v012,Maternal age at interview,0.004274636332483328,0.0025651979499004994,20
+Full cohort,Random Forest,10,internet_exposure,Internet exposure,0.004141853506343768,0.012914128551177167,20
+Full cohort,Random Forest,11,preceding_pregnancy_interval_group,Preceding pregnancy interval,0.0034936600337207384,0.002778218305943551,20
+Full cohort,Random Forest,12,healthcare_decision_participation,Healthcare decision participation,0.0023268428592944064,0.0015788623330423228,20
+Full cohort,Random Forest,13,pregnancy_intention,Pregnancy intention,0.0022469725083866104,0.004647949947921294,20
+Full cohort,Random Forest,14,maternal_occupation_group,Maternal occupation,0.0018575225667817746,0.002880013376230453,20
+Full cohort,Random Forest,15,partner_occupation_group,Partner occupation,0.0018184888027554219,0.0022586882649027525,20
+Full cohort,Random Forest,16,maternal_current_union_status,Current union status,0.00046351116275494266,0.00039370577442172184,20
+Full cohort,Random Forest,17,health_insurance,Health insurance,0.00031424274224421954,0.0010823922391606116,20
+Full cohort,Random Forest,18,transport_mode_group,Transport mode to nearest hospital/health centre,-0.0008554830649568496,0.0018275936959966314,20
+Full cohort,Random Forest,19,partner_education,Partner education,-0.0022538409175616226,0.00474776816840589,20
+Full cohort,Random Forest,20,residence,Urban/rural residence,-0.004991344147302465,0.008324678675980484,20
+Full cohort,Random Forest,21,maternal_education,Maternal education,-0.010441384295608966,0.008514218497214527,20
+Full cohort,XGBoost,1,wealth_quintile,Household wealth,0.09543733150932401,0.030169888718261928,20
+Full cohort,XGBoost,2,region,Region,0.09470901804423901,0.014215121233382077,20
+Full cohort,XGBoost,3,travel_time_min,Travel time to nearest hospital/health centre,0.027379989673732924,0.01908889233099059,20
+Full cohort,XGBoost,4,religion_group,Religion,0.015686923494838013,0.00521751016041238,20
+Full cohort,XGBoost,5,pregnancy_intention,Pregnancy intention,0.009082986407617715,0.009286369396507595,20
+Full cohort,XGBoost,6,previous_pregnancy_history,Previous pregnancy history,0.00849304691231435,0.004175192709540281,20
+Full cohort,XGBoost,7,maternal_occupation_group,Maternal occupation,0.004532318524216353,0.00690008479159565,20
+Full cohort,XGBoost,8,partner_occupation_group,Partner occupation,0.003770041116925102,0.005425931353638295,20
+Full cohort,XGBoost,9,pregnancy_order_group,Pregnancy order,0.0034405795566529395,0.006220866951256306,20
+Full cohort,XGBoost,10,household_size,Household size,0.0030147975312429438,0.0033889952805712634,20
+Full cohort,XGBoost,11,partner_education,Partner education,0.003002297003243032,0.006702494980504722,20
+Full cohort,XGBoost,12,healthcare_decision_participation,Healthcare decision participation,0.0005063309306106073,0.000990505902445417,20
+Full cohort,XGBoost,13,maternal_current_union_status,Current union status,0.00039464208064173554,0.00017137783689869892,20
+Full cohort,XGBoost,14,health_insurance,Health insurance,0.00028914750639587317,0.001121708093272111,20
+Full cohort,XGBoost,15,internet_exposure,Internet exposure,-0.00021898399122073365,0.006748490046238228,20
+Full cohort,XGBoost,16,v012,Maternal age at interview,-0.0006379130518995218,0.005442765697941965,20
+Full cohort,XGBoost,17,preceding_pregnancy_interval_group,Preceding pregnancy interval,-0.0007368770608227632,0.004343035289620878,20
+Full cohort,XGBoost,18,traditional_media_weekly_count,Weekly traditional-media count,-0.0008963162701408567,0.005814639514068559,20
+Full cohort,XGBoost,19,maternal_education,Maternal education,-0.0015510054150215836,0.00833571915367596,20
+Full cohort,XGBoost,20,residence,Urban/rural residence,-0.001951512002382788,0.0012306153374172615,20
+Full cohort,XGBoost,21,transport_mode_group,Transport mode to nearest hospital/health centre,-0.0022720735325881315,0.002109005490712359,20

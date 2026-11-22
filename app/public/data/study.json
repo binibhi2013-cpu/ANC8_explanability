@@ -1,0 +1,1347 @@
+{
+ "source": "The study's own saved outputs (notebooks 2-4); copied, not re-estimated.",
+ "cohorts": {
+  "full": {
+   "n": 6893,
+   "heldout": 1375,
+   "development": 5518
+  },
+  "entry": {
+   "n": 5001,
+   "heldout": 984,
+   "development": 4017
+  }
+ },
+ "prevalence": {
+  "full_heldout": 0.16,
+  "entry_heldout": 0.209,
+  "full": 0.192
+ },
+ "full_performance": [
+  {
+   "model": "Logistic regression",
+   "ap": 0.4278800272032039,
+   "ap_ci": [
+    0.3455095514858454,
+    0.5339537003860402
+   ],
+   "auroc": 0.7616933278756165,
+   "auroc_ci": [
+    0.6883698532408066,
+    0.8340205009099034
+   ],
+   "brier": 0.11454377978604877,
+   "brier_ci": [
+    0.08672865559922957,
+    0.14436928729306048
+   ],
+   "citl": -0.08749863344480906,
+   "slope": 0.7828797183062556,
+   "threshold": 0.20021947837830253,
+   "sensitivity": 0.6656183603573107,
+   "specificity": 0.7528382435861292,
+   "ppv": 0.338717602436258,
+   "npv": 0.9221019684760181
+  },
+  {
+   "model": "Random Forest",
+   "ap": 0.39677649305762197,
+   "ap_ci": [
+    0.3243534028891975,
+    0.4944574430069287
+   ],
+   "auroc": 0.7483866756468927,
+   "auroc_ci": [
+    0.6748970640417568,
+    0.825821120629021
+   ],
+   "brier": 0.11701057682523426,
+   "brier_ci": [
+    0.0885729815072498,
+    0.1468661813455993
+   ],
+   "citl": -0.13836539951140114,
+   "slope": 1.0911827559783585,
+   "threshold": 0.15751138924894606,
+   "sensitivity": 0.7130364877287045,
+   "specificity": 0.6554933232147423,
+   "ppv": 0.28246469312911454,
+   "npv": 0.9231347097568402
+  },
+  {
+   "model": "XGBoost",
+   "ap": 0.43831923252132643,
+   "ap_ci": [
+    0.35447241651669303,
+    0.5366086683002732
+   ],
+   "auroc": 0.7606599216379486,
+   "auroc_ci": [
+    0.6821803790085259,
+    0.8359414122581125
+   ],
+   "brier": 0.11320146376958111,
+   "brier_ci": [
+    0.08491321759171717,
+    0.14305803618032525
+   ],
+   "citl": -0.05343719080569577,
+   "slope": 0.8576467851604281,
+   "threshold": 0.1754283308982849,
+   "sensitivity": 0.721325962391736,
+   "specificity": 0.7164571842066889,
+   "ppv": 0.3260819646157779,
+   "npv": 0.9311162239802465
+  }
+ ],
+ "entry_performance": [
+  {
+   "model": "Logistic regression",
+   "baseline": {
+    "ap": 0.4476631584828746,
+    "auroc": 0.7204494035769281,
+    "brier": 0.14639147706396
+   },
+   "extended": {
+    "ap": 0.4744586334091747,
+    "auroc": 0.7611498520466524,
+    "brier": 0.1423087284405525
+   },
+   "delta_ap": 0.026795474926300134,
+   "delta_ap_ci": [
+    -0.03102013655584291,
+    0.07923955834760102
+   ],
+   "delta_auroc": 0.040700448469724315,
+   "delta_auroc_ci": [
+    -0.01242456677736685,
+    0.09347866564720794
+   ],
+   "brier_gain": 0.0040827486234074895,
+   "brier_gain_ci": [
+    -0.00842344333653393,
+    0.01555727261226056
+   ]
+  },
+  {
+   "model": "Random Forest",
+   "baseline": {
+    "ap": 0.42978935173263244,
+    "auroc": 0.7179418784282618,
+    "brier": 0.1481942536309026
+   },
+   "extended": {
+    "ap": 0.46383548306978606,
+    "auroc": 0.753478705952696,
+    "brier": 0.1415190721333537
+   },
+   "delta_ap": 0.03404613133715362,
+   "delta_ap_ci": [
+    -0.023753942203263365,
+    0.09459545125516541
+   ],
+   "delta_auroc": 0.0355368275244341,
+   "delta_auroc_ci": [
+    -0.013605336823380073,
+    0.08102944941242045
+   ],
+   "brier_gain": 0.006675181497548893,
+   "brier_gain_ci": [
+    -0.0020753253968839895,
+    0.014719934867239352
+   ]
+  },
+  {
+   "model": "XGBoost",
+   "baseline": {
+    "ap": 0.4533033312177634,
+    "auroc": 0.718532737402747,
+    "brier": 0.1449223232964455
+   },
+   "extended": {
+    "ap": 0.4751424696970358,
+    "auroc": 0.7587671972125345,
+    "brier": 0.14102441257424933
+   },
+   "delta_ap": 0.02183913847927238,
+   "delta_ap_ci": [
+    -0.04277525375171432,
+    0.08474021747586435
+   ],
+   "delta_auroc": 0.04023445980978746,
+   "delta_auroc_ci": [
+    -0.02161639587656087,
+    0.09665098599284126
+   ],
+   "brier_gain": 0.0038979107221961684,
+   "brier_gain_ci": [
+    -0.008768388434803197,
+    0.01560766891504952
+   ]
+  }
+ ],
+ "full_shap": [
+  {
+   "rank": 1,
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "value": 0.5183207348907117,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 2,
+   "predictor": "travel_time_min",
+   "label": "Travel time to nearest hospital/health centre",
+   "value": 0.32229481890163353,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 3,
+   "predictor": "region",
+   "label": "Region",
+   "value": 0.2080784211036485,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 4,
+   "predictor": "religion_group",
+   "label": "Religion",
+   "value": 0.11998025109448254,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 5,
+   "predictor": "pregnancy_intention",
+   "label": "Pregnancy intention",
+   "value": 0.11337923119768581,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 6,
+   "predictor": "maternal_occupation_group",
+   "label": "Maternal occupation",
+   "value": 0.10827669121921114,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 7,
+   "predictor": "v012",
+   "label": "Maternal age at interview",
+   "value": 0.08100001428203189,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 8,
+   "predictor": "partner_education",
+   "label": "Partner education",
+   "value": 0.07851434177565866,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 9,
+   "predictor": "household_size",
+   "label": "Household size",
+   "value": 0.06153553028550412,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 10,
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional-media count",
+   "value": 0.06005084115649361,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 11,
+   "predictor": "maternal_education",
+   "label": "Maternal education",
+   "value": 0.05988728386262647,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 12,
+   "predictor": "pregnancy_order_group",
+   "label": "Pregnancy order",
+   "value": 0.05432817929818366,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 13,
+   "predictor": "partner_occupation_group",
+   "label": "Partner occupation",
+   "value": 0.05148172433820926,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 14,
+   "predictor": "preceding_pregnancy_interval_group",
+   "label": "Preceding pregnancy interval",
+   "value": 0.04913675995453247,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 15,
+   "predictor": "transport_mode_group",
+   "label": "Transport mode to nearest hospital/health centre",
+   "value": 0.047087397256903085,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 16,
+   "predictor": "internet_exposure",
+   "label": "Internet exposure",
+   "value": 0.04047716158410584,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 17,
+   "predictor": "previous_pregnancy_history",
+   "label": "Previous pregnancy history",
+   "value": 0.03191567323990723,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 18,
+   "predictor": "healthcare_decision_participation",
+   "label": "Healthcare decision participation",
+   "value": 0.015531068946002011,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 19,
+   "predictor": "health_insurance",
+   "label": "Health insurance",
+   "value": 0.011302248802176087,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 20,
+   "predictor": "residence",
+   "label": "Urban/rural residence",
+   "value": 0.007589036407213581,
+   "algorithm": "XGBoost",
+   "specification": ""
+  },
+  {
+   "rank": 21,
+   "predictor": "maternal_current_union_status",
+   "label": "Current union status",
+   "value": 0.0010531727244241288,
+   "algorithm": "XGBoost",
+   "specification": ""
+  }
+ ],
+ "entry_shap": [
+  {
+   "rank": 1,
+   "predictor": "early_anc",
+   "label": "Early ANC initiation",
+   "value": 0.7588317501614572,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 2,
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "value": 0.2691170827209525,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 3,
+   "predictor": "travel_time_min",
+   "label": "Travel time to nearest hospital/health centre",
+   "value": 0.21076669152958144,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 4,
+   "predictor": "region",
+   "label": "Region",
+   "value": 0.14171313818735445,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 5,
+   "predictor": "maternal_occupation_group",
+   "label": "Maternal occupation",
+   "value": 0.1360321374910564,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 6,
+   "predictor": "religion_group",
+   "label": "Religion",
+   "value": 0.1227883847869162,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 7,
+   "predictor": "pregnancy_intention",
+   "label": "Pregnancy intention",
+   "value": 0.10350904082962287,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 8,
+   "predictor": "partner_education",
+   "label": "Partner education",
+   "value": 0.09810679899435507,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 9,
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional-media count",
+   "value": 0.08579122892171909,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 10,
+   "predictor": "internet_exposure",
+   "label": "Internet exposure",
+   "value": 0.07967878666144985,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 11,
+   "predictor": "healthcare_decision_participation",
+   "label": "Healthcare decision participation",
+   "value": 0.0658906467054423,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 12,
+   "predictor": "preceding_pregnancy_interval_group",
+   "label": "Preceding pregnancy interval",
+   "value": 0.049141007094281,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 13,
+   "predictor": "transport_mode_group",
+   "label": "Transport mode to nearest hospital/health centre",
+   "value": 0.046308108579218916,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 14,
+   "predictor": "v012",
+   "label": "Maternal age at interview",
+   "value": 0.046254672037308084,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 15,
+   "predictor": "partner_occupation_group",
+   "label": "Partner occupation",
+   "value": 0.04160241639957541,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 16,
+   "predictor": "household_size",
+   "label": "Household size",
+   "value": 0.03228258905510011,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 17,
+   "predictor": "residence",
+   "label": "Urban/rural residence",
+   "value": 0.032254458705915284,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 18,
+   "predictor": "maternal_education",
+   "label": "Maternal education",
+   "value": 0.030482480707714036,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 19,
+   "predictor": "previous_pregnancy_history",
+   "label": "Previous pregnancy history",
+   "value": 0.02802253791345562,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 20,
+   "predictor": "pregnancy_order_group",
+   "label": "Pregnancy order",
+   "value": 0.025934718358048205,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 21,
+   "predictor": "health_insurance",
+   "label": "Health insurance",
+   "value": 0.008214659820118923,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  },
+  {
+   "rank": 22,
+   "predictor": "maternal_current_union_status",
+   "label": "Current union status",
+   "value": 0.007078948690149115,
+   "algorithm": "XGBoost",
+   "specification": "Extended"
+  }
+ ],
+ "full_permutation": {
+  "Logistic regression": [
+   {
+    "rank": 1,
+    "predictor": "region",
+    "label": "Region",
+    "value": 0.08484947003106243,
+    "sd": 0.020280828415012442
+   },
+   {
+    "rank": 2,
+    "predictor": "wealth_quintile",
+    "label": "Household wealth",
+    "value": 0.056439500148707786,
+    "sd": 0.029466395465798042
+   },
+   {
+    "rank": 3,
+    "predictor": "religion_group",
+    "label": "Religion",
+    "value": 0.01843933570460927,
+    "sd": 0.00755927838784064
+   },
+   {
+    "rank": 4,
+    "predictor": "pregnancy_intention",
+    "label": "Pregnancy intention",
+    "value": 0.013291385666733704,
+    "sd": 0.009323224234094348
+   },
+   {
+    "rank": 5,
+    "predictor": "travel_time_min",
+    "label": "Travel time to nearest hospital/health centre",
+    "value": 0.011593551194186586,
+    "sd": 0.017736214316127596
+   },
+   {
+    "rank": 6,
+    "predictor": "previous_pregnancy_history",
+    "label": "Previous pregnancy history",
+    "value": 0.011095699163052813,
+    "sd": 0.005753522327378443
+   },
+   {
+    "rank": 7,
+    "predictor": "pregnancy_order_group",
+    "label": "Pregnancy order",
+    "value": 0.0076506979952147,
+    "sd": 0.009193939750930784
+   },
+   {
+    "rank": 8,
+    "predictor": "maternal_occupation_group",
+    "label": "Maternal occupation",
+    "value": 0.0071424752623850535,
+    "sd": 0.011220965042421257
+   },
+   {
+    "rank": 9,
+    "predictor": "healthcare_decision_participation",
+    "label": "Healthcare decision participation",
+    "value": 0.007138325704657239,
+    "sd": 0.004431664918388321
+   },
+   {
+    "rank": 10,
+    "predictor": "preceding_pregnancy_interval_group",
+    "label": "Preceding pregnancy interval",
+    "value": 0.005874517318738237,
+    "sd": 0.00874915932190739
+   },
+   {
+    "rank": 11,
+    "predictor": "v012",
+    "label": "Maternal age at interview",
+    "value": 0.0019647263495828128,
+    "sd": 0.004339377172617102
+   },
+   {
+    "rank": 12,
+    "predictor": "partner_education",
+    "label": "Partner education",
+    "value": 0.0008597164132906898,
+    "sd": 0.013144330650301078
+   },
+   {
+    "rank": 13,
+    "predictor": "household_size",
+    "label": "Household size",
+    "value": 0.0008570388168162246,
+    "sd": 0.001978518378582181
+   },
+   {
+    "rank": 14,
+    "predictor": "traditional_media_weekly_count",
+    "label": "Weekly traditional-media count",
+    "value": 0.0003496190237113783,
+    "sd": 0.0011526467956498611
+   },
+   {
+    "rank": 15,
+    "predictor": "maternal_current_union_status",
+    "label": "Current union status",
+    "value": -0.0001661971982590743,
+    "sd": 0.0008211642890918032
+   },
+   {
+    "rank": 16,
+    "predictor": "internet_exposure",
+    "label": "Internet exposure",
+    "value": -0.0004249966963572438,
+    "sd": 0.007983955794382908
+   },
+   {
+    "rank": 17,
+    "predictor": "partner_occupation_group",
+    "label": "Partner occupation",
+    "value": -0.000923830112840407,
+    "sd": 0.009344795227108519
+   },
+   {
+    "rank": 18,
+    "predictor": "health_insurance",
+    "label": "Health insurance",
+    "value": -0.0015438698692128356,
+    "sd": 0.003182538374670152
+   },
+   {
+    "rank": 19,
+    "predictor": "residence",
+    "label": "Urban/rural residence",
+    "value": -0.003448741409107606,
+    "sd": 0.0058843448365012065
+   },
+   {
+    "rank": 20,
+    "predictor": "transport_mode_group",
+    "label": "Transport mode to nearest hospital/health centre",
+    "value": -0.006117256441888766,
+    "sd": 0.007737990212613907
+   },
+   {
+    "rank": 21,
+    "predictor": "maternal_education",
+    "label": "Maternal education",
+    "value": -0.006556606910509713,
+    "sd": 0.005159379937682176
+   }
+  ],
+  "Random Forest": [
+   {
+    "rank": 1,
+    "predictor": "region",
+    "label": "Region",
+    "value": 0.06054701856016489,
+    "sd": 0.007071879250121772
+   },
+   {
+    "rank": 2,
+    "predictor": "wealth_quintile",
+    "label": "Household wealth",
+    "value": 0.02213539887929416,
+    "sd": 0.019568570640880436
+   },
+   {
+    "rank": 3,
+    "predictor": "religion_group",
+    "label": "Religion",
+    "value": 0.01726940968380243,
+    "sd": 0.005030582011382412
+   },
+   {
+    "rank": 4,
+    "predictor": "previous_pregnancy_history",
+    "label": "Previous pregnancy history",
+    "value": 0.007587458889512416,
+    "sd": 0.003307826340633409
+   },
+   {
+    "rank": 5,
+    "predictor": "traditional_media_weekly_count",
+    "label": "Weekly traditional-media count",
+    "value": 0.006627057120361826,
+    "sd": 0.006267622206263723
+   },
+   {
+    "rank": 6,
+    "predictor": "household_size",
+    "label": "Household size",
+    "value": 0.006518023989123387,
+    "sd": 0.00319245937018216
+   },
+   {
+    "rank": 7,
+    "predictor": "pregnancy_order_group",
+    "label": "Pregnancy order",
+    "value": 0.005807492349412272,
+    "sd": 0.0018573480428600085
+   },
+   {
+    "rank": 8,
+    "predictor": "travel_time_min",
+    "label": "Travel time to nearest hospital/health centre",
+    "value": 0.005042683979293239,
+    "sd": 0.00590914985467371
+   },
+   {
+    "rank": 9,
+    "predictor": "v012",
+    "label": "Maternal age at interview",
+    "value": 0.004274636332483328,
+    "sd": 0.0025651979499004994
+   },
+   {
+    "rank": 10,
+    "predictor": "internet_exposure",
+    "label": "Internet exposure",
+    "value": 0.004141853506343768,
+    "sd": 0.012914128551177167
+   },
+   {
+    "rank": 11,
+    "predictor": "preceding_pregnancy_interval_group",
+    "label": "Preceding pregnancy interval",
+    "value": 0.0034936600337207384,
+    "sd": 0.002778218305943551
+   },
+   {
+    "rank": 12,
+    "predictor": "healthcare_decision_participation",
+    "label": "Healthcare decision participation",
+    "value": 0.0023268428592944064,
+    "sd": 0.0015788623330423228
+   },
+   {
+    "rank": 13,
+    "predictor": "pregnancy_intention",
+    "label": "Pregnancy intention",
+    "value": 0.0022469725083866104,
+    "sd": 0.004647949947921294
+   },
+   {
+    "rank": 14,
+    "predictor": "maternal_occupation_group",
+    "label": "Maternal occupation",
+    "value": 0.0018575225667817746,
+    "sd": 0.002880013376230453
+   },
+   {
+    "rank": 15,
+    "predictor": "partner_occupation_group",
+    "label": "Partner occupation",
+    "value": 0.0018184888027554219,
+    "sd": 0.0022586882649027525
+   },
+   {
+    "rank": 16,
+    "predictor": "maternal_current_union_status",
+    "label": "Current union status",
+    "value": 0.00046351116275494266,
+    "sd": 0.00039370577442172184
+   },
+   {
+    "rank": 17,
+    "predictor": "health_insurance",
+    "label": "Health insurance",
+    "value": 0.00031424274224421954,
+    "sd": 0.0010823922391606116
+   },
+   {
+    "rank": 18,
+    "predictor": "transport_mode_group",
+    "label": "Transport mode to nearest hospital/health centre",
+    "value": -0.0008554830649568496,
+    "sd": 0.0018275936959966314
+   },
+   {
+    "rank": 19,
+    "predictor": "partner_education",
+    "label": "Partner education",
+    "value": -0.0022538409175616226,
+    "sd": 0.00474776816840589
+   },
+   {
+    "rank": 20,
+    "predictor": "residence",
+    "label": "Urban/rural residence",
+    "value": -0.004991344147302465,
+    "sd": 0.008324678675980484
+   },
+   {
+    "rank": 21,
+    "predictor": "maternal_education",
+    "label": "Maternal education",
+    "value": -0.010441384295608966,
+    "sd": 0.008514218497214527
+   }
+  ],
+  "XGBoost": [
+   {
+    "rank": 1,
+    "predictor": "wealth_quintile",
+    "label": "Household wealth",
+    "value": 0.09543733150932401,
+    "sd": 0.030169888718261928
+   },
+   {
+    "rank": 2,
+    "predictor": "region",
+    "label": "Region",
+    "value": 0.09470901804423901,
+    "sd": 0.014215121233382077
+   },
+   {
+    "rank": 3,
+    "predictor": "travel_time_min",
+    "label": "Travel time to nearest hospital/health centre",
+    "value": 0.027379989673732924,
+    "sd": 0.01908889233099059
+   },
+   {
+    "rank": 4,
+    "predictor": "religion_group",
+    "label": "Religion",
+    "value": 0.015686923494838013,
+    "sd": 0.00521751016041238
+   },
+   {
+    "rank": 5,
+    "predictor": "pregnancy_intention",
+    "label": "Pregnancy intention",
+    "value": 0.009082986407617715,
+    "sd": 0.009286369396507595
+   },
+   {
+    "rank": 6,
+    "predictor": "previous_pregnancy_history",
+    "label": "Previous pregnancy history",
+    "value": 0.00849304691231435,
+    "sd": 0.004175192709540281
+   },
+   {
+    "rank": 7,
+    "predictor": "maternal_occupation_group",
+    "label": "Maternal occupation",
+    "value": 0.004532318524216353,
+    "sd": 0.00690008479159565
+   },
+   {
+    "rank": 8,
+    "predictor": "partner_occupation_group",
+    "label": "Partner occupation",
+    "value": 0.003770041116925102,
+    "sd": 0.005425931353638295
+   },
+   {
+    "rank": 9,
+    "predictor": "pregnancy_order_group",
+    "label": "Pregnancy order",
+    "value": 0.0034405795566529395,
+    "sd": 0.006220866951256306
+   },
+   {
+    "rank": 10,
+    "predictor": "household_size",
+    "label": "Household size",
+    "value": 0.0030147975312429438,
+    "sd": 0.0033889952805712634
+   },
+   {
+    "rank": 11,
+    "predictor": "partner_education",
+    "label": "Partner education",
+    "value": 0.003002297003243032,
+    "sd": 0.006702494980504722
+   },
+   {
+    "rank": 12,
+    "predictor": "healthcare_decision_participation",
+    "label": "Healthcare decision participation",
+    "value": 0.0005063309306106073,
+    "sd": 0.000990505902445417
+   },
+   {
+    "rank": 13,
+    "predictor": "maternal_current_union_status",
+    "label": "Current union status",
+    "value": 0.00039464208064173554,
+    "sd": 0.00017137783689869892
+   },
+   {
+    "rank": 14,
+    "predictor": "health_insurance",
+    "label": "Health insurance",
+    "value": 0.00028914750639587317,
+    "sd": 0.001121708093272111
+   },
+   {
+    "rank": 15,
+    "predictor": "internet_exposure",
+    "label": "Internet exposure",
+    "value": -0.00021898399122073365,
+    "sd": 0.006748490046238228
+   },
+   {
+    "rank": 16,
+    "predictor": "v012",
+    "label": "Maternal age at interview",
+    "value": -0.0006379130518995218,
+    "sd": 0.005442765697941965
+   },
+   {
+    "rank": 17,
+    "predictor": "preceding_pregnancy_interval_group",
+    "label": "Preceding pregnancy interval",
+    "value": -0.0007368770608227632,
+    "sd": 0.004343035289620878
+   },
+   {
+    "rank": 18,
+    "predictor": "traditional_media_weekly_count",
+    "label": "Weekly traditional-media count",
+    "value": -0.0008963162701408567,
+    "sd": 0.005814639514068559
+   },
+   {
+    "rank": 19,
+    "predictor": "maternal_education",
+    "label": "Maternal education",
+    "value": -0.0015510054150215836,
+    "sd": 0.00833571915367596
+   },
+   {
+    "rank": 20,
+    "predictor": "residence",
+    "label": "Urban/rural residence",
+    "value": -0.001951512002382788,
+    "sd": 0.0012306153374172615
+   },
+   {
+    "rank": 21,
+    "predictor": "transport_mode_group",
+    "label": "Transport mode to nearest hospital/health centre",
+    "value": -0.0022720735325881315,
+    "sd": 0.002109005490712359
+   }
+  ]
+ },
+ "direction": [
+  {
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "category": "Poorest",
+   "n": 522,
+   "value": -0.8738474016819643
+  },
+  {
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "category": "Poorer",
+   "n": 275,
+   "value": -0.5686208424426418
+  },
+  {
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "category": "Middle",
+   "n": 169,
+   "value": -0.04987930409771009
+  },
+  {
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "category": "Richer",
+   "n": 150,
+   "value": 0.11594922238026364
+  },
+  {
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "category": "Richest",
+   "n": 259,
+   "value": 0.7435904022601215
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Addis Ababa",
+   "n": 65,
+   "value": 0.6448174753413927
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Afar",
+   "n": 148,
+   "value": 0.5702927493811437
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Amhara",
+   "n": 88,
+   "value": 0.193164223580473
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "South West Ethiopia",
+   "n": 91,
+   "value": -0.09333883153993847
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Harari",
+   "n": 72,
+   "value": -0.10263135614024622
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Benishangul-Gumuz",
+   "n": 88,
+   "value": -0.11274039653420594
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Gambella",
+   "n": 74,
+   "value": -0.12294130476595613
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Dire Dawa",
+   "n": 61,
+   "value": -0.13380384990366817
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Oromia",
+   "n": 147,
+   "value": -0.13804822012193388
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "South Ethiopia",
+   "n": 110,
+   "value": -0.1850597809016932
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Tigray",
+   "n": 103,
+   "value": -0.22901247734358376
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Central Ethiopia",
+   "n": 103,
+   "value": -0.2675385212392995
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Sidama",
+   "n": 92,
+   "value": -0.2923580925079384
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "category": "Somali",
+   "n": 133,
+   "value": -0.3672659604841314
+  },
+  {
+   "predictor": "religion_group",
+   "label": "Religion",
+   "category": "Protestant",
+   "n": 317,
+   "value": -0.1586085485535761
+  },
+  {
+   "predictor": "religion_group",
+   "label": "Religion",
+   "category": "Muslim",
+   "n": 647,
+   "value": -0.09287022659656831
+  },
+  {
+   "predictor": "religion_group",
+   "label": "Religion",
+   "category": "Orthodox",
+   "n": 350,
+   "value": 0.13220005792046655
+  },
+  {
+   "predictor": "religion_group",
+   "label": "Religion",
+   "category": "Other religion",
+   "n": 61,
+   "value": -0.09733869389435346
+  },
+  {
+   "predictor": "pregnancy_intention",
+   "label": "Pregnancy intention",
+   "category": "Wanted then",
+   "n": 1180,
+   "value": 0.06725397763285058
+  },
+  {
+   "predictor": "pregnancy_intention",
+   "label": "Pregnancy intention",
+   "category": "Wanted later",
+   "n": 138,
+   "value": -0.42590939414362483
+  },
+  {
+   "predictor": "pregnancy_intention",
+   "label": "Pregnancy intention",
+   "category": "Wanted no more",
+   "n": 57,
+   "value": -0.44170669933427553
+  },
+  {
+   "predictor": "maternal_occupation_group",
+   "label": "Maternal occupation",
+   "category": "Not working",
+   "n": 936,
+   "value": -0.09279209526727525
+  },
+  {
+   "predictor": "maternal_occupation_group",
+   "label": "Maternal occupation",
+   "category": "Sales/services",
+   "n": 149,
+   "value": -0.008050023713515136
+  },
+  {
+   "predictor": "maternal_occupation_group",
+   "label": "Maternal occupation",
+   "category": "Agriculture",
+   "n": 159,
+   "value": 0.3150607696447737
+  },
+  {
+   "predictor": "maternal_occupation_group",
+   "label": "Maternal occupation",
+   "category": "Professional/clerical",
+   "n": 54,
+   "value": -0.011232536843364681
+  },
+  {
+   "predictor": "maternal_occupation_group",
+   "label": "Maternal occupation",
+   "category": "Manual/domestic",
+   "n": 77,
+   "value": -0.01692299162277026
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner education",
+   "category": "Higher",
+   "n": 171,
+   "value": 0.1959817602639626
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner education",
+   "category": "Secondary",
+   "n": 198,
+   "value": -0.0017818385910751643
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner education",
+   "category": "Primary",
+   "n": 439,
+   "value": -0.02719097415745997
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner education",
+   "category": "No education",
+   "n": 475,
+   "value": -0.14513279211874208
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner education",
+   "category": "Not applicable",
+   "n": 80,
+   "value": -0.006451472917805345
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner education",
+   "category": "Unknown",
+   "n": 12,
+   "value": -0.012974634085496602
+  },
+  {
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional-media count",
+   "category": "0",
+   "n": 1049,
+   "value": -0.054442027804774744
+  },
+  {
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional-media count",
+   "category": "1",
+   "n": 239,
+   "value": 0.09835700269919502
+  },
+  {
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional-media count",
+   "category": "2",
+   "n": 77,
+   "value": -0.005106413889963631
+  },
+  {
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional-media count",
+   "category": "3",
+   "n": 10,
+   "value": -0.015184317564402637
+  }
+ ],
+ "what_if": [
+  {
+   "model": "Logistic regression",
+   "later": 0.1298220900613895,
+   "early": 0.33873879536354956,
+   "difference_pp": 20.891670530216004
+  },
+  {
+   "model": "Random Forest",
+   "later": 0.1768828191705319,
+   "early": 0.3277154347103682,
+   "difference_pp": 15.083261553983625
+  },
+  {
+   "model": "XGBoost",
+   "later": 0.12949750691216233,
+   "early": 0.33718378006207206,
+   "difference_pp": 20.768627297630978
+  }
+ ],
+ "regional_cues": {
+  "Addis Ababa": {
+   "pattern": "Above national reference across all examined stages",
+   "question": "What practices may help sustain strong ANC performance?"
+  },
+  "Afar": {
+   "pattern": "Lower entry, but comparatively strong later continuation",
+   "question": "What geographic or service-access barriers limit ANC entry?"
+  },
+  "Amhara": {
+   "pattern": "Generally above national reference across the pathway",
+   "question": "What factors support relatively strong pathway performance?"
+  },
+  "Benishangul-Gumuz": {
+   "pattern": "Lower entry and early initiation, but stronger continuation once engaged",
+   "question": "What prevents women from entering and initiating ANC early?"
+  },
+  "Central Ethiopia": {
+   "pattern": "Good entry, but weak early initiation and later continuation",
+   "question": "What limits timely initiation and continuation after women enter ANC?"
+  },
+  "Dire Dawa": {
+   "pattern": "Strong performance across timing and continuation stages",
+   "question": "What service-delivery practices may support strong timing and continuity?"
+  },
+  "Gambella": {
+   "pattern": "Near-national entry, but weaker timing and continuation",
+   "question": "What factors limit timely initiation and continued attendance after entry?"
+  },
+  "Harari": {
+   "pattern": "Strong early initiation, weaker ANC4+ progression, stronger later continuation",
+   "question": "What limits progression from ANC entry to ANC4+ despite early initiation?"
+  },
+  "Oromia": {
+   "pattern": "Moderately below national at entry, timing and later continuation",
+   "question": "Where are the main barriers to entry and later continuation?"
+  },
+  "Sidama": {
+   "pattern": "Good entry, but weak timing and subsequent progression",
+   "question": "Why do women enter ANC but progress poorly through subsequent contacts?"
+  },
+  "Somali": {
+   "pattern": "Very low entry and ANC4+ progression; later continuation closer to national once ANC4+ is reached",
+   "question": "What prevents ANC entry and progression through the first four contacts?"
+  },
+  "South Ethiopia": {
+   "pattern": "Near-national entry, but weak timing and later continuation",
+   "question": "What limits timely initiation and continuation after entry?"
+  },
+  "South West Ethiopia": {
+   "pattern": "Mostly close to national reference across stages",
+   "question": "Are there specific subgroups or localities hiding behind near-national averages?"
+  },
+  "Tigray": {
+   "pattern": "High entry, but weaker progression and later continuation",
+   "question": "Why does continuation weaken after relatively strong ANC entry?"
+  }
+ }
+}

@@ -19,7 +19,7 @@ const ScopeContext = createContext<() => void>(() => {});
 export const useOpenScope = () => useContext(ScopeContext);
 
 // Screens that follow the region; the rest describe the whole country.
-const FOLLOWS_REGION = ["/map", "/planner", "/war", "/your-data", "/explore/ladder", "/explore/cohorts"];
+const FOLLOWS_REGION = ["/map", "/explore/ladder", "/explore/cohorts"];
 
 export function ScopeProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -151,7 +151,7 @@ function ScopeBody({ onDone }: { onDone: () => void }) {
       <div className="text-10 text-faint leading-normal">
         {follows
           ? "Every panel on this screen follows the scope."
-          : "This screen describes the whole country; the scope applies on the map, planner, conflict simulator, your data, the ladder and cohorts."}
+          : "This screen describes the whole country; the scope applies on the map, the ladder and cohorts. The model screens are ANC8+ only."}
       </div>
     </div>
   );

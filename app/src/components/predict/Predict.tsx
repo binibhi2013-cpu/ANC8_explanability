@@ -322,7 +322,7 @@ export default function Predict({
   const changedCount = model ? model.fields.filter(changed).length : 0;
   const contribs = (current?.contributions ?? []).slice(0, 12);
   const key = model ? cardKey(model) : "";
-  const analysisHref = `/models?${key ? `model=${key}&` : ""}rung=${RUNG_OF[outcome]}`;
+  const analysisHref = "/models";
 
   return (
     <div className="grid gap-10 md:gap-14 lg:grid-cols-[minmax(0,1fr)_380px]">
@@ -347,7 +347,7 @@ export default function Predict({
           />
           <Segmented
             label="Outcome"
-            options={(["anc1plus", "anc4plus", "anc8plus"] as const).map((o) => ({ key: o, label: schema.outcomes[o] }))}
+            options={(["anc1plus", "anc4plus", "anc8plus"] as const).filter((o) => schema.outcomes[o]).map((o) => ({ key: o, label: schema.outcomes[o] }))}
             value={outcome}
             onChange={(o) => { setOutcome(o); if (!hasEntry(o)) setHorizon("before"); }}
           />

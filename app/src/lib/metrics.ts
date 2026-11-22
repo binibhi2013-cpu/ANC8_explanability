@@ -52,14 +52,14 @@ const LOSSES: Metric[] = [
   { key: "never", label: "Never start ANC", short: "Never", group: "Where women are lost", scale: "bad", kind: "share",
     legend: "Darker: more women receive no antenatal care at all.",
     value: (d, c, r) => (c === "entry" ? null : cascade(d, c, r)?.never ?? null) },
-  { key: "start_lt4", label: "Start, stop before four", short: "Stop <4", group: "Where women are lost", scale: "bad", kind: "share",
-    legend: "Darker: more women start antenatal care but stop before four contacts.",
+  { key: "start_lt4", label: "Started, did not reach four", short: "No 4", group: "Where women are lost", scale: "bad", kind: "share",
+    legend: "Darker: more women started antenatal care but did not reach four contacts.",
     value: (d, c, r) => cascade(d, c, r)?.start_lt4 ?? null },
-  { key: "four_lt8", label: "Reach four, stop before eight", short: "Stop 4–8", group: "Where women are lost", scale: "bad", kind: "share",
-    legend: "Darker: more women reach four contacts and stop before eight.",
+  { key: "four_lt8", label: "Reached four, did not reach eight", short: "4, not 8", group: "Where women are lost", scale: "bad", kind: "share",
+    legend: "Darker: more women reached four contacts but did not reach eight.",
     value: (d, c, r) => cascade(d, c, r)?.four_lt8 ?? null },
   { key: "drop48", label: "Of women at four, never reach eight", short: "Lost 4→8", group: "Where women are lost", scale: "bad", kind: "share",
-    legend: "Darker: of the women who reached four contacts, more stopped before eight.",
+    legend: "Darker: of the women who reached four contacts, more did not reach eight.",
     value: (d, c, r) => {
       const x = cascade(d, c, r)?.continue_4_to_8;
       return x == null ? null : 1 - x;
@@ -108,9 +108,25 @@ export function circumstanceMetrics(d: RegionsData): Metric[] {
   }));
 }
 
+/**
+ * The circumstances that are among the study's 21 predictors. The data file carries more
+ * (health post, distance and money problems, age at the birth, parity), but those are
+ * not the study's variables, so they are not shown.
+ */
+export const STUDY_CIRCUMSTANCES = ["poorest40", "no_school", "rural", "unintended", "uninsured", "no_say", "no_media"];
+
+/**
+ * The layers the studio shows: the ladder, where women are lost, and the circumstances
+ * that are study predictors. The "per year" layers (UN birth projections) and the
+ * "against circumstances" gaps (a model that is not the study's) stay defined above
+ * but are not offered.
+ */
 export function allMetrics(d: RegionsData): Metric[] {
-  return [...LADDER, ...LOSSES, ...PER_YEAR, ...GAPS, ...circumstanceMetrics(d)];
+  return [...LADDER, ...LOSSES, ...circumstanceMetrics(d).filter((m) => STUDY_CIRCUMSTANCES.includes(m.key.slice(2)))];
 }
+
+/** Kept for reference; not shown in the app. */
+export const HIDDEN_METRICS = [...PER_YEAR, ...GAPS];
 
 export const LADDER_KEYS = ["anc1", "anc4", "anc8"];
 

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import type { FeatureCollection } from "geojson";
 import { Layers, Pause, Play, Tag as TagIcon } from "lucide-react";
 import Heatmap from "@/components/charts/Heatmap";
@@ -27,9 +26,9 @@ const RegionMap = dynamic(() => import("@/components/map/RegionMap"), {
 });
 
 const HEATMAP_SETS = {
-  ladder: { label: "Ladder & losses", groups: ["The ladder", "Where women are lost", "Against circumstances"] },
+  ladder: { label: "Ladder & losses", groups: ["The ladder", "Where women are lost"] },
   circumstances: { label: "Circumstances", groups: ["Circumstances"] },
-  all: { label: "Everything", groups: ["The ladder", "Where women are lost", "Women per year", "Against circumstances", "Circumstances"] },
+  all: { label: "Everything", groups: ["The ladder", "Where women are lost", "Circumstances"] },
 } as const;
 
 // A fixed 0-100% scale for the three ladder maps, so they can be compared with each
@@ -38,7 +37,6 @@ const LADDER_BREAKS = { breaks: [0.2, 0.4, 0.6, 0.8], min: 0, max: 1 };
 
 export default function MapPage() {
   const studio = useStudio();
-  const router = useRouter();
   const theme = useRenderTheme();
   const geo = useJSON<FeatureCollection>("/geo/regions.geojson");
   const reg = useJSON<RegionsData>("/data/regions.json");
@@ -163,7 +161,6 @@ export default function MapPage() {
                     {ms.map((m) => (
                       <option key={m.key} value={m.key}>
                         {m.label}
-                        {m.modifiable ? "  (a health system can change this)" : ""}
                       </option>
                     ))}
                   </optgroup>
@@ -333,7 +330,6 @@ export default function MapPage() {
             rung={studio.rung as Rung}
             onRung={(r) => studio.set({ rung: r })}
             onClose={() => studio.set({ region: "" })}
-            onOpenPlanner={() => router.push(studio.href("/planner"))}
           />
         </div>
       )}

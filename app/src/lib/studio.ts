@@ -24,7 +24,12 @@ export const RUNGS: { key: Rung; label: string; outcome: string }[] = [
   { key: "anc8", label: "ANC8+", outcome: "anc8plus" },
 ];
 
-export const COHORTS: { key: Cohort; label: string; short: string; n: number; blurb: string }[] = [
+/**
+ * Every cohort the data files carry. The 24-month cohort is kept in the data for a
+ * later decision, but the study (and so every picker) uses only the full cohort and
+ * ANC entry: see COHORTS below.
+ */
+export const ALL_COHORTS: { key: Cohort; label: string; short: string; n: number; blurb: string }[] = [
   { key: "full", label: "Full cohort", short: "Full", n: 6893,
     blurb: "Every woman whose most recent pregnancy has a recorded number of ANC contacts" },
   { key: "entry", label: "ANC entry", short: "Entry", n: 5001,
@@ -32,6 +37,9 @@ export const COHORTS: { key: Cohort; label: string; short: string; n: number; bl
   { key: "recent", label: "Last 24 months", short: "24 mo", n: 5037,
     blurb: "The official DHS-8 window: births in the two years before interview" },
 ];
+
+/** The cohorts the study analyses, and the only ones the pickers offer. */
+export const COHORTS = ALL_COHORTS.filter((c) => c.key !== "recent");
 
 export interface StudioState {
   region: string;
