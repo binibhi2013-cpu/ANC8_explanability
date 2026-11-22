@@ -80,6 +80,9 @@ export default function AboutPage() {
           <Row to="/models" go="Model analysis" text="Wealth and region lead permutation importance in all three models; wealth, travel time and region lead SHAP." />
           <Row to="/explore/cohorts" go="Cohorts" text={<>Adding early initiation raised average precision by <b className="font-mono">0.022–0.034</b>; every interval includes zero.</>} />
           <Row to="/" go="Overview" text={<>Model contrast: <b className="font-mono">34%</b> predicted ANC8+ with an early first visit against <b className="font-mono">13%</b> with a later one.</>} />
+          <Row to="/explore/cohorts" go="Cohorts" text={<>Observed: <b className="font-mono">42%</b> of early starters reached ANC8+ against <b className="font-mono">11%</b> of later starters; <b className="font-mono">58%</b> of early starters still did not.</>} />
+          <Row to="/explore/ladder" go="The ANC ladder" text={<>Among women at ANC4+, ANC8+ was <b className="font-mono">20%</b> in the poorest quintile against <b className="font-mono">52%</b> in the richest (notebook 4).</>} />
+          <Row to="/explore/ladder" go="The ANC ladder" text={<>In Afar, <b className="font-mono">79%</b> of women within two hours of care started ANC, against <b className="font-mono">39%</b> of those further away (notebook 4).</>} />
           <Row to="/help" go="Help" text="New to the dashboard? Every screen explained in plain language." />
         </Panel>
 

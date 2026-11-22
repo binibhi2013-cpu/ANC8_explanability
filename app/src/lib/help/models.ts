@@ -75,6 +75,26 @@ export const MODELS: HelpTopic[] = [
         read: ["Region and wealth lead in all three models. A bar near zero: the model loses little without that predictor."],
         shot: false,
       },
+      {
+        id: "direction",
+        title: "Which way each answer pushes the prediction",
+        shows: "Notebook 4's selected SHAP-direction panel: for each category of a predictor (for example each wealth quintile or region), the average SHAP value in the XGBoost model on the held-out women.",
+        read: [
+          "Bars to the right raise the predicted chance of ANC8+; bars to the left lower it.",
+          "Pick the predictor with the switch. Early ANC initiation comes from the ANC-entry extended model.",
+          "It describes how the model uses the answer, not what would happen if the answer changed.",
+        ],
+        terms: ["shap", "log-odds"],
+      },
+      {
+        id: "review",
+        title: "From evidence to programme review",
+        shows: "Notebook 4's evidence-to-review matrix: for each of seven signals, the model evidence, the observed pathway pattern, the programme-review question and the evidence still needed, followed by the national and WHO guidance anchors.",
+        read: [
+          "Click a signal to open it. Wealth, travel time, region and early ANC are the core signals; occupation, religion and pregnancy intention are contextual.",
+          "These are questions for investigation, not estimates of intervention effects or programme rankings.",
+        ],
+      },
     ],
   },
   {

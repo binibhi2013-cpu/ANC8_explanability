@@ -1,0 +1,88 @@
+{
+  "handoff_name": "ANC8 Notebook 4 Programme Review Handoff",
+  "created_utc": "2026-09-21T08:07:50.516097+00:00",
+  "purpose": "Policy-facing ANC evidence explorer combining observed attendance and equity patterns with frozen predictive-model performance and explainability evidence.",
+  "primary_outcome": "anc8plus",
+  "primary_outcome_definition": "Attainment of 8 or more ANC contacts",
+  "resolved_contact_denominator_n": 6893,
+  "anc_entry_denominator_n": 5001,
+  "approved_aggregate_tables": 51,
+  "export_categories": {
+    "dashboard_attendance": 21,
+    "model_evidence": 7,
+    "contextual_evidence": 12,
+    "programme_review": 7,
+    "support": 4
+  },
+  "survey_design": {
+    "weight": "v005 / 1e6",
+    "PSU": "v021",
+    "stratum": "v022",
+    "design_df": 767,
+    "confidence_level": 0.95,
+    "proportion_CI": "Taylor-linearized survey proportion with logit confidence interval"
+  },
+  "attendance_definition": {
+    "groups": [
+      "0",
+      "1–3",
+      "4–7",
+      "8+"
+    ],
+    "interpretation": "Final reported ANC contact attainment; not longitudinal dropout or missed-appointment history."
+  },
+  "travel_time_groups": {
+    "groups": [
+      "0–30 min",
+      "31–60 min",
+      "61–120 min",
+      ">120 min"
+    ],
+    "interpretation": "Empirical descriptive bands; not clinical thresholds."
+  },
+  "evidence_layers": [
+    "Observed survey-weighted ANC attendance and pathway evidence",
+    "Frozen Notebook 2 held-out model-performance evidence",
+    "Frozen Notebook 3 permutation and SHAP evidence",
+    "External ANC programme-guidance register"
+  ],
+  "selected_core_programme_signals": [
+    "Household wealth",
+    "Travel time",
+    "Region",
+    "Early ANC initiation"
+  ],
+  "selected_contextual_signals": [
+    "Maternal occupation",
+    "Religion",
+    "Pregnancy intention"
+  ],
+  "model_interpretation_boundary": "Prediction-model importance, SHAP values and model-response contrasts describe fitted-model behavior and do not establish causal effects.",
+  "programme_interpretation_boundary": "Programme-review cues identify questions and options for further review; they are not intervention-effect estimates or resource-allocation priorities.",
+  "upstream_authorities": {
+    "Notebook 1 artifact manifest": {
+      "path": "D:\\MOH\\2026\\Data science\\Capstone\\ANC8\\outputs\\ANC8_artifact_manifest_final.csv",
+      "sha256": "1a8e916c8194d1ac2be9b89196ea29098bc2a0584feef3d9dc04a9e5d5df9157"
+    },
+    "Notebook 2 handoff manifest": {
+      "path": "D:\\MOH\\2026\\Data science\\Capstone\\ANC8\\outputs\\notebook3_explainability_handoff\\SHA256_MANIFEST.csv",
+      "sha256": "6f0b0d1471d9e675a09f59ca1facbd3f9105d69db944c3638f750b8de594e41c"
+    },
+    "Notebook 3 final manifest": {
+      "path": "D:\\MOH\\2026\\Data science\\Capstone\\ANC8\\outputs\\notebook3_explainability_final\\SHA256_MANIFEST.csv",
+      "sha256": "cf8bfd0fc3dc5ecd12f6c0ff25f2299389a767e914e40a90c4f9bb15d36376bc"
+    }
+  },
+  "raw_source": {
+    "path": "D:\\MOH\\2026\\Data science\\Capstone\\ANC8\\ETIR8AFL.dta",
+    "sha256_current_file": "e48e51c49f632c578c67480d87f446b8a589ddb9ad306fb28262c9d06072f08b",
+    "notebook4_use": "Restricted extraction of caseid and m14_1 only, followed by one-to-one alignment with the frozen Notebook 1 cohort.",
+    "boundary": "Notebook 4 did not recreate Notebook 1 preprocessing from the raw file."
+  },
+  "software": {
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "pandas": "2.3.3",
+    "numpy": "2.3.5"
+  }
+}

@@ -6,6 +6,8 @@ import DotRows from "@/components/charts/DotRows";
 import { AXIS, ChartBox, GRID, SeriesLegend, TipPanel, tip } from "@/components/charts/rc";
 import { Cue, DataNote, InlineError, Note, Panel, PanelLoading, Screen, Segmented, StatTile, Tag } from "@/components/studio/ui";
 import { CUES } from "@/lib/cues";
+import { PairedTable, TimingPanel } from "@/components/nb4/Nb4Panels";
+import { useNb4 } from "@/lib/nb4";
 import { useJSON } from "@/lib/data";
 import { COHORT_COLOR, RUNG_LABEL, pct, signed, type ExploreData } from "@/lib/explore";
 import { REGION_NAMES } from "@/lib/regions";
@@ -27,6 +29,7 @@ export default function CohortsPage() {
   const reg = useJSON<RegionsData>("/data/regions.json");
   const exp = useJSON<ExploreData>("/data/explore.json");
   const study = useJSON<Study>("/data/study.json");
+  const nb4 = useNb4();
 
   const rung = studio.rung;
   const place = studio.region || "Ethiopia";
@@ -267,6 +270,14 @@ export default function CohortsPage() {
               />
               <div className="px-14 pb-12 flex flex-col gap-8">
                 <Note tone="accent">Every interval includes zero: the point estimates favour adding early initiation, but its added predictive value is uncertain.</Note>
+              </div>
+              {nb4.data && (
+                <div className="border-t border-border pb-8">
+                  <div className="px-14 pt-8 text-9.5 uppercase tracking-label text-faint font-semibold">All three paired comparisons (95% interval)</div>
+                  <PairedTable data={nb4.data} />
+                </div>
+              )}
+              <div className="px-14 pb-12 flex flex-col gap-8">
                 <Cue>{CUES.firstVisitAdds(Math.min(...study.data.entry_performance.map((m) => m.delta_ap)), Math.max(...study.data.entry_performance.map((m) => m.delta_ap)))}</Cue>
               </div>
             </>
@@ -274,6 +285,8 @@ export default function CohortsPage() {
             <PanelLoading rows={3} />
           )}
         </Panel>
+
+        <TimingPanel />
       </div>
     </Screen>
   );

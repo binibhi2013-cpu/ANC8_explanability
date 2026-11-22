@@ -7,6 +7,7 @@ import {
   Cue, DataNote, InlineError, Note, Panel, PanelLoading, Screen, Segmented, StatTile, Table,
 } from "@/components/studio/ui";
 import { CUES } from "@/lib/cues";
+import { DirectionPanel, ReviewMatrixPanel } from "@/components/nb4/Nb4Panels";
 import { useJSON } from "@/lib/data";
 import { asset } from "@/lib/paths";
 
@@ -183,6 +184,11 @@ export default function ModelAnalysisPage() {
             signed={perm.some((r) => r.value < 0)}
           />
         </Panel>
+      </div>
+
+      <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
+        <DirectionPanel />
+        <ReviewMatrixPanel />
       </div>
     </Screen>
   );

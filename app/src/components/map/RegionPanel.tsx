@@ -6,6 +6,7 @@ import Funnel from "@/components/charts/Funnel";
 import { Cue, Hint, Segmented, Tag } from "@/components/studio/ui";
 import { Select } from "@/components/ui/select";
 import { CUES } from "@/lib/cues";
+import { RegionNb4 } from "@/components/nb4/Nb4Panels";
 import { useJSON } from "@/lib/data";
 import { helpHref } from "@/lib/help/href";
 import { STUDY_CIRCUMSTANCES } from "@/lib/metrics";
@@ -205,6 +206,8 @@ export default function RegionPanel({
             </div>
           </Section>
         )}
+
+        <RegionNb4 region={region} Section={Section} />
 
         <Section
           help="map.region-behind"

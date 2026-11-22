@@ -83,6 +83,36 @@ export const EXPLORE: HelpTopic[] = [
         ],
         terms: ["continuation"],
       },
+      {
+        id: "equity",
+        title: "Who moves through each stage",
+        shows: "Notebook 4's equity tables: for wealth, travel time, maternal occupation, religion and pregnancy intention, the share of each group passing each of five stages, with 95% intervals.",
+        read: [
+          "Pick the grouping (list) and the stage (switch). Each stage counts only women who reached the stage before it.",
+          "The vertical line is Ethiopia for that stage.",
+          "Under the chart: what notebook 4 found, what the models say, the review question and the notebook's own programme cue.",
+        ],
+        terms: ["ci", "continuation"],
+      },
+      {
+        id: "region-stages",
+        title: "Regions through the five stages",
+        shows: "Notebook 4's regional pathway: 14 regions against five stages, as shares or as gaps to Ethiopia in percentage points.",
+        read: [
+          "Each column is shaded on its own: compare regions down a column.",
+          "Switch to Gap to Ethiopia to see at which stage each region falls behind.",
+          "Click a region to follow it.",
+        ],
+      },
+      {
+        id: "region-travel",
+        title: "Travel time to care, region by region",
+        shows: "For each region, the share of women in each travel band to the nearest hospital or health centre, sorted by the share travelling more than an hour; below, the gap in starting ANC for women travelling over two hours in Afar, Somali, South Ethiopia and Tigray.",
+        read: [
+          "From notebook 4, cells 4.25A–H. These tables were printed in the notebook and saved unchanged for the dashboard.",
+          "The gap is a descriptive comparison within each region; no statistical test was performed.",
+        ],
+      },
     ],
   },
   {
@@ -139,6 +169,16 @@ export const EXPLORE: HelpTopic[] = [
         read: ["Under each model: the gain and its 95% interval from the paired bootstrap. Every interval includes zero, so the gain is uncertain."],
         shot: false,
         terms: ["horizon"],
+      },
+      {
+        id: "timing",
+        title: "Early and later first visit: what women actually did",
+        shows: "Notebook 4's observed comparison among the 5,001 women who started ANC: reaching ANC4+, ANC8+ among those at ANC4+, and ANC8+, by whether the first visit was by 12 weeks.",
+        read: [
+          "This is what happened, not a model: 42% of early starters reached ANC8+ against 11% of later starters.",
+          "More than half of early starters still did not reach eight, so starting early and continuing are separate problems.",
+        ],
+        terms: ["ci"],
       },
     ],
   },

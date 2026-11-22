@@ -213,6 +213,21 @@ export const PLAN: HelpTopic[] = [
         ],
       },
       {
+        id: "region-stages",
+        title: "Through the five stages",
+        shows: "Notebook 4's regional pathway for the chosen region: any ANC, ANC4+ among users, ANC8+ among women at ANC4+, early ANC, and ANC8+ among early starters.",
+        read: [
+          "Each stage counts only the women who reached the stage before it, so the stages show where the region loses women.",
+          "The dashed mark is Ethiopia; the number on the right is the gap to Ethiopia in percentage points (red more than 5 below, green more than 5 above).",
+        ],
+      },
+      {
+        id: "region-travel",
+        title: "Travel time to the nearest hospital or health centre",
+        shows: "The share of women in the region in each travel band (notebook 4, 4.25A), and for the four regions with many long trips, the share starting ANC at two hours or less against over two hours (4.25G).",
+        read: ["Travel time is one of the 21 predictors; the bands are descriptive, not clinical thresholds."],
+      },
+      {
         id: "region-circumstances",
         title: "The region's circumstances",
         shows: "How common each circumstance is among the region's women (dot) against Ethiopia (tick). Only circumstances among the study's 21 predictors are shown.",

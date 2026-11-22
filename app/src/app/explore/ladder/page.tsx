@@ -18,6 +18,7 @@ import { REGION_NAMES } from "@/lib/regions";
 import { cohortRungs, REACH_OF, type RegionsData, type SubgroupRow } from "@/lib/regionsData";
 import { COHORTS, useStudio, type Rung } from "@/lib/studio";
 import { MODEL_ABBR, type Explained } from "@/lib/modelCards";
+import { EquityPanel, RegionPathwayPanel, RegionTravelPanel } from "@/components/nb4/Nb4Panels";
 
 const BAND = (k: number) => (k === 0 ? "var(--bad)" : k < 4 ? "var(--rung1)" : k < 8 ? "var(--rung4)" : "var(--rung8)");
 const BANDS = [
@@ -293,6 +294,13 @@ export default function LadderPage() {
           )}
         </Panel>
 
+      </div>
+
+      <EquityPanel />
+
+      <div className="grid gap-10 md:gap-14 xl:grid-cols-2">
+        <RegionPathwayPanel />
+        <RegionTravelPanel />
       </div>
 
     </Screen>

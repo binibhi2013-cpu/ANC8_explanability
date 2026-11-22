@@ -13,6 +13,7 @@ import MiniMap, { useRegionPaths } from "@/components/map/MiniMap";
 import { useRenderTheme } from "@/components/shell/theme-provider";
 import { NO_DATA, classify, colorOf } from "@/lib/colors";
 import { CUES } from "@/lib/cues";
+import { useNb4 } from "@/lib/nb4";
 import { REGION_NAMES } from "@/lib/regions";
 import type { RegionsData } from "@/lib/regionsData";
 
@@ -119,6 +120,7 @@ export default function Overview() {
  * ANC8+ map of the full cohort, with its legend and every region's value.
  */
 function KeyFindingAndMap() {
+  const nb4 = useNb4();
   const studio = useStudio();
   const router = useRouter();
   const theme = useRenderTheme();
@@ -168,6 +170,14 @@ function KeyFindingAndMap() {
               This is a model contrast, not the effect of an intervention: an early first visit may also reflect better
               access and care-seeking.
             </div>
+            {nb4.data && (
+              <div className="text-10.5 leading-relaxed border-l-2 border-good pl-8">
+                <span className="font-semibold">What women actually did:</span>{" "}
+                <b className="font-mono">{pct(nb4.data.timing["Early initiation"].anc8)}</b> of early starters reached ANC8+, against{" "}
+                <b className="font-mono">{pct(nb4.data.timing["Later initiation"].anc8)}</b> of later starters; but{" "}
+                <b className="font-mono">{pct(1 - nb4.data.timing["Early initiation"].anc8)}</b> of early starters still did not reach eight (notebook 4).
+              </div>
+            )}
             <Cue>{CUES.earlyVisit}</Cue>
           </div>
         ) : (
