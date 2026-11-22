@@ -18,7 +18,7 @@ const STEPS: { path: string; title: string; say: string }[] = [
   { path: "/map?metric=anc8", title: "Where",
     say: "Every region shaded by ANC8+ in our full cohort. Press play to move the map from ANC1+ to ANC8+, and see the country empty out." },
   { path: "/map?region=Somali&metric=never", title: "One region",
-    say: "Click a region: its ladder with intervals, where women are lost, what that suggests for programmes, and ANC8+ by wealth." },
+    say: "Click a region: its ladder with intervals, where women are lost, what that suggests for programmes, and who is left behind by wealth, education and other study predictors." },
   { path: "/explore/ladder", title: "One distribution",
     say: "The three rungs are cuts through one contact count. Women bunch at three or four contacts, and at eight." },
   { path: "/models", title: "Our models",

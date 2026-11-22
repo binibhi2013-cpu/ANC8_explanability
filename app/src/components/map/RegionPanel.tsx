@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import Funnel from "@/components/charts/Funnel";
 import { Cue, Hint, Segmented, Tag } from "@/components/studio/ui";
+import { Select } from "@/components/ui/select";
 import { CUES } from "@/lib/cues";
 import { useJSON } from "@/lib/data";
 import { helpHref } from "@/lib/help/href";
@@ -27,9 +28,16 @@ const ACTION_TONE: Record<string, "bad" | "warn" | "accent"> = {
   "Early engagement": "warn",
   Retention: "accent",
 };
-// Who is left behind: wealth only. The other groupings in the data file are either not
-// the study's predictors (health post, age at the birth) or were not approved for this view.
-const DIM = "Wealth";
+// Who is left behind: only groupings that are among the study's 21 predictors, with the
+// study's own categories. Left out: "Health post" (travel to a health post, not the study's
+// travel time to the nearest hospital or health centre) and "Age at birth" (the study uses
+// age at interview). The study's travel-time grouping exists only nationally (notebook 4),
+// not region by region, so it cannot be shown here.
+const STUDY_DIMS = ["Wealth", "Education", "Residence", "Pregnancy wanted", "Pregnancy number", "Health insurance"];
+const DIM_LABEL: Record<string, string> = {
+  Wealth: "wealth", Education: "education", Residence: "residence",
+  "Pregnancy wanted": "pregnancy intention", "Pregnancy number": "pregnancy order", "Health insurance": "health insurance",
+};
 
 function Section({ title, how, help, children, right }: {
   title: string; how?: string; help?: string; children: React.ReactNode; right?: React.ReactNode;
@@ -88,6 +96,7 @@ export default function RegionPanel({
   onClose: () => void;
 }) {
   const cues = useJSON<{ regional_cues: Record<string, { pattern: string; question: string }> }>("/data/study.json").data?.regional_cues;
+  const [dim, setDim] = useState("Wealth");
   useEffect(() => {
     const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", k);
@@ -103,6 +112,8 @@ export default function RegionPanel({
   const reachKey = REACH_OF[r] as "reach1" | "reach4" | "reach8";
 
   // groups with fewer than min_n women are hidden, not just faded
+  const dims = STUDY_DIMS.filter((d) => data.subgroups[cohort]?.[region]?.[d]);
+  const DIM = dims.includes(dim) ? dim : dims[0] ?? "Wealth";
   const sub = (data.subgroups[cohort]?.[region]?.[DIM] ?? []).filter((s) => !s.small);
   const subNat = data.subgroups[cohort]?.["Ethiopia"]?.[DIM] ?? [];
   const hiddenSmall = (data.subgroups[cohort]?.[region]?.[DIM] ?? []).length - sub.length;
@@ -197,8 +208,13 @@ export default function RegionPanel({
 
         <Section
           help="map.region-behind"
-          title={`Who is left behind: ${rungLabel} by wealth`}
-          how={`${rungLabel} for women in each wealth group, in this region. The dashed mark is the same group nationally. Groups with fewer than ${data.min_n} women are not shown. No intervals: read small differences with care.`}
+          title={`Who is left behind: ${rungLabel} by ${DIM_LABEL[DIM] ?? DIM}`}
+          right={
+            <Select aria-label="Group by" value={DIM} onChange={(e) => setDim(e.target.value)} className="w-auto h-22 text-10.5">
+              {dims.map((d) => <option key={d} value={d}>{d === "Pregnancy number" ? "Pregnancy order" : d === "Pregnancy wanted" ? "Pregnancy intention" : d}</option>)}
+            </Select>
+          }
+          how={`${rungLabel} for women in each group, in this region. Choose the grouping: only groupings that are among the study's 21 predictors are offered. The dashed mark is the same group nationally. Groups with fewer than ${data.min_n} women are not shown. No intervals: read small differences with care.`}
         >
           <div className="flex flex-col gap-4">
             {sub.map((s) => {
@@ -226,7 +242,7 @@ export default function RegionPanel({
           {hiddenSmall > 0 && (
             <div className="text-9.5 text-faint mt-5">{hiddenSmall} group{hiddenSmall > 1 ? "s" : ""} with fewer than {data.min_n} women not shown.</div>
           )}
-          {poorest && richest && <Cue className="mt-8">{CUES.wealthGap(region, poorest[reachKey], richest[reachKey], rungLabel)}</Cue>}
+          {DIM === "Wealth" && poorest && richest && <Cue className="mt-8">{CUES.wealthGap(region, poorest[reachKey], richest[reachKey], rungLabel)}</Cue>}
         </Section>
 
         <Section help="map.region-circumstances" title="The region's circumstances" how="How common each circumstance is among women in this region (dot) against Ethiopia (tick). Only circumstances that are among the study's 21 predictors are shown.">

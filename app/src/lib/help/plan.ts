@@ -160,7 +160,7 @@ export const PLAN: HelpTopic[] = [
       {
         id: "region",
         title: "A region's analysis",
-        shows: "Clicking a region opens a panel beside the map (a full-screen sheet on a phone) with its ladder, where women are lost, what that suggests for programmes, ANC8+ by wealth and its circumstances.",
+        shows: "Clicking a region opens a panel beside the map (a full-screen sheet on a phone) with its ladder, where women are lost, what that suggests for programmes, who is left behind (by wealth, education and other study predictors) and its circumstances.",
         read: [
           "The coloured tag at the top names its main task. **Outreach** (red): the largest loss is women with no ANC. **Early engagement** (orange): women who started but did not reach four. **Retention** (purple): women who reached four but did not reach eight.",
           "Under the name: how many women and survey clusters the region's numbers rest on.",
@@ -204,9 +204,11 @@ export const PLAN: HelpTopic[] = [
       {
         id: "region-behind",
         title: "Who is left behind",
-        shows: "The chosen rung for each wealth group within the region.",
+        shows: "The chosen rung for each group of women within the region: by wealth, education, residence, pregnancy intention, pregnancy order or health insurance.",
         read: [
+          "Pick the grouping with the list. Only groupings that are among the study's 21 predictors are offered.",
           "The bar is the group's share; the dashed mark is the same group nationally.",
+          "Travel time is not offered: the study's travel-time grouping was tabulated nationally, not region by region.",
           "Groups with fewer than 25 women are not shown. There are no intervals, so read small differences with care.",
         ],
       },
