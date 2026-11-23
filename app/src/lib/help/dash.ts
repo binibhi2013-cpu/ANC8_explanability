@@ -39,6 +39,7 @@ export const DASH_HELP: HelpTopic[] = [
           "**Suggested action**: what a programme could consider, drafted for the dashboard from the card's finding.",
           "**Based on**: the number on the card, which changes with the filters (choose Somali and the cue turns to Somali's weakest stage).",
           "**Study finding**: the study's own programme-review wording, verbatim, where it exists.",
+          "**Evidence**: published guidance and studies (WHO, Ethiopia's Ministry of Health, Cochrane and peer-reviewed reviews) that support the suggested action, each with a link.",
         ],
         watch: "A cue is a suggestion to review, not a tested intervention or a predicted effect.",
       },

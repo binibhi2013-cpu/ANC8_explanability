@@ -112,7 +112,7 @@ export default function Tour() {
   if (mini) {
     return (
       <div ref={box} role="dialog" aria-label="Guided tour (minimised)" style={place}
-        className={`fixed z-[1200] flex items-center gap-6 bg-panel border border-accent rounded-full shadow-lg pl-10 pr-4 py-4 ${pos ? "" : "right-14 bottom-14"}`}>
+        className={`tour-type fixed z-[1200] flex items-center gap-6 bg-panel border border-accent rounded-full shadow-lg pl-10 pr-4 py-4 ${pos ? "" : "right-14 bottom-14"}`}>
         <span onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} className="cursor-move touch-none text-faint" title="Drag to move"><GripHorizontal className="size-14" /></span>
         <span className="text-11 font-semibold text-accent whitespace-nowrap">Presentation {i + 1}/{STEPS.length}</span>
         <button type="button" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Back" className="size-24 rounded-full flex items-center justify-center hover:bg-soft disabled:opacity-40"><ChevronLeft className="size-14" /></button>
@@ -123,7 +123,7 @@ export default function Tour() {
   }
   return (
     <div ref={box} role="dialog" aria-label="Guided tour" style={place}
-      className={`fixed z-[1200] w-[min(360px,calc(100vw-28px))] bg-panel border border-accent rounded-3 shadow-lg ${pos ? "" : "right-14 bottom-36"}`}>
+      className={`tour-type fixed z-[1200] w-[min(360px,calc(100vw-28px))] bg-panel border border-accent rounded-3 shadow-lg ${pos ? "" : "right-14 bottom-36"}`}>
       <div onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
         className="flex items-center gap-8 px-12 py-7 border-b border-border cursor-move touch-none select-none" title="Drag to move">
         <GripHorizontal className="size-13 text-faint flex-none" aria-hidden="true" />

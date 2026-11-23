@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Info, Lightbulb, X, type LucideIcon } from "lucide-react";
+import { BookOpen, ExternalLink, Info, Lightbulb, X, type LucideIcon } from "lucide-react";
 import type { Cue } from "@/lib/recs";
 
 /**
@@ -117,7 +117,7 @@ export function Bar({ label, sub, value, ci, max = 1, color = "var(--accent)", r
 
 /**
  * The recommendation cue behind a 💡 button: what a programme could consider, the number
- * it rests on, and the study's own notebook 4 wording where there is some. Click to open,
+ * it rests on, the study's own wording where there is some, and the published evidence behind it. Click to open,
  * click again, outside, or press Escape to close.
  */
 export function CueButton({ cue }: { cue: Cue }) {
@@ -140,7 +140,7 @@ export function CueButton({ cue }: { cue: Cue }) {
       </button>
       {open && (
         <span role="dialog" aria-label="Recommendation cue"
-          className="absolute right-0 top-30 z-[1100] w-[340px] max-w-[85vw] bg-panel border border-border2 rounded-[8px] shadow-xl p-14 flex flex-col gap-8 text-left">
+          className="fixed right-16 top-[60px] z-[1100] w-[420px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-76px)] overflow-y-auto bg-panel border border-border2 rounded-[8px] shadow-xl p-14 flex flex-col gap-8 text-left">
           <span className="flex items-center gap-6 text-12 font-semibold uppercase tracking-wide text-warn">
             <Lightbulb className="size-14" /> Suggested action
             <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="ml-auto text-faint hover:text-text"><X className="size-14" /></button>
@@ -150,7 +150,18 @@ export function CueButton({ cue }: { cue: Cue }) {
           {cue.study && (
             <span className="text-12.5 text-dim leading-snug border-l-2 border-accent pl-8"><b className="text-text font-semibold">Study finding: </b>“{cue.study}”</span>
           )}
-          <span className="text-11.5 text-faint">A suggestion from the findings, not a tested effect.</span>
+          {cue.evidence && cue.evidence.length > 0 && (
+            <span className="flex flex-col gap-5 border-t border-border pt-8">
+              <span className="flex items-center gap-5 text-12 font-semibold uppercase tracking-wide text-accent"><BookOpen className="size-13" /> Evidence</span>
+              {cue.evidence.map((e) => (
+                <span key={e.url} className="text-12 leading-snug text-dim">
+                  <a href={e.url} target="_blank" rel="noreferrer" className="text-accent font-semibold hover:underline inline-flex items-baseline gap-3">{e.cite}<ExternalLink className="size-10 flex-none self-center" /></a>
+                  <span className="block">{e.shows}</span>
+                </span>
+              ))}
+            </span>
+          )}
+          <span className="text-11.5 text-faint">A suggestion from the study&apos;s findings, supported by the evidence above; not a tested effect in Ethiopia.</span>
         </span>
       )}
     </span>
