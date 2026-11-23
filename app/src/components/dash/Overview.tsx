@@ -9,11 +9,12 @@ import { classify, colorOf, inkOn } from "@/lib/colors";
 import { useJSON } from "@/lib/data";
 import { INDICATORS, pct, rate, type Ind, type RegionsJSON, type StudyJSON, useDash } from "@/lib/dash";
 import { REGION_NAMES } from "@/lib/regions";
-import { Card, Insight, Section } from "./kit";
+import { Card, CueButton, Insight, TabHead, useBoxHeight } from "./kit";
+import { ladderCue, mapCue, tilesCue } from "@/lib/recs";
 
 const RegionMap = dynamic(() => import("@/components/map/RegionMap"), {
   ssr: false,
-  loading: () => <div className="h-[460px] bg-panel2 rounded-[6px]" />,
+  loading: () => <div className="h-full bg-panel2 rounded-[6px]" />,
 });
 
 export default function Overview({ reg, study }: { reg: RegionsJSON; study: StudyJSON }) {
@@ -59,21 +60,23 @@ export default function Overview({ reg, study }: { reg: RegionsJSON; study: Stud
   const biggest = losses[0];
   const r8 = place.reach8;
   const oneIn = Math.round(1 / Math.max(r8, 0.01));
+  const [mapBox, mapH] = useBoxHeight<HTMLDivElement>(420);
 
   return (
-    <Section id="overview" n={1} title={d.region ? `Antenatal care in ${d.region}` : "Antenatal care in Ethiopia"}
-      lead={<>Survey-weighted shares among {entry ? "the 5,001 women who started ANC" : "6,893 women with a recent pregnancy"}, EDHS 2024–25.
-        Click a tile to colour the map by it; click a region to see the whole page for that region.</>}>
+    <>
+      <TabHead title={d.region ? `Antenatal care in ${d.region}` : "Antenatal care in Ethiopia"}
+        lead={<>Survey-weighted shares among {entry ? "the 5,001 women who started ANC" : "6,893 women with a recent pregnancy"}, EDHS 2024–25.
+          Click a tile to colour the map; click a region to see every tab for that region.</>} />
 
-      <div data-help="dash.tiles" className="grid gap-12 grid-cols-2 xl:grid-cols-4">
+      <div data-help="dash.tiles" className="grid gap-12 grid-cols-2 xl:grid-cols-4 flex-none">
         {tiles.map(({ i, r, nat: n }) => {
           const on = d.ind === i.key;
           const trivial = entry && i.key === "anc1";
           return (
             <button key={i.key} type="button" disabled={trivial} onClick={() => d.set({ ind: i.key as Ind })} aria-pressed={on}
-              className={`text-left rounded-[6px] border px-16 py-14 transition-colors ${on ? "border-accent bg-soft ring-1 ring-accent" : trivial ? "border-border bg-panel cursor-default" : "border-border bg-panel hover:border-accent"}`}>
+              className={`text-left rounded-[6px] border px-14 py-10 transition-colors ${on ? "border-accent bg-soft ring-1 ring-accent" : trivial ? "border-border bg-panel cursor-default" : "border-border bg-panel hover:border-accent"}`}>
               <div className="text-13 font-semibold text-dim">{i.label} <span className="font-normal text-faint">· {i.long}</span></div>
-              <div className={`font-mono text-30 font-semibold mt-4 ${i.key === "anc8" ? "text-bad" : "text-text"}`}>
+              <div className={`font-mono text-26 font-semibold mt-2 ${i.key === "anc8" ? "text-bad" : "text-text"}`}>
                 {trivial ? "5,001" : pct(r?.value)}
               </div>
               <div className="text-12.5 text-dim mt-2">
@@ -87,26 +90,28 @@ export default function Overview({ reg, study }: { reg: RegionsJSON; study: Stud
         })}
       </div>
 
-      <div className="flex flex-col gap-10">
-        <Insight icon={TrendingDown} tone="bad">
+      <div className="flex items-start gap-10 flex-none">
+        <div className="flex-1"><Insight icon={TrendingDown} tone="bad">
           {d.region ? `In ${d.region}, ` : ""}{pct(r8)} of {entry ? "women who started ANC" : "women"} reached eight contacts
           {oneIn >= 2 && r8 < 0.5 ? ` (about one in ${oneIn})` : ""}{d.region ? `, against ${pct(nat.reach8)} nationally` : ""}.
           The largest loss: {pct(biggest.v)} {biggest.label}.
-        </Insight>
+        </Insight></div>
+        <CueButton cue={tilesCue({ place: d.place, r8, nat8: nat.reach8, region: !!d.region })} />
       </div>
 
-      <div className="grid gap-14 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <div className="grid gap-14 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:flex-1 lg:min-h-0">
         <Card help="dash.map" title={`${indLabel.label} by region`}
           sub={d.region ? `${d.region} selected · click it again to return to Ethiopia` : "Click a region to filter the whole page"}
+          cue={mapCue({ best: map.best.r, bestV: map.best.v, worst: map.worst.r, worstV: map.worst.v, label: indLabel.label })}
           info="Each region shows its survey-weighted share. Colours are five equal-count classes of the 14 regions; darker is better. Early first visit is among women who started ANC.">
-          <div className="rounded-[6px] overflow-hidden border border-border">
+          <div ref={mapBox} className="rounded-[6px] overflow-hidden border border-border h-[380px] lg:h-auto lg:flex-1 lg:min-h-[260px]">
             {geo.data && (
               <RegionMap geo={geo.data} data={map.data} selected={d.region}
                 onSelect={(r) => d.set({ region: r === d.region ? "" : r })}
-                basemap={false} theme={theme} labels height={460} />
+                basemap={false} theme={theme} labels height={mapH} />
             )}
           </div>
-          <div className="flex items-center gap-6 flex-wrap text-12.5 text-dim">
+          <div className="flex items-center gap-6 flex-wrap text-12.5 text-dim flex-none">
             <span>Lower</span>
             {map.classes.colors.map((c, k) => (
               <span key={k} className="h-12 w-40 rounded-[2px]" style={{ background: c }} />
@@ -118,8 +123,9 @@ export default function Overview({ reg, study }: { reg: RegionsJSON; study: Stud
 
         <Card help="dash.ladder" title={`Where women are lost · ${d.place}`}
           sub="The antenatal care ladder, from first contact to eight"
+          cue={ladderCue({ place: d.place, never: place.never, lt4: entry ? 1 - place.reach4 : place.start_lt4, four8: entry ? place.reach4 - place.reach8 : place.four_lt8, cont48: place.continue_4_to_8, entry })}
           info="Each bar is the share of the cohort that reached the rung; the gap between bars is the share lost at that step. Click a rung to colour the map by it.">
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-6">
             {steps.map((s, k) => {
               const prev = k > 0 ? steps[k - 1].value : null;
               const clickable = s.key !== "all" && !(entry && s.key === "anc1");
@@ -157,6 +163,6 @@ export default function Overview({ reg, study }: { reg: RegionsJSON; study: Stud
           </div>
         </Card>
       </div>
-    </Section>
+    </>
   );
 }

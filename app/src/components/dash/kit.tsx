@@ -1,7 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { Info, type LucideIcon } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Info, Lightbulb, X, type LucideIcon } from "lucide-react";
+import type { Cue } from "@/lib/recs";
 
 /**
  * The dashboard's small kit: a section with its headline, a card, an insight line and
@@ -24,17 +25,19 @@ export function Section({ id, n, title, lead, children }: {
   );
 }
 
-export function Card({ title, sub, info, actions, children, className = "", help }: {
+export function Card({ title, sub, info, actions, children, className = "", help, cue, body = "" }: {
   title: ReactNode; sub?: ReactNode; info?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; help?: string;
+  cue?: Cue | null; body?: string;
 }) {
   return (
     <div data-help={help} className={`bg-panel border border-border rounded-[6px] min-w-0 flex flex-col ${className}`}>
-      <div className="flex items-start gap-10 px-16 pt-14 pb-10 flex-wrap">
+      <div className="flex items-start gap-10 px-16 pt-12 pb-8 flex-wrap">
         <div className="flex-1 min-w-[180px]">
           <h3 className="text-15 font-semibold text-text leading-snug">{title}</h3>
           {sub && <div className="text-13 text-dim mt-2">{sub}</div>}
         </div>
         {actions}
+        {cue && <CueButton cue={cue} />}
         {info && (
           <span className="relative group flex-none">
             <button type="button" aria-label="About this card" className="text-faint hover:text-accent mt-2">
@@ -47,7 +50,7 @@ export function Card({ title, sub, info, actions, children, className = "", help
           </span>
         )}
       </div>
-      <div className="px-16 pb-16 flex-1 flex flex-col gap-12">{children}</div>
+      <div className={`px-16 pb-14 flex-1 min-h-0 flex flex-col gap-10 ${body}`}>{children}</div>
     </div>
   );
 }
@@ -110,4 +113,73 @@ export function Bar({ label, sub, value, ci, max = 1, color = "var(--accent)", r
       <div className="font-mono text-14 font-semibold text-right">{display}</div>
     </div>
   );
+}
+
+/**
+ * The recommendation cue behind a 💡 button: what a programme could consider, the number
+ * it rests on, and the study's own notebook 4 wording where there is some. Click to open,
+ * click again, outside, or press Escape to close.
+ */
+export function CueButton({ cue }: { cue: Cue }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: MouseEvent) => { if (box.current && !box.current.contains(e.target as Node)) setOpen(false); };
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", away);
+    document.addEventListener("keydown", esc);
+    return () => { document.removeEventListener("mousedown", away); document.removeEventListener("keydown", esc); };
+  }, [open]);
+  return (
+    <span ref={box} className="relative flex-none" data-cue>
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label="Recommendation for this finding"
+        title="What could a programme do?"
+        className={`flex items-center gap-4 h-24 px-7 rounded-full text-12 font-semibold transition-colors ${open ? "bg-warn text-white" : "bg-warnbg text-warn hover:bg-warn hover:text-white"}`}>
+        <Lightbulb className="size-14" /> Cue
+      </button>
+      {open && (
+        <span role="dialog" aria-label="Recommendation cue"
+          className="absolute right-0 top-30 z-[1100] w-[340px] max-w-[85vw] bg-panel border border-border2 rounded-[8px] shadow-xl p-14 flex flex-col gap-8 text-left">
+          <span className="flex items-center gap-6 text-12 font-semibold uppercase tracking-wide text-warn">
+            <Lightbulb className="size-14" /> Suggested action
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="ml-auto text-faint hover:text-text"><X className="size-14" /></button>
+          </span>
+          <span className="text-14 text-text leading-snug">{cue.action}</span>
+          <span className="text-12.5 text-dim leading-snug"><b className="text-text font-semibold">Based on: </b>{cue.basis}</span>
+          {cue.study && (
+            <span className="text-12.5 text-dim leading-snug border-l-2 border-accent pl-8"><b className="text-text font-semibold">Study (notebook 4): </b>“{cue.study}”</span>
+          )}
+          <span className="text-11.5 text-faint">A suggestion from the findings, not a tested effect.</span>
+        </span>
+      )}
+    </span>
+  );
+}
+
+/** A tab's heading: title and one line of context, kept short so the tab fits the screen. */
+export function TabHead({ title, lead, children }: { title: ReactNode; lead?: ReactNode; children?: ReactNode }) {
+  return (
+    <div className="flex items-end gap-x-16 gap-y-6 flex-wrap flex-none">
+      <div className="min-w-0 flex-1">
+        <h2 className="text-19 font-semibold text-text leading-tight">{title}</h2>
+        {lead && <p className="text-13 text-dim mt-2 leading-snug max-w-[1000px]">{lead}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/** The pixel height of an element, kept current, so a chart can fill the space it is given. */
+export function useBoxHeight<T extends HTMLElement>(fallback = 400) {
+  const ref = useRef<T>(null);
+  const [h, setH] = useState(fallback);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setH(Math.max(240, Math.floor(e.contentRect.height))));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, h] as const;
 }

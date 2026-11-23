@@ -1381,7 +1381,7 @@
   },
   "pathway": [
    {
-    "stage": "Resolved ANC information \u2192 Any ANC",
+    "stage": "Resolved ANC information → Any ANC",
     "eligible": "Women with resolved ANC contact count",
     "n": 6893,
     "k": 5016,
@@ -1392,7 +1392,7 @@
     ]
    },
    {
-    "stage": "Any ANC \u2192 ANC4+",
+    "stage": "Any ANC → ANC4+",
     "eligible": "Women with any ANC",
     "n": 5016,
     "k": 3234,
@@ -1403,7 +1403,7 @@
     ]
    },
    {
-    "stage": "ANC4+ \u2192 ANC8+",
+    "stage": "ANC4+ → ANC8+",
     "eligible": "Women attaining ANC4+",
     "n": 3234,
     "k": 1173,
@@ -3881,7 +3881,7 @@
     },
     {
      "Review domain": "Access: travel time",
-     "Observed evidence": "ANC entry and subsequent attainment decline as travel time increases. Any ANC was 86.5% at 0\u201330 minutes versus 54.7% at >120 minutes. Among early initiators, ANC8+ was 48.2% at 0\u201330 minutes versus 18.5% at >120 minutes.",
+     "Observed evidence": "ANC entry and subsequent attainment decline as travel time increases. Any ANC was 86.5% at 0–30 minutes versus 54.7% at >120 minutes. Among early initiators, ANC8+ was 48.2% at 0–30 minutes versus 18.5% at >120 minutes.",
      "Model evidence": "Travel time was among the strongest predictors in both the full-cohort and ANC-entry models and remained highly prominent after early ANC timing was introduced.",
      "Programme-review cue": "Review where geographic and repeated-travel burdens interfere with both ANC entry and sustained attendance.",
      "Contextual lenses": "Region; household wealth; maternal occupation",
@@ -3915,7 +3915,7 @@
     {
      "Signal": "Travel time",
      "Model evidence": "Full-cohort SHAP rank 2 and XGBoost permutation rank 3; remains among the leading predictors after early ANC is added.",
-     "Observed pathway pattern": "Longer travel is associated with lower ANC entry, lower progression to ANC4+, and lower ANC8+ attainment. Even among early initiators, ANC8+ declined from 48.2% at 0\u201330 minutes to 18.5% at >120 minutes.",
+     "Observed pathway pattern": "Longer travel is associated with lower ANC entry, lower progression to ANC4+, and lower ANC8+ attainment. Even among early initiators, ANC8+ declined from 48.2% at 0–30 minutes to 18.5% at >120 minutes.",
      "Programme-review question": "Where does repeated travel burden interfere with timely entry and sustained ANC attendance?",
      "Additional evidence needed": "Facility catchment geography, service distribution, outreach coverage, transport availability, referral arrangements and local travel-cost information."
     },
@@ -4108,5 +4108,343 @@
     }
    ]
   }
- }
+ },
+ "what_if_top": [
+  {
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "a": "Poorest",
+   "b": "Richest",
+   "model": "Logistic regression",
+   "observed": 0.16930088856121883,
+   "pa": 0.08935991460881314,
+   "pb": 0.24343241194946397,
+   "diff_pp": 15.40724973406509,
+   "ci": [
+    14.095565748658059,
+    16.851162980783432
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "a": "Poorest",
+   "b": "Richest",
+   "model": "Random Forest",
+   "observed": 0.17696275302436926,
+   "pa": 0.13541896385456884,
+   "pb": 0.24978961500850624,
+   "diff_pp": 11.437065115393743,
+   "ci": [
+    11.075186456200361,
+    11.803770365252912
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "wealth_quintile",
+   "label": "Household wealth",
+   "a": "Poorest",
+   "b": "Richest",
+   "model": "XGBoost",
+   "observed": 0.16574898456965578,
+   "pa": 0.08503259394907324,
+   "pb": 0.24826785537765542,
+   "diff_pp": 16.323526109455628,
+   "ci": [
+    15.149297406041383,
+    17.612156953708936
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "travel_time_min",
+   "label": "Travel time",
+   "a": "150",
+   "b": "15",
+   "model": "Logistic regression",
+   "observed": 0.16930088856121883,
+   "pa": 0.1225155540053084,
+   "pb": 0.18637487494835997,
+   "diff_pp": 6.385932094305156,
+   "ci": [
+    5.733203204766021,
+    7.090482055296679
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "travel_time_min",
+   "label": "Travel time",
+   "a": "150",
+   "b": "15",
+   "model": "Random Forest",
+   "observed": 0.17696275302436926,
+   "pa": 0.15472807793953572,
+   "pb": 0.18895419801391408,
+   "diff_pp": 3.422612007437835,
+   "ci": [
+    3.2899537116802184,
+    3.549815382925356
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "travel_time_min",
+   "label": "Travel time",
+   "a": "150",
+   "b": "15",
+   "model": "XGBoost",
+   "observed": 0.16574898456965578,
+   "pa": 0.09814627282043929,
+   "pb": 0.17775919551040023,
+   "diff_pp": 7.9612922572705696,
+   "ci": [
+    6.90232474603886,
+    9.045464864646938
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "a": "as observed",
+   "b": "Addis Ababa",
+   "model": "Logistic regression",
+   "observed": 0.16930088856121883,
+   "pa": 0.16930088856121883,
+   "pb": 0.2951398607252225,
+   "diff_pp": 12.583897216400366,
+   "ci": [
+    11.311768460204275,
+    13.95197675538515
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "a": "as observed",
+   "b": "Addis Ababa",
+   "model": "Random Forest",
+   "observed": 0.17696275302436926,
+   "pa": 0.17696275302436926,
+   "pb": 0.2519926989649062,
+   "diff_pp": 7.5029945940537,
+   "ci": [
+    7.115445867950762,
+    7.9117212602759786
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "region",
+   "label": "Region",
+   "a": "as observed",
+   "b": "Addis Ababa",
+   "model": "XGBoost",
+   "observed": 0.16574898456965578,
+   "pa": 0.16574898456965578,
+   "pb": 0.22271780881982464,
+   "diff_pp": 5.696882424386001,
+   "ci": [
+    4.740984583119979,
+    6.667123842993248
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "pregnancy_intention",
+   "label": "Pregnancy intention",
+   "a": "Wanted no more",
+   "b": "Wanted then",
+   "model": "Logistic regression",
+   "observed": 0.16930088856121883,
+   "pa": 0.10875043906055164,
+   "pb": 0.17847509426269043,
+   "diff_pp": 6.9724655202138806,
+   "ci": [
+    6.134356296425807,
+    7.832275035384649
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "pregnancy_intention",
+   "label": "Pregnancy intention",
+   "a": "Wanted no more",
+   "b": "Wanted then",
+   "model": "Random Forest",
+   "observed": 0.17696275302436926,
+   "pa": 0.16681143366585982,
+   "pb": 0.17883461879179702,
+   "diff_pp": 1.2023185125937208,
+   "ci": [
+    1.0461715705206287,
+    1.3751544601742205
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "pregnancy_intention",
+   "label": "Pregnancy intention",
+   "a": "Wanted no more",
+   "b": "Wanted then",
+   "model": "XGBoost",
+   "observed": 0.16574898456965578,
+   "pa": 0.1135923422431952,
+   "pb": 0.17243958899913983,
+   "diff_pp": 5.884724678239297,
+   "ci": [
+    4.909543201768862,
+    6.9236658752676545
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "maternal_occupation_group",
+   "label": "Mother's occupation",
+   "a": "Not working",
+   "b": "Professional/clerical",
+   "model": "Logistic regression",
+   "observed": 0.16930088856121883,
+   "pa": 0.15867677226397464,
+   "pb": 0.1667581636814634,
+   "diff_pp": 0.8081391417488808,
+   "ci": [
+    0.7057943931655852,
+    0.9168780158418691
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "maternal_occupation_group",
+   "label": "Mother's occupation",
+   "a": "Not working",
+   "b": "Professional/clerical",
+   "model": "Random Forest",
+   "observed": 0.17696275302436926,
+   "pa": 0.17006339921237285,
+   "pb": 0.20164260020894087,
+   "diff_pp": 3.1579200996568026,
+   "ci": [
+    3.0174782414412507,
+    3.3067654959611112
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "maternal_occupation_group",
+   "label": "Mother's occupation",
+   "a": "Not working",
+   "b": "Professional/clerical",
+   "model": "XGBoost",
+   "observed": 0.16574898456965578,
+   "pa": 0.1571324577023395,
+   "pb": 0.16620213985951898,
+   "diff_pp": 0.9069682157179502,
+   "ci": [
+    0.7539603941811405,
+    1.0598983040368641
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner's education",
+   "a": "No education",
+   "b": "Higher",
+   "model": "Logistic regression",
+   "observed": 0.16930088856121883,
+   "pa": 0.1380335181535144,
+   "pb": 0.23251569046513068,
+   "diff_pp": 9.448217231161625,
+   "ci": [
+    8.446800351318895,
+    10.48797231441565
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner's education",
+   "a": "No education",
+   "b": "Higher",
+   "model": "Random Forest",
+   "observed": 0.17696275302436926,
+   "pa": 0.16770535528736524,
+   "pb": 0.20275485910983068,
+   "diff_pp": 3.5049503822465438,
+   "ci": [
+    3.3480785519975393,
+    3.6637496328183174
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "partner_education",
+   "label": "Partner's education",
+   "a": "No education",
+   "b": "Higher",
+   "model": "XGBoost",
+   "observed": 0.16574898456965578,
+   "pa": 0.1487882025905961,
+   "pb": 0.1934779926896343,
+   "diff_pp": 4.468979010044194,
+   "ci": [
+    3.863568491283361,
+    5.090734442845229
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional media",
+   "a": "0",
+   "b": "3",
+   "model": "Logistic regression",
+   "observed": 0.16930088856121883,
+   "pa": 0.16719179424333297,
+   "pb": 0.17800534294034936,
+   "diff_pp": 1.0813548697016413,
+   "ci": [
+    0.9576216648612551,
+    1.2103172653274903
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional media",
+   "a": "0",
+   "b": "3",
+   "model": "Random Forest",
+   "observed": 0.17696275302436926,
+   "pa": 0.16747594280897682,
+   "pb": 0.20777352256736734,
+   "diff_pp": 4.02975797583905,
+   "ci": [
+    3.9039178661229887,
+    4.1501993289455035
+   ],
+   "n": 1375
+  },
+  {
+   "predictor": "traditional_media_weekly_count",
+   "label": "Weekly traditional media",
+   "a": "0",
+   "b": "3",
+   "model": "XGBoost",
+   "observed": 0.16574898456965578,
+   "pa": 0.1580668314573278,
+   "pb": 0.16346502712737151,
+   "diff_pp": 0.5398195670043687,
+   "ci": [
+    0.45561350401020034,
+    0.6282820597827835
+   ],
+   "n": 1375
+  }
+ ]
 }

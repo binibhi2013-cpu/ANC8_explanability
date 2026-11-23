@@ -16,10 +16,10 @@ export const DASH_HELP: HelpTopic[] = [
     purpose:
       "The ANC8+ Ethiopia Dashboard shows how many pregnant women in Ethiopia reach eight antenatal care contacts (ANC8+), where they are lost on the way, which groups are left behind, and how well the study's three models predict ANC8+. Every number comes from the study's own analysis of the Ethiopia Demographic and Health Survey 2024–25.",
     plain: [
-      "The page has five sections, in the order you would tell the story: **Overview**, **Who is left behind**, **Early ANC**, **Models** and **What if**. The links in the dark top bar jump to each one.",
+      "The dashboard has seven tabs, in the order you would tell the story: **Overview**, **Left behind**, **Regions**, **Early ANC**, **Models**, **What if** and **Review**. Each tab fits one screen, so nothing is hidden below.",
       "The **filter bar** under the top bar has three controls, and every chart on the page follows them. **Cohort** chooses who is counted: all 6,893 women with a recent pregnancy, or the 5,001 who started ANC. **Indicator** chooses what is counted: ANC1+, ANC4+, ANC8+ or an early first visit. **Region** shows the page for one region; clicking a region on the map or in a ranked list does the same.",
       "The filters are kept in the address bar, so a link you copy opens exactly what you see, and the browser's back button undoes the last change. **Reset** returns to all women, ANC8+, Ethiopia.",
-      "Every card has a small (i): hover over it for what the card shows and where the numbers come from.",
+      "Every card has a small (i): hover over it for what the card shows and where the numbers come from. Finding cards also have a **Cue** button: click it for a suggested action, the number it rests on, and the study's own notebook 4 wording where there is some. Cues are suggestions from the findings, not tested effects.",
     ],
     cards: [
       {
@@ -31,6 +31,16 @@ export const DASH_HELP: HelpTopic[] = [
           "An early first visit is always counted among women who started ANC, whichever cohort is chosen.",
         ],
         terms: ["cohort", "contact"],
+      },
+      {
+        id: "cues", title: "Recommendation cues", shot: false,
+        shows: "The **Cue** button on a finding card opens a short suggested action for programmes.",
+        read: [
+          "**Suggested action**: what a programme could consider, drafted for the dashboard from the card's finding.",
+          "**Based on**: the number on the card, which changes with the filters (choose Somali and the cue turns to Somali's weakest stage).",
+          "**Study (notebook 4)**: the study's own programme-review wording, verbatim, where it exists.",
+        ],
+        watch: "A cue is a suggestion to review, not a tested intervention or a predicted effect.",
       },
       {
         id: "present", title: "Presenting", shot: false,
@@ -86,7 +96,7 @@ export const DASH_HELP: HelpTopic[] = [
     label: "1 · Overview",
     group: "plan",
     blurb: "The four indicators, the map and the care ladder",
-    screen: "/#overview",
+    screen: "/",
     purpose: "The national or regional picture at a glance: how many women reach each indicator, how it varies across the 14 regions, and at which step of the care ladder women are lost.",
     cards: [
       {
@@ -97,7 +107,7 @@ export const DASH_HELP: HelpTopic[] = [
       {
         id: "map", title: "Map by region", shot: false,
         shows: "The chosen indicator in each region; darker is higher.",
-        read: ["Click a region to show the page for that region; click it again to return to Ethiopia.", "The line under the map names the highest and lowest region."],
+        read: ["Click a region to show every tab for that region; click it again to return to Ethiopia.", "The line under the map names the highest and lowest region."],
         terms: ["regional-gap"],
       },
       {
@@ -112,37 +122,49 @@ export const DASH_HELP: HelpTopic[] = [
     key: "left-behind",
     label: "2 · Who is left behind",
     group: "plan",
-    blurb: "The chosen indicator by wealth, travel time, intention, occupation, religion and region",
-    screen: "/#left-behind",
-    purpose: "The predictors the study's models rank highest (household wealth, travel time, region, religion, pregnancy intention and occupation), each shown as the share reaching the chosen indicator in each group. Change the cohort, indicator or region above and every card follows.",
+    blurb: "The whole care pathway, stacked, for each group of a predictor",
+    screen: "/?tab=left-behind",
+    purpose: "One stacked chart: each bar is 100% of a group's women, split into never started, stopped before four, reached four but not eight, and reached eight. **Group by** switches the predictor: wealth, travel time, pregnancy intention, occupation, religion, education, residence, health insurance, pregnancy order or region.",
     cards: [
       {
-        id: "factors", title: "One card per predictor", shot: false,
-        shows: "Bars for each group, a dashed mark for the average, and one sentence comparing the highest and lowest group.",
+        id: "stacked", title: "The stacked pathway", shot: false,
+        shows: "The bright part of each bar, and the number at its end, is the indicator chosen in the filter bar; the faded parts are the rest of the pathway.",
         read: [
-          "Wealth and pregnancy intention are available for each region; travel time, occupation and religion are national only, and the card says so when a region is chosen.",
-          "Early first visit is not broken down by pregnancy intention in the study's outputs, so that card says “Not available for this indicator”.",
+          "Choose ANC4+ and the last two parts light up; choose ANC8+ and only the last one does.",
+          "The dashed mark is the average for the place chosen.",
+          "Wealth, intention, education, residence, insurance and pregnancy order are also available by region; travel time, occupation and religion are national only, and the card says so.",
+          "With the ANC-entry cohort there is no grey part, because every woman started ANC.",
         ],
-        watch: "Within a region some groups are small. Read large gaps from small groups with care.",
+        watch: "Within a region some groups are small; grey bars marked “not reliable” are left out of the comparison.",
       },
       {
-        id: "travel", title: "Travel time", shot: false,
-        shows: "The share reaching the indicator by travel time to a health centre or hospital. Move the slider to pick a travel band.",
-        read: ["Travel time is one of the strongest predictors in the models; it is not a study objective on its own."],
+        id: "gap", title: "The gap", shot: false,
+        shows: "The highest and lowest group for the chosen indicator, how many times higher, and the step of the pathway where the two groups part most.",
+        read: ["Its Cue suggests an action for that predictor, with the study's notebook 4 wording."],
       },
+    ],
+  },
+  {
+    key: "regions",
+    label: "3 · Regions",
+    group: "plan",
+    blurb: "Each region through five stages of care, and its weakest stage",
+    screen: "/?tab=regions",
+    purpose: "Each region through the five notebook 4 stages, each among women who reached the stage before it. Red cells are below Ethiopia, blue above, and the last column names the stage where the region falls furthest behind.",
+    cards: [
       {
-        id: "stages", title: "Where each region loses women", shot: false,
-        shows: "For each region, five steps of care, each among women who reached the step before it. Red cells are below Ethiopia, blue above.",
-        read: ["The last column names the step where the region falls furthest below Ethiopia.", "Click a row to show the page for that region."],
+        id: "stages", title: "Five stages by region", shot: false,
+        shows: "Started ANC, ANC4+ of those who started, ANC8+ of those with four, early first visit, and ANC8+ of early starters.",
+        read: ["Click a row to show every tab for that region; the Cue then gives an action for that region's weakest stage.", "The side card groups the regions by weakest stage."],
       },
     ],
   },
   {
     key: "early",
-    label: "3 · Early ANC",
+    label: "4 · Early ANC",
     group: "plan",
     blurb: "Does a first visit by 12 weeks go with reaching eight contacts?",
-    screen: "/#early",
+    screen: "/?tab=early",
     purpose: "Among the 5,001 women who started ANC, 43% had their first visit by 12 weeks. This section compares them with women who started later, first as observed and then as the XGBoost model predicts.",
     cards: [
       {
@@ -160,10 +182,10 @@ export const DASH_HELP: HelpTopic[] = [
   },
   {
     key: "models",
-    label: "4 · Our three models",
+    label: "5 · Our three models",
     group: "plan",
     blurb: "Logistic regression, random forest and XGBoost: performance, calibration, predictors",
-    screen: "/#models",
+    screen: "/?tab=models",
     purpose: "The study trained three models for ANC8+ on the same 21 predictors. This section reports how well each predicts on held-out women and which predictors each relies on. XGBoost scored highest and is the model used for findings elsewhere on the dashboard.",
     cards: [
       {
@@ -192,19 +214,37 @@ export const DASH_HELP: HelpTopic[] = [
   },
   {
     key: "whatif",
-    label: "5 · What if",
+    label: "6 · What if",
     group: "plan",
     blurb: "Change one thing for every woman and ask the models what they predict",
-    screen: "/#what-if",
+    screen: "/?tab=what-if",
     purpose: "A what-if changes one predictor for every woman, keeps everything else as it is, and asks each model what share would reach ANC8+. It is a model contrast, not the effect of a programme.",
     cards: [
       {
-        id: "early", title: "If every woman who started ANC had an early first visit", shot: false,
-        shows: "For each of the three models, the predicted share reaching ANC8+ with every first visit later and with every first visit early.",
-        read: ["XGBoost: 13% → 34%. Logistic regression gives the same, random forest 18% → 33%."],
-        watch: "Model contrast, not effect.",
+        id: "contrast", title: "One contrast, three models", shot: false,
+        shows: "Choose a predictor: early first visit, household wealth, travel time, region, pregnancy intention, mother's occupation, partner's education or weekly traditional media. Each model's predicted share reaching ANC8+ is shown with every woman at one level and then at the other.",
+        read: [
+          "Early first visit (ANC-entry cohort, notebook 3 table T8): XGBoost 13% → 34%.",
+          "The others use the full cohort's 1,375 held-out women, from a script run on the study's saved models with the same method: for example, all poorest → all richest moves XGBoost from 9% to 25%.",
+          "The bracket after each change is a 95% interval from resampling survey clusters. It leaves out uncertainty in the fitted models, so the spread between the three models is the better guide.",
+        ],
+        watch: "Model contrast, not effect. Only 10 held-out women had three weekly media exposures, so that contrast rests on very little data.",
+      },
+      {
+        id: "all", title: "All contrasts at a glance", shot: false,
+        shows: "The change for every predictor, XGBoost as the bar and the other two models as ticks. Click a row to open it.",
+        read: ["The models agree most on wealth and the first visit; they disagree on intention, occupation and media."],
       },
     ],
+  },
+  {
+    key: "review",
+    label: "7 · Programme review",
+    group: "plan",
+    blurb: "The study's notebook 4 brief: observed, models, review cue, caution",
+    screen: "/?tab=review",
+    purpose: "The study's own programme-review brief from notebook 4, verbatim: for each core signal (wealth, travel time, region, early ANC) what was observed, what the models show, the review cue, and the caution that goes with it.",
+    cards: [],
   },
   {
     key: "predict",
@@ -229,10 +269,10 @@ export const DASH_HELP: HelpTopic[] = [
     group: "models",
     blurb: "Upload a list of women attending ANC and get each one's predicted chance of ANC8+",
     screen: "/your-data",
-    purpose: "A decision aid for a facility: download the template, fill in one row per woman attending ANC, upload it, and see each woman's predicted chance of reaching eight contacts from the study's trained models. Women below the model's threshold are flagged and listed first, so staff can decide whom to follow up first.",
+    purpose: "A decision aid for a facility: download the template, fill in one row per woman attending ANC, upload it, and see each woman's predicted chance of reaching eight contacts from the study's trained ANC-entry models. Women are ranked from the lowest chance, and you set how many your team can follow up.",
     plain: [
       "The file is read in your browser and is never sent anywhere.",
-      "The template has the 21 questions the models use plus a woman_id. If you also fill **early_anc** (1 = first visit by 12 weeks, 0 = later), that woman is scored with the model that includes the first visit, which was trained on women who started ANC.",
+      "The models are the study's **ANC-entry** models, trained on the 5,001 women who started ANC, because a facility list is women already in care. The template has the 21 questions they use plus a woman_id. If you also fill **early_anc** (1 = first visit by 12 weeks, 0 = later), that woman is scored with the version that also uses the first visit.",
       "A blank or unrecognised answer is filled with the model's usual value and listed under “Checks on your file”, so you can correct it and upload again.",
     ],
     cards: [

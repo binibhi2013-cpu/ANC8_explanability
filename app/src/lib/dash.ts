@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useJSON } from "@/lib/data";
 import type { Nb4 } from "@/lib/nb4";
 import { REGION_NAMES } from "@/lib/regions";
@@ -9,7 +9,7 @@ import { REGION_NAMES } from "@/lib/regions";
 /**
  * The dashboard's one shared state and its numbers.
  *
- * State lives in the address bar (cohort, ind, region), so a view can be shared as a
+ * State lives in the address bar (tab, cohort, ind, region), so a view can be shared as a
  * link and the browser's back button undoes the last click. Every section reads the
  * same three slicers.
  *
@@ -37,27 +37,40 @@ export const DASH_COHORTS: { key: DashCohort; label: string; n: number; who: str
   { key: "entry", label: "Women who started ANC", n: 5001, who: "women who started ANC" },
 ];
 
+export const TABS = [
+  { id: "overview", label: "Overview" },
+  { id: "left-behind", label: "Who is left behind" },
+  { id: "regions", label: "Regions" },
+  { id: "early", label: "Early ANC" },
+  { id: "models", label: "Models" },
+  { id: "what-if", label: "What if" },
+  { id: "review", label: "Programme review" },
+] as const;
+export type Tab = (typeof TABS)[number]["id"];
+
 export interface DashState {
+  tab: Tab;
   cohort: DashCohort;
   ind: Ind;
   region: string; // "" = Ethiopia
 }
 
-const DEFAULTS: DashState = { cohort: "full", ind: "anc8", region: "" };
+const DEFAULTS: DashState = { tab: "overview", cohort: "full", ind: "anc8", region: "" };
 
 export function useDash() {
   const params = useSearchParams();
   const router = useRouter();
-  const pathname = usePathname();
   const state = useMemo<DashState>(() => {
     const c = params.get("cohort");
     const i = params.get("ind");
     const r = params.get("region") ?? "";
+    const t = params.get("tab");
     const cohort: DashCohort = c === "entry" ? "entry" : "full";
     let ind: Ind = INDICATORS.some((x) => x.key === i) ? (i as Ind) : DEFAULTS.ind;
     // Every woman in the ANC-entry cohort started ANC, so ANC1+ is 100% there by definition.
     if (cohort === "entry" && ind === "anc1") ind = "anc4";
     return {
+      tab: TABS.some((x) => x.id === t) ? (t as Tab) : DEFAULTS.tab,
       cohort,
       ind,
       region: REGION_NAMES.includes(r) ? r : "",
@@ -72,9 +85,12 @@ export function useDash() {
         else next.set(k, String(v));
       }
       const qs = next.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      const url = qs ? `/?${qs}` : "/";
+      // A new tab is a new view: push it, so the browser's back button returns to the last tab.
+      if (patch.tab !== undefined && patch.tab !== state.tab) router.push(url, { scroll: false });
+      else router.replace(url, { scroll: false });
     },
-    [params, pathname, router],
+    [params, router, state.tab],
   );
   return { ...state, set, place: state.region || "Ethiopia" };
 }
@@ -117,6 +133,9 @@ export interface StudyJSON {
   entry_shap: Ranked[];
   full_permutation: Record<string, Ranked[]>;
   what_if: { model: string; later: number; early: number; difference_pp: number }[];
+  /** Model contrasts for the top predictors, full cohort held-out women (script
+   *  what_if_top_predictors.py on the study's saved models; T8 method). */
+  what_if_top?: { predictor: string; label: string; a: string; b: string; model: string; observed: number; pa: number; pb: number; diff_pp: number; ci: [number, number]; n: number }[];
   nb4: Nb4;
 }
 
@@ -201,6 +220,77 @@ export function byFactor(
       else if (ind === "anc8" && u && e8) row = { level: L, value: u.pct * e8.pct, n: u.n };
     }
     if (row) rows.push(row);
+  }
+  return { scope: "Ethiopia", rows };
+}
+
+// ---- the pathway, stacked, by one grouping -----------------------------------------------
+
+/** The groupings the stacked pathway chart offers: predictors from the study's 21, with
+ *  where their numbers come from. `sub` = the saved subgroup tables (by region too);
+ *  `nb4` = notebook 4 equity stages (national only). */
+export const GROUPS = [
+  { key: "wealth", label: "Wealth", sub: "Wealth", nb4: "wealth" },
+  { key: "travel", label: "Travel time", sub: null, nb4: "travel" },
+  { key: "intention", label: "Pregnancy intention", sub: "Pregnancy wanted", nb4: "intention" },
+  { key: "occupation", label: "Occupation", sub: null, nb4: "occupation" },
+  { key: "religion", label: "Religion", sub: null, nb4: "religion" },
+  { key: "education", label: "Education", sub: "Education", nb4: null },
+  { key: "residence", label: "Residence", sub: "Residence", nb4: null },
+  { key: "insurance", label: "Health insurance", sub: "Health insurance", nb4: null },
+  { key: "order", label: "Pregnancy order", sub: "Pregnancy number", nb4: null },
+  { key: "region", label: "Region", sub: null, nb4: null },
+] as const;
+export type GroupKey = (typeof GROUPS)[number]["key"];
+
+/** One group's women split along the care pathway; the four parts add to 1. In the
+ *  ANC-entry cohort `never` is 0. `early` is the share with a first visit by 12 weeks
+ *  among women who started ANC, where the study has it. */
+export interface PathRow {
+  level: string; n: number; small?: boolean;
+  never: number; lt4: number; four8: number; r8: number;
+  reach1: number; reach4: number; reach8: number; early?: number;
+}
+
+export function pathwayBy(
+  reg: RegionsJSON, nb4: Nb4, group: GroupKey, cohort: DashCohort, region: string,
+): { rows: PathRow[]; scope: string } | null {
+  const g = GROUPS.find((x) => x.key === group)!;
+  const mk = (level: string, n: number, r1: number, r4: number, r8: number, small?: boolean, early?: number): PathRow => ({
+    level, n, small, early, reach1: r1, reach4: r4, reach8: r8,
+    never: 1 - r1, lt4: Math.max(0, r1 - r4), four8: Math.max(0, r4 - r8), r8,
+  });
+  const earlyOf = (lvl: string) => (g.nb4 ? nb4.equity[g.nb4]?.stages.early_anc?.find((r) => r.level === lvl)?.pct : undefined);
+  if (group === "region") {
+    const names = Object.keys(reg.cohorts[cohort].regions);
+    return {
+      scope: "Ethiopia",
+      rows: names.map((r) => {
+        const x = reg.cohorts[cohort].regions[r];
+        return mk(r, x.n, cohort === "entry" ? 1 : x.reach1, x.reach4, x.reach8, false, nb4.regions[r]?.early_anc?.pct);
+      }).sort((a, b) => b.reach8 - a.reach8),
+    };
+  }
+  if (g.sub) {
+    const subs = reg.subgroups[cohort]?.[region || "Ethiopia"]?.[g.sub];
+    if (subs?.length) {
+      return {
+        scope: region || "Ethiopia",
+        rows: subs.map((s) => mk(s.level, s.n, cohort === "entry" ? 1 : s.reach1, s.reach4, s.reach8, s.small, region ? undefined : earlyOf(s.level))),
+      };
+    }
+  }
+  if (!g.nb4) return null;
+  const st = nb4.equity[g.nb4]?.stages;
+  if (!st?.any_anc || !st.anc4 || !st.anc8) return null;
+  const at = (key: "anc4" | "anc8", L: string) => st[key]!.find((r) => r.level === L);
+  const rows: PathRow[] = [];
+  for (const a of st.any_anc) {
+    const u = at("anc4", a.level), e8 = at("anc8", a.level);
+    if (!u || !e8) continue;
+    rows.push(cohort === "entry"
+      ? mk(a.level, u.n, 1, u.pct, u.pct * e8.pct, false, earlyOf(a.level))
+      : mk(a.level, a.n, a.pct, a.pct * u.pct, a.pct * u.pct * e8.pct, false, earlyOf(a.level)));
   }
   return { scope: "Ethiopia", rows };
 }

@@ -3,36 +3,38 @@
 import { RotateCcw } from "lucide-react";
 import { DASH_COHORTS, INDICATORS, useDash, useDashData } from "@/lib/dash";
 import { REGION_NAMES } from "@/lib/regions";
-import { InlineError, PanelLoading, SiteFooter } from "@/components/studio/ui";
+import { InlineError, PanelLoading } from "@/components/studio/ui";
 import { Seg } from "@/components/dash/kit";
 import Overview from "@/components/dash/Overview";
 import LeftBehind from "@/components/dash/LeftBehind";
-import { EarlyAnc, Models, WhatIf } from "@/components/dash/Sections";
+import Regions from "@/components/dash/Regions";
+import { EarlyAnc, Models, Review, WhatIf } from "@/components/dash/Sections";
 
 /**
- * The ANC8+ Ethiopia Dashboard: one page, five sections, one filter bar that every
- * chart obeys. Every number comes from the study's own saved outputs (lib/dash.ts).
+ * The ANC8+ Ethiopia Dashboard: one tab at a time, each sized to fit the screen, under
+ * one filter bar that every chart obeys. Every number comes from the study's own saved
+ * outputs (lib/dash.ts).
  */
 export default function Dashboard() {
   const { reg, study, error, ready } = useDashData();
+  const d = useDash();
   return (
-    <div className="min-h-full">
+    <div className="min-h-full lg:h-full flex flex-col">
       <FilterBar />
-      <div className="max-w-[1440px] mx-auto px-12 md:px-24 py-20 flex flex-col gap-40">
+      <div className="lg:flex-1 lg:min-h-0 max-w-[1440px] w-full mx-auto px-12 md:px-20 py-12 flex flex-col gap-12">
         {error && <InlineError message={error} />}
         {!ready && !error && <PanelLoading rows={10} />}
         {reg && study && (
           <>
-            <Overview reg={reg} study={study} />
-            <LeftBehind reg={reg} study={study} />
-            <EarlyAnc study={study} />
-            <Models study={study} />
-            <WhatIf study={study} />
+            {d.tab === "overview" && <Overview reg={reg} study={study} />}
+            {d.tab === "left-behind" && <LeftBehind reg={reg} study={study} />}
+            {d.tab === "regions" && <Regions study={study} />}
+            {d.tab === "early" && <EarlyAnc study={study} />}
+            {d.tab === "models" && <Models study={study} />}
+            {d.tab === "what-if" && <WhatIf study={study} />}
+            {d.tab === "review" && <Review study={study} />}
           </>
         )}
-      </div>
-      <div className="max-w-[1440px] mx-auto px-12 md:px-24">
-        <SiteFooter />
       </div>
     </div>
   );
@@ -42,8 +44,8 @@ function FilterBar() {
   const d = useDash();
   const changed = d.cohort !== "full" || d.ind !== "anc8" || d.region !== "";
   return (
-    <div data-help="dash.filters" className="sticky top-0 z-[1000] bg-panel/95 backdrop-blur border-b border-border shadow-sm">
-      <div className="max-w-[1440px] mx-auto px-12 md:px-24 py-10 flex items-center gap-x-20 gap-y-8 flex-wrap">
+    <div data-help="dash.filters" className="sticky top-0 z-[1000] bg-panel/95 backdrop-blur border-b border-border shadow-sm flex-none">
+      <div className="max-w-[1440px] mx-auto px-12 md:px-20 py-8 flex items-center gap-x-18 gap-y-6 flex-wrap">
         <label className="flex items-center gap-8">
           <span className="text-12.5 font-semibold text-dim uppercase tracking-wide">Cohort</span>
           <Seg label="Cohort" value={d.cohort} onChange={(k) => d.set(k === "entry" && d.ind === "anc1" ? { cohort: k, ind: "anc4" } : { cohort: k })}

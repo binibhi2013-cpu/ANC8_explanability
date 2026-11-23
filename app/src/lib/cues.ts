@@ -16,15 +16,15 @@
 const pct = (v: number, d = 0) => `${(v * 100).toFixed(d)}%`;
 
 /** Notebook 4, core_programme_review.csv (Region), programme-review focus, verbatim. */
-const REGION_CUE = "Diagnose the pathway stage responsible for each regional pattern before considering a programme response.";
+export const REGION_CUE = "Diagnose the pathway stage responsible for each regional pattern before considering a programme response.";
 
 /** Notebook 4, programme_review_brief.csv (Timing and continuity), verbatim. */
-const TIMING_CUE = "Review timely initiation and continuity after initiation as related but distinct programme problems.";
+export const TIMING_CUE = "Review timely initiation and continuity after initiation as related but distinct programme problems.";
 
 /** Notebook 4 wording per signal, verbatim: the brief's cue for wealth and travel time
  *  (programme_review_brief.csv) and "How to use in programme review" for the contextual
  *  signals (contextual_overlays.csv). */
-const SIGNAL_CUE = {
+export const SIGNAL_CUE = {
   wealth: "Review whether barriers affecting poorer women persist beyond initial ANC access and continue through repeated contacts.",
   travel: "Review where geographic and repeated-travel burdens interfere with both ANC entry and sustained attendance.",
   occupation: "Use occupation to ask whether work schedules, livelihood demands, seasonality, clinic hours or opportunity costs help explain an identified access or continuity problem.",

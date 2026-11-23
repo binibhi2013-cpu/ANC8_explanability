@@ -37,7 +37,7 @@ const STEPS: { icon: typeof Database; title: string; what: string; out: string; 
     out: "Model bundles (all PASS), study.json, the Predict screen's questions and models.",
     where: "scripts/export_serving.py --v1 · build_study_predict.py · build_study_data.py · extract_nb4_printed.py" },
   { icon: Globe, title: "7 · The dashboard",
-    what: "A one-page dashboard (Next.js and React) with one filter bar for cohort, indicator and region: map, care ladder, who is left behind, early ANC, the three models and what-if, plus a tool to score one woman or a facility's list. Logistic models are scored in the browser; tree models from their exported files. It works offline once opened.",
+    what: "A tabbed dashboard (Next.js and React), each tab sized to one screen, under one filter bar for cohort, indicator and region: overview, who is left behind, regions, early ANC, the three models, what-if and the programme review, with a recommendation cue on each finding, plus tools to score one woman or a facility's list. Logistic models are scored in the browser; tree models from their exported files. It works offline once opened.",
     out: "Every screen reads the files above; nothing is re-estimated in the app.",
     where: "app/ in the repository · deployed on Vercel" },
 ];

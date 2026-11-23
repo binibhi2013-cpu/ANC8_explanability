@@ -17,7 +17,7 @@ const TASKS: { q: string; a: string; href: string }[] = [
   { q: "How do the cohort, indicator and region filters work?", a: "Using the dashboard", href: "/help/start" },
   { q: "Where on the care ladder are women lost?", a: "Overview", href: "/help/overview#ladder" },
   { q: "Which groups are left behind?", a: "Who is left behind", href: "/help/left-behind" },
-  { q: "Where does each region lose women?", a: "Who is left behind", href: "/help/left-behind#stages" },
+  { q: "Where does each region lose women?", a: "Regions", href: "/help/regions" },
   { q: "Does an early first visit go with reaching eight?", a: "Early ANC", href: "/help/early" },
   { q: "How well do our three models predict ANC8+?", a: "Our three models", href: "/help/models" },
   { q: "Which predictors does XGBoost lean on?", a: "Our three models", href: "/help/models#shap" },

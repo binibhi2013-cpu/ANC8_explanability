@@ -4,5 +4,5 @@ import Redirect from "@/components/shell/Redirect";
 
 /** This screen is now a section of the one-page dashboard. */
 export default function Moved() {
-  return <Redirect to="/#models" />;
+  return <Redirect to="/?tab=models" />;
 }
