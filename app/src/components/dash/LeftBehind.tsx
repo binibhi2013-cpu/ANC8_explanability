@@ -69,7 +69,7 @@ export default function LeftBehind({ reg, study }: { reg: RegionsJSON; study: St
       <div className="grid gap-14 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:flex-1 lg:min-h-0">
         <Card help="dash.stacked" title={`${ind.label} by ${g.label.toLowerCase()}`}
           sub={regionNote ? "Ethiopia · this grouping is not available by region" : res?.scope ?? ""}
-          info={<>Survey-weighted shares. Wealth, intention, education, residence, insurance and pregnancy order come from the study&apos;s saved subgroup tables (also by region); travel time, occupation and religion from notebook 4 (national). The dashed mark is the {res?.scope === "Ethiopia" ? "national" : res?.scope} share.</>}>
+          info={<>Survey-weighted shares. Wealth, intention, education, residence, insurance and pregnancy order come from the study&apos;s saved subgroup tables (also by region); travel time, occupation and religion from the study's programme review (national only). The dashed mark is the {res?.scope === "Ethiopia" ? "national" : res?.scope} share.</>}>
           {!rows.length ? (
             <p className="text-13 text-dim">The study&apos;s saved outputs do not break {ind.label.toLowerCase()} down by {g.label.toLowerCase()}. Choose another grouping or indicator.</p>
           ) : (

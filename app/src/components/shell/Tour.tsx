@@ -39,7 +39,7 @@ const STEPS: { path: string; focus?: string; title: string; say: string }[] = [
   { path: "/your-data", title: "11 · A tool for facilities",
     say: "A facility uploads its list of women attending ANC; the ANC-entry models rank them so staff can follow up those least likely to reach eight." },
   { path: "/built", title: "12 · How it was built",
-    say: "Survey file → four notebooks → exported models checked against the published results → this dashboard. Next: external validation and recalibration." },
+    say: "Survey file → analysis in four steps → exported models checked against the published results → this dashboard. Next: external validation and recalibration." },
 ];
 
 export default function Tour() {

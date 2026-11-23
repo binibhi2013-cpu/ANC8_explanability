@@ -70,11 +70,11 @@ export const CUES = {
 
   /** Model analysis: SHAP and permutation ranking. */
   leadingPredictors:
-    "Wealth, travel time and region lead the model. Notebook 4 treats them as the core equity, access and contextual signals for programme review; none of them is a causal mechanism or an intervention target.",
+    "Wealth, travel time and region lead the model. The study treats them as the core equity, access and contextual signals for programme review; none of them is a causal mechanism or an intervention target.",
 
   /** Model analysis: held-out performance. */
   performance: (apLo: number, apHi: number) =>
-    `Average precision ${apLo.toFixed(2)} to ${apHi.toFixed(2)} and overall overprediction. As the manuscript concludes, independent validation and calibration assessment are needed before programme application.`,
+    `Average precision ${apLo.toFixed(2)} to ${apHi.toFixed(2)} and overall overprediction. As the study concludes, independent validation and calibration assessment are needed before programme application.`,
 
   /** Cohorts: what the first visit adds (Table 3 of the manuscript). */
   firstVisitAdds: (lo: number, hi: number) =>

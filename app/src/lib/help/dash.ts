@@ -19,7 +19,7 @@ export const DASH_HELP: HelpTopic[] = [
       "The dashboard has seven tabs, in the order you would tell the story: **Overview**, **Left behind**, **Regions**, **Early ANC**, **Models**, **What if** and **Review**. Each tab fits one screen, so nothing is hidden below.",
       "The **filter bar** under the top bar has three controls, and every chart on the page follows them. **Cohort** chooses who is counted: all 6,893 women with a recent pregnancy, or the 5,001 who started ANC. **Indicator** chooses what is counted: ANC1+, ANC4+, ANC8+ or an early first visit. **Region** shows the page for one region; clicking a region on the map or in a ranked list does the same.",
       "The filters are kept in the address bar, so a link you copy opens exactly what you see, and the browser's back button undoes the last change. **Reset** returns to all women, ANC8+, Ethiopia.",
-      "Every card has a small (i): hover over it for what the card shows and where the numbers come from. Finding cards also have a **Cue** button: click it for a suggested action, the number it rests on, and the study's own notebook 4 wording where there is some. Cues are suggestions from the findings, not tested effects.",
+      "Every card has a small (i): hover over it for what the card shows and where the numbers come from. Finding cards also have a **Cue** button: click it for a suggested action, the number it rests on, and the study's own wording where there is some. Cues are suggestions from the findings, not tested effects.",
     ],
     cards: [
       {
@@ -38,7 +38,7 @@ export const DASH_HELP: HelpTopic[] = [
         read: [
           "**Suggested action**: what a programme could consider, drafted for the dashboard from the card's finding.",
           "**Based on**: the number on the card, which changes with the filters (choose Somali and the cue turns to Somali's weakest stage).",
-          "**Study (notebook 4)**: the study's own programme-review wording, verbatim, where it exists.",
+          "**Study finding**: the study's own programme-review wording, verbatim, where it exists.",
         ],
         watch: "A cue is a suggestion to review, not a tested intervention or a predicted effect.",
       },
@@ -140,7 +140,7 @@ export const DASH_HELP: HelpTopic[] = [
       {
         id: "gap", title: "The gap", shot: false,
         shows: "The highest and lowest group for the chosen indicator, how many times higher, and the step of the pathway where the two groups part most.",
-        read: ["Its Cue suggests an action for that predictor, with the study's notebook 4 wording."],
+        read: ["Its Cue suggests an action for that predictor, with the study's own wording."],
       },
     ],
   },
@@ -150,7 +150,7 @@ export const DASH_HELP: HelpTopic[] = [
     group: "plan",
     blurb: "Each region through five stages of care, and its weakest stage",
     screen: "/?tab=regions",
-    purpose: "Each region through the five notebook 4 stages, each among women who reached the stage before it. Red cells are below Ethiopia, blue above, and the last column names the stage where the region falls furthest behind.",
+    purpose: "Each region through the study's five pathway stages, each among women who reached the stage before it. Red cells are below Ethiopia, blue above, and the last column names the stage where the region falls furthest behind.",
     cards: [
       {
         id: "stages", title: "Five stages by region", shot: false,
@@ -224,8 +224,8 @@ export const DASH_HELP: HelpTopic[] = [
         id: "contrast", title: "One contrast, three models", shot: false,
         shows: "Choose a predictor: early first visit, household wealth, travel time, region, pregnancy intention, mother's occupation, partner's education or weekly traditional media. Each model's predicted share reaching ANC8+ is shown with every woman at one level and then at the other.",
         read: [
-          "Early first visit (ANC-entry cohort, notebook 3 table T8): XGBoost 13% → 34%.",
-          "The others use the full cohort's 1,375 held-out women, from a script run on the study's saved models with the same method: for example, all poorest → all richest moves XGBoost from 9% to 25%.",
+          "Early first visit (ANC-entry cohort): XGBoost 13% → 34%.",
+          "The others use the full cohort's 1,375 held-out women, from the study's saved models with the same method: for example, all poorest → all richest moves XGBoost from 9% to 25%.",
           "The bracket after each change is a 95% interval from resampling survey clusters. It leaves out uncertainty in the fitted models, so the spread between the three models is the better guide.",
         ],
         watch: "Model contrast, not effect. Only 10 held-out women had three weekly media exposures, so that contrast rests on very little data.",
@@ -241,9 +241,9 @@ export const DASH_HELP: HelpTopic[] = [
     key: "review",
     label: "7 · Programme review",
     group: "plan",
-    blurb: "The study's notebook 4 brief: observed, models, review cue, caution",
+    blurb: "The study's programme-review brief: observed, models, review cue, caution",
     screen: "/?tab=review",
-    purpose: "The study's own programme-review brief from notebook 4, verbatim: for each core signal (wealth, travel time, region, early ANC) what was observed, what the models show, the review cue, and the caution that goes with it.",
+    purpose: "The study's own programme-review brief, in its own words: for each core signal (wealth, travel time, region, early ANC) what was observed, what the models show, the review cue, and the caution that goes with it.",
     cards: [],
   },
   {

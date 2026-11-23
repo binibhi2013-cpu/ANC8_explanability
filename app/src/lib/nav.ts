@@ -90,7 +90,7 @@ export const NAV: Record<Mode, NavGroup[]> = {
         { key: "predict", label: "Predict", icon: Calculator, path: "/predict",
           meta: ["Models", "Score one woman for ANC8+", "our three models, 21 predictors"] },
         { key: "analysis", label: "Model analysis", icon: Microscope, path: "/models",
-          meta: ["Models", "How well our models predict ANC8+", "Table 1, Table 2, Figure 1 and SHAP"] },
+          meta: ["Models", "How well our models predict ANC8+", "Performance, predictors and calibration"] },
       ],
     },
   ],
@@ -113,7 +113,7 @@ NAV.help = [
       { key: "help-home", label: "Help home", icon: CircleHelp, path: "/help",
         meta: ["Help", "How to use the studio", "every tool, in plain language"] },
       { key: "built", label: "How it was built", icon: Hammer, path: "/built",
-        meta: ["Help", "How this dashboard was built", "survey file → notebooks 1–4 → export → app"] },
+        meta: ["Help", "How this dashboard was built", "survey file → analysis → export → app"] },
     ],
   },
   ...HELP_GROUPS.map((g) => ({

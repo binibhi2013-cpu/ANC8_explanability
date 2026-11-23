@@ -45,7 +45,7 @@ export default function Regions({ study }: { study: StudyJSON }) {
       <TabHead title="Where each region loses women"
         lead="Each stage among women who reached the stage before it, so a region can start well and still lose women later. Red is below Ethiopia, blue above. Click a row to see every tab for that region." />
       <div className="grid gap-14 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:flex-1 lg:min-h-0">
-        <Card help="dash.stages" title="Five stages by region" sub="Notebook 4 pathway stages, survey-weighted" cue={cue}
+        <Card help="dash.stages" title="Five stages by region" sub="The study's pathway stages, survey-weighted" cue={cue}
           info="Each column is conditional on the one before it. The last column names the stage where the region is furthest below the national share.">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-13 border-separate border-spacing-y-[2px]">

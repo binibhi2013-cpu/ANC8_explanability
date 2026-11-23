@@ -29,7 +29,7 @@ export const TOPIC_LIST: TopicEntry[] = [
   { key: "early", label: "4 · Early ANC", group: "plan", blurb: "Does a first visit by 12 weeks go with reaching eight contacts?" },
   { key: "models", label: "5 · Our three models", group: "plan", blurb: "Logistic regression, random forest and XGBoost: performance, calibration, predictors" },
   { key: "whatif", label: "6 · What if", group: "plan", blurb: "Change one thing for every woman and ask the models what they predict" },
-  { key: "review", label: "7 · Programme review", group: "plan", blurb: "The study's notebook 4 brief: observed, models, review cue, caution" },
+  { key: "review", label: "7 · Programme review", group: "plan", blurb: "The study's programme-review brief: observed, models, review cue, caution" },
   { key: "predict", label: "Score one woman", group: "models", blurb: "Answer the 21 questions and see one woman's predicted chance of ANC8+" },
   { key: "your-data", label: "Score a facility's list", group: "models", blurb: "Upload a list of women attending ANC and get each one's predicted chance of ANC8+" },
 ];

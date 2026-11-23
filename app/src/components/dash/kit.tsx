@@ -148,7 +148,7 @@ export function CueButton({ cue }: { cue: Cue }) {
           <span className="text-14 text-text leading-snug">{cue.action}</span>
           <span className="text-12.5 text-dim leading-snug"><b className="text-text font-semibold">Based on: </b>{cue.basis}</span>
           {cue.study && (
-            <span className="text-12.5 text-dim leading-snug border-l-2 border-accent pl-8"><b className="text-text font-semibold">Study (notebook 4): </b>“{cue.study}”</span>
+            <span className="text-12.5 text-dim leading-snug border-l-2 border-accent pl-8"><b className="text-text font-semibold">Study finding: </b>“{cue.study}”</span>
           )}
           <span className="text-11.5 text-faint">A suggestion from the findings, not a tested effect.</span>
         </span>

@@ -34,7 +34,7 @@ export function EarlyAnc({ study }: { study: StudyJSON }) {
         <Card help="dash.early-observed" title="What women actually did"
           sub={`Early starters (${E.n.toLocaleString("en-US")} women) against later starters (${L.n.toLocaleString("en-US")})`}
           cue={earlyCue({ e8: E.anc8, l8: L.anc8 })}
-          info="Survey-weighted shares with 95% confidence intervals, notebook 4. An observed difference: early starters may also differ in wealth, distance and care-seeking.">
+          info="Survey-weighted shares with 95% confidence intervals. An observed difference: early starters may also differ in wealth, distance and care-seeking.">
           <div className="flex items-center gap-14 text-12.5 text-dim">
             <span className="flex items-center gap-6"><span className="size-12 rounded-[2px] bg-accent" /> First visit by 12 weeks</span>
             <span className="flex items-center gap-6"><span className="size-12 rounded-[2px] bg-border2" /> Later first visit</span>
@@ -65,7 +65,7 @@ export function EarlyAnc({ study }: { study: StudyJSON }) {
         <Card help="dash.early-model" title="What our model predicts"
           sub="XGBoost, ANC-entry cohort: the same women, first visit set to early and then to later"
           cue={whatIfCue({ label: "Every first visit early instead of later (XGBoost)", diff: xgb.difference_pp })}
-          info="Notebook 3 table T8. Each held-out woman is scored twice with only the timing of her first visit changed; the bars are the survey-weighted mean predictions. This is how the model responds, not the effect of an intervention.">
+          info="Each held-out woman is scored twice with only the timing of her first visit changed; the bars are the survey-weighted mean predictions. This is how the model responds, not the effect of an intervention.">
           <div className="grid grid-cols-2 gap-12">
             <div className="rounded-[6px] bg-panel2 border border-border p-14">
               <div className="text-13 text-dim">All set to a later first visit</div>
@@ -126,7 +126,7 @@ export function Models({ study }: { study: StudyJSON }) {
       <Card help="dash.performance" title="How well each model predicts ANC8+ · held-out women, full cohort"
             sub={`Average precision: chance is ${pct(chance)}, the share of held-out women who reached ANC8+`}
             cue={MODEL_CUE}
-            info="Manuscript Table 2. Survey-weighted, 95% confidence intervals by cluster bootstrap. Calibration in the large below 0 means the model predicts more ANC8+ than observed; a slope of 1 is ideal. Sensitivity to NPV are at the threshold chosen on the development women.">
+            info="Survey-weighted, 95% confidence intervals by cluster bootstrap. Calibration in the large below 0 means the model predicts more ANC8+ than observed; a slope of 1 is ideal. Sensitivity to NPV are at the threshold chosen on the development women.">
             <div className="flex flex-col gap-4">
               {perf.map((p) => (
                 <Bar key={p.model} label={SHORT[p.model]} value={p.ap} ci={p.ap_ci} max={0.7} reference={chance}
@@ -181,7 +181,7 @@ export function Models({ study }: { study: StudyJSON }) {
         <Card help="dash.shap" title={`What XGBoost leans on · ${d.cohort === "entry" ? "ANC-entry cohort" : "full cohort"}`}
           sub="Top 10 predictors by mean absolute SHAP value · follows the cohort slicer"
           cue={SHAP_CUE}
-          info="Notebook 3 tables T2 and T5. How far, on average, each predictor moves the prediction for a held-out woman (log-odds). Larger is more influential; it says nothing about cause.">
+          info="How far, on average, each predictor moves the prediction for a held-out woman (log-odds). Larger is more influential; it says nothing about cause.">
           <div>
             {shap.map((r) => (
               <Bar key={r.predictor} label={`${r.rank}. ${r.label.replace(" to nearest hospital/health centre", "")}`} value={r.value}
@@ -195,7 +195,7 @@ export function Models({ study }: { study: StudyJSON }) {
           sub="Top 10 by drop in average precision when the predictor is shuffled · full cohort"
           actions={<Seg label="Model" size="sm" value={permModel} onChange={setPermModel}
             options={MODELS.map((m) => ({ key: m, label: SHORT[m] }))} />}
-          info="Notebook 3 table T1 (manuscript Figure 4): each predictor shuffled 20 times on the held-out women; the bar is the mean loss of average precision.">
+          info="Each predictor shuffled 20 times on the held-out women; the bar is the mean loss of average precision.">
           <div>
             {perm.map((r) => (
               <Bar key={r.predictor} label={`${r.rank}. ${r.label.replace(" to nearest hospital/health centre", "")}`} value={Math.max(r.value, 0)}
@@ -208,7 +208,7 @@ export function Models({ study }: { study: StudyJSON }) {
       {view === "calibration" && (
         <div className="grid gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:flex-1 lg:min-h-0">
         <Card help="dash.calibration" title="Calibration · full cohort" sub="Predicted against observed ANC8+, by risk group"
-          info="Manuscript Figure 2, as saved by the study. Points below the diagonal: the model predicted more ANC8+ than was observed.">
+          info="As saved by the study. Points below the diagonal: the model predicted more ANC8+ than was observed.">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <div className="relative h-[300px] lg:h-auto lg:flex-1 lg:min-h-0">
             <img src={asset("/figures/study/Figure_1_full_cohort_calibration.png")}
@@ -217,7 +217,7 @@ export function Models({ study }: { study: StudyJSON }) {
         </Card>
         <Card help="dash.entry-gain" title="What the first visit adds · ANC-entry cohort"
           sub="Each model without and with early ANC, same women, same predictors otherwise"
-          info="Manuscript Table 3 and notebook 4 paired comparison: differences with 95% confidence intervals from paired cluster bootstrap on the held-out ANC-entry women.">
+          info="Paired comparison: differences with 95% confidence intervals from paired cluster bootstrap on the held-out ANC-entry women.">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[520px]">
               <thead>
@@ -299,8 +299,8 @@ export function WhatIf({ study }: { study: StudyJSON }) {
           sub={`${label(pick)} · ${cohort} · predicted share reaching ANC8+`}
           cue={xgb ? whatIfCue({ label: `${label(pick)}, ${rows[0].a} → ${rows[0].b} (XGBoost)`, diff: xgb.diff }) : null}
           info={pick === "early_anc"
-            ? "Notebook 3 table T8: each woman scored with her first visit set to later, then to early; survey-weighted means."
-            : "Script what_if_top_predictors.py on the study's saved models (T8 method): each held-out woman scored with the predictor set to each level, survey-weighted means. 95% intervals: cluster bootstrap of the women (1,000 replicates); they leave out uncertainty in the fitted models, so the spread across the three models is the better guide."}>
+            ? "Each held-out woman scored with her first visit set to later, then to early; survey-weighted means."
+            : "From the study's saved models, with the same method as the first-visit contrast: each held-out woman scored with the predictor set to each level, survey-weighted means. 95% intervals: cluster bootstrap of the women (1,000 replicates); they leave out uncertainty in the fitted models, so the spread across the three models is the better guide."}>
           <div className="flex flex-col gap-14 lg:flex-1 justify-center">
             {rows.map((w) => (
               <div key={w.model} className="flex flex-col gap-4">
@@ -371,9 +371,9 @@ export function Review({ study }: { study: StudyJSON }) {
   return (
     <>
       <TabHead title="Programme review"
-        lead={<>The study&apos;s own programme-review brief from notebook 4, verbatim. Each finding card in the other tabs also has a <b className="text-warn">Cue</b> button with a suggested action.</>} />
-      <Card help="dash.review" title="Four core signals" sub="Source: outputs/notebook4_programme_review/programme_review/programme_review_brief.csv"
-        className="lg:flex-1 lg:min-h-0" info="Copied unchanged from the study's notebook 4 output. The cues are prompts for programme review, not tested interventions.">
+        lead={<>The study&apos;s own programme-review brief, in its own words. Each finding card in the other tabs also has a <b className="text-warn">Cue</b> button with a suggested action.</>} />
+      <Card help="dash.review" title="Four core signals" sub="From the study's programme review, survey-weighted"
+        className="lg:flex-1 lg:min-h-0" info="Copied unchanged from the study's programme review. The cues are prompts for programme review, not tested interventions.">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px] text-12.5 leading-snug border-separate border-spacing-0">
             <thead>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { AlertTriangle, CheckCircle2, Download, FileUp, ShieldCheck, Users } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Download, FileUp, Filter, ShieldCheck, Users } from "lucide-react";
 import { Bar, Card, Insight, Seg } from "@/components/dash/kit";
 import { InlineError, PanelLoading, SiteFooter } from "@/components/studio/ui";
 import { useJSON } from "@/lib/data";
@@ -31,7 +31,7 @@ const ID_COLS = ["woman_id", "id", "name", "card_no", "mrn"];
 type Field = Schema["fields"][number];
 interface Scored {
   i: number; id: string; p: number; flag: boolean; model: "baseline" | "extended"; blanks: string[];
-  region: string; wealth: string; travel: string;
+  region: string; wealth: string; travel: string; band: string;
 }
 
 async function loadTrees(path: string): Promise<Bundle> {
@@ -45,6 +45,14 @@ async function loadTrees(path: string): Promise<Bundle> {
 }
 
 const pct = (v: number, d = 0) => `${(v * 100).toFixed(d)}%`;
+
+/** Travel-time bands for the slicer and chart (minutes to the nearest hospital or health centre). */
+const BANDS = ["30 min or less", "31–60 min", "1–2 hours", "Over 2 hours", "Not given"] as const;
+function travelBand(m: number | undefined): string {
+  if (m == null || !Number.isFinite(m)) return "Not given";
+  return m <= 30 ? BANDS[0] : m <= 60 ? BANDS[1] : m <= 120 ? BANDS[2] : BANDS[3];
+}
+type Status = "all" | "follow" | "below" | "above";
 
 export default function FacilityList() {
   const schema = useJSON<Schema>("/form_schema.json");
@@ -113,6 +121,7 @@ export default function FacilityList() {
           model: useExt ? "extended" : "baseline", blanks,
           region: String(a.region ?? "–"), wealth: String(a.wealth_quintile ?? "–"),
           travel: a.travel_time_min != null ? `${a.travel_time_min} min` : "–",
+          band: travelBand(a.travel_time_min as number | undefined),
         });
       });
       if (bad > 15) problems.push(`…and ${bad - 15} more values treated as blank.`);
@@ -220,16 +229,37 @@ function Results({ res, byName }: { res: Result; byName: Record<string, Field> }
   const mean = rows.reduce((a, r) => a + r.p, 0) / Math.max(n, 1);
   const withBlanks = rows.filter((r) => r.blanks.length).length;
   const sorted = [...rows].sort((a, b) => a.p - b.p);
-  const group = (key: "region" | "wealth") => {
+  // Priority is ranked on the whole list; the slicers only choose which women are shown.
+  const rank = new Map(sorted.map((r, j) => [r.i, j]));
+  const [fRegion, setFRegion] = useState("");
+  const [fWealth, setFWealth] = useState("");
+  const [fBand, setFBand] = useState("");
+  const [fStatus, setFStatus] = useState<Status>("all");
+  const levels = (key: "region" | "wealth", order: string[]) => {
+    const have = new Set(rows.map((r) => r[key]));
+    return [...order.filter((o) => have.has(o)), ...[...have].filter((h) => !order.includes(h)).sort()];
+  };
+  const regionLevels = levels("region", (byName.region?.options ?? []).map((o) => o.value));
+  const wealthLevels = levels("wealth", ["Poorest", "Poorer", "Middle", "Richer", "Richest"]);
+  const bandLevels = BANDS.filter((b) => rows.some((r) => r.band === b));
+  const view = sorted.filter((r) => {
+    const j = rank.get(r.i)!;
+    return (!fRegion || r.region === fRegion) && (!fWealth || r.wealth === fWealth) && (!fBand || r.band === fBand)
+      && (fStatus === "all" || (fStatus === "follow" ? j < k : fStatus === "below" ? r.flag : !r.flag));
+  });
+  const filtered = view.length !== n;
+  const vMean = view.reduce((a, r) => a + r.p, 0) / Math.max(view.length, 1);
+  const vFollow = view.filter((r) => rank.get(r.i)! < k).length;
+  const vFlag = view.filter((r) => r.flag).length;
+  const group = (key: "region" | "wealth" | "band", order: readonly string[]) => {
     const m = new Map<string, Scored[]>();
-    rows.forEach((r) => m.set(r[key], [...(m.get(r[key]) ?? []), r]));
-    return [...m.entries()].map(([k, v]) => ({ k, n: v.length, mean: v.reduce((a, r) => a + r.p, 0) / v.length, flagged: v.filter((r) => r.flag).length / v.length }))
-      .sort((a, b) => a.mean - b.mean);
+    view.forEach((r) => m.set(r[key], [...(m.get(r[key]) ?? []), r]));
+    return order.filter((o) => m.has(o)).map((o) => { const v = m.get(o)!; return { k: o, n: v.length, mean: v.reduce((a, r) => a + r.p, 0) / v.length, flagged: v.filter((r) => r.flag).length / v.length }; });
   };
   const exportCsv = () => {
     const head = "priority,woman_id,predicted_anc8_chance,follow_up_first,below_model_threshold,model,region,wealth_quintile,travel_time,blank_answers";
-    const body = sorted.map((r, j) => [j + 1, r.id, r.p.toFixed(4), j < k ? "yes" : "no", r.flag ? "yes" : "no", `${res.alg} ANC-entry ${r.model}`, r.region, r.wealth, r.travel, r.blanks.join(" ")].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
-    download("anc8_facility_scores.csv", [head, ...body].join("\n"));
+    const body = view.map((r) => { const j = rank.get(r.i)!; return [j + 1, r.id, r.p.toFixed(4), j < k ? "yes" : "no", r.flag ? "yes" : "no", `${res.alg} ANC-entry ${r.model}`, r.region, r.wealth, r.travel, r.blanks.join(" ")].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","); });
+    download(filtered ? "anc8_facility_scores_filtered.csv" : "anc8_facility_scores.csv", [head, ...body].join("\n"));
   };
   return (
     <div className="flex flex-col gap-14">
@@ -266,17 +296,39 @@ function Results({ res, byName }: { res: Result; byName: Record<string, Field> }
       )}
       {res.problems.length === 0 && <p className="flex items-center gap-6 text-13 text-good"><CheckCircle2 className="size-16" /> Every column and value was recognised.</p>}
 
-      <div className="grid gap-14 xl:grid-cols-2">
-        <Card title="By region" sub="Average predicted chance and share below the threshold">
-          {group("region").map((g) => <Bar key={g.k} label={g.k} sub={`${g.n} ${g.n === 1 ? "woman" : "women"} · ${pct(g.flagged)} below threshold`} value={g.mean} max={1} display={pct(g.mean)} />)}
+      <Card title="Slicers" sub="Choose which women to show in the charts, the table and the download; the follow-up order stays ranked on the whole list"
+        actions={filtered ? <button type="button" onClick={() => { setFRegion(""); setFWealth(""); setFBand(""); setFStatus("all"); }} className="text-13 text-accent hover:underline">Clear all</button> : undefined}>
+        <div className="flex flex-wrap items-end gap-x-16 gap-y-10">
+          <Pick label="Region" value={fRegion} onChange={setFRegion} options={regionLevels} />
+          <Pick label="Household wealth" value={fWealth} onChange={setFWealth} options={wealthLevels} />
+          <Pick label="Travel time" value={fBand} onChange={setFBand} options={bandLevels} />
+          <div className="flex flex-col gap-4">
+            <span className="text-12 font-semibold text-dim uppercase tracking-wide">Show</span>
+            <Seg label="Show" size="sm" value={fStatus} onChange={setFStatus}
+              options={[{ key: "all", label: "Everyone" }, { key: "follow", label: "Follow up" }, { key: "below", label: "Below threshold" }, { key: "above", label: "Above threshold" }]} />
+          </div>
+        </div>
+        <Insight icon={Filter} tone="accent">
+          {view.length
+            ? <>Showing <b>{view.length.toLocaleString("en-US")}</b> of {n.toLocaleString("en-US")} women: average predicted chance {pct(vMean)}, {vFollow.toLocaleString("en-US")} marked follow up, {vFlag.toLocaleString("en-US")} below the threshold.</>
+            : <>No woman matches these choices. Clear a slicer to see more.</>}
+        </Insight>
+      </Card>
+
+      <div className="grid gap-14 xl:grid-cols-3">
+        <Card title="By region" sub="Average predicted chance; click a bar to filter">
+          {group("region", regionLevels).map((g) => <PickBar key={g.k} g={g} on={fRegion === g.k} onClick={() => setFRegion(fRegion === g.k ? "" : g.k)} />)}
         </Card>
-        <Card title="By household wealth" sub="Average predicted chance and share below the threshold">
-          {group("wealth").map((g) => <Bar key={g.k} label={g.k} sub={`${g.n} ${g.n === 1 ? "woman" : "women"} · ${pct(g.flagged)} below threshold`} value={g.mean} max={1} display={pct(g.mean)} />)}
+        <Card title="By household wealth" sub="Average predicted chance; click a bar to filter">
+          {group("wealth", wealthLevels).map((g) => <PickBar key={g.k} g={g} on={fWealth === g.k} onClick={() => setFWealth(fWealth === g.k ? "" : g.k)} />)}
+        </Card>
+        <Card title="By travel time" sub="Average predicted chance; click a bar to filter">
+          {group("band", bandLevels).map((g) => <PickBar key={g.k} g={g} on={fBand === g.k} onClick={() => setFBand(fBand === g.k ? "" : g.k)} />)}
         </Card>
       </div>
 
-      <Card title="Every woman, lowest predicted chance first"
-        actions={<button type="button" onClick={exportCsv} className="flex items-center gap-6 rounded-[6px] border border-accent text-accent px-12 py-6 text-13 font-semibold hover:bg-soft"><Download className="size-15" /> Download results (CSV)</button>}>
+      <Card title={filtered ? `The women shown (${view.length.toLocaleString("en-US")}), lowest predicted chance first` : "Every woman, lowest predicted chance first"}
+        actions={<button type="button" onClick={exportCsv} className="flex items-center gap-6 rounded-[6px] border border-accent text-accent px-12 py-6 text-13 font-semibold hover:bg-soft"><Download className="size-15" /> {filtered ? "Download shown (CSV)" : "Download results (CSV)"}</button>}>
         <div className="overflow-auto max-h-[520px]">
           <table className="w-full min-w-[720px] text-13">
             <thead className="sticky top-0 bg-panel">
@@ -287,7 +339,7 @@ function Results({ res, byName }: { res: Result; byName: Record<string, Field> }
               </tr>
             </thead>
             <tbody>
-              {sorted.slice(0, 500).map((r, j) => (
+              {view.slice(0, 500).map((r) => { const j = rank.get(r.i)!; return (
                 <tr key={r.i} className={`border-b border-border ${j < k ? "bg-badbg/40" : ""}`}>
                   <td className="py-5 px-8 font-mono text-dim">{j + 1}</td>
                   <td className="py-5 px-8"><span className="font-mono">{r.id}</span>{r.model === "extended" && <div className="text-11 text-faint">with first-visit timing</div>}</td>
@@ -306,13 +358,34 @@ function Results({ res, byName }: { res: Result; byName: Record<string, Field> }
                   <td className="py-5 px-8">{r.travel}</td>
                   <td className="py-5 px-8 text-12 text-warn">{r.blanks.map((b) => byName[b]?.label ?? b).join(", ")}</td>
                 </tr>
-              ))}
+              ); })}
             </tbody>
           </table>
-          {sorted.length > 500 && <p className="text-12.5 text-dim py-8">Showing the first 500 of {sorted.length}; the download has every woman.</p>}
+          {view.length > 500 && <p className="text-12.5 text-dim py-8">Showing the first 500 of {view.length}; the download has every woman shown.</p>}
         </div>
       </Card>
     </div>
+  );
+}
+
+function Pick({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: readonly string[] }) {
+  return (
+    <label className="flex flex-col gap-4">
+      <span className="text-12 font-semibold text-dim uppercase tracking-wide">{label}</span>
+      <select value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}
+        className={`h-32 min-w-[160px] rounded-[6px] border px-8 text-13 bg-panel ${value ? "border-accent text-accent font-semibold" : "border-border2"}`}>
+        <option value="">All</option>
+        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+      </select>
+    </label>
+  );
+}
+
+function PickBar({ g, on, onClick }: { g: { k: string; n: number; mean: number; flagged: number }; on: boolean; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} aria-pressed={on} className="block w-full text-left rounded-[4px] hover:bg-soft">
+      <Bar label={g.k} sub={`${g.n} ${g.n === 1 ? "woman" : "women"} · ${pct(g.flagged)} below threshold`} value={g.mean} max={1} display={pct(g.mean)} highlight={on} labelWidth={130} />
+    </button>
   );
 }
 
