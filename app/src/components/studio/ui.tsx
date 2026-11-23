@@ -36,6 +36,7 @@ export function SiteFooter() {
       )}
       <span><span className="font-semibold text-dim">Data:</span> {PROJECT.data}.</span>
       <span><span className="font-semibold text-dim">Team:</span> {PROJECT.team.join(", ")}.</span>
+      <span><span className="font-semibold text-dim">Supervisor:</span> {PROJECT.supervisor}.</span>
       <a href={PROJECT.github} target="_blank" rel="noreferrer" className="text-accent hover:underline">Code on GitHub</a>
       <Link href="/built" className="text-accent hover:underline">How it was built</Link>
       <span className="basis-full"><span className="font-semibold text-dim">Cite as:</span> {PROJECT.citation}</span>

@@ -79,6 +79,7 @@ export default function Built() {
         </Panel>
         <Panel title="Rules the dashboard follows">
           <div className="px-14 py-10 flex flex-col gap-6 text-11 text-dim leading-relaxed">
+            <p><span className="font-semibold text-text">Team:</span> {PROJECT.team.join(", ")}. <span className="font-semibold text-text">Supervisor:</span> {PROJECT.supervisor}.</p>
             <p>Every number comes from the study's own saved outputs: the two cohorts (6,893 and 5,001 women) and the 21 predictors. No new samples or variables.</p>
             <p>Programme cues use the study's own programme-review wording and are questions for review, not effects of an intervention.</p>
             <p>Predictions describe women with similar answers, not an individual woman; the models need external validation and recalibration before programme use.</p>
