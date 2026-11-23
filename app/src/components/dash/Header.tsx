@@ -1,0 +1,98 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { CircleHelp, Monitor, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/shell/theme-provider";
+import { MOH_LOGO, MOH_NAME } from "@/lib/project";
+
+/** The dashboard's sections, in reading order, and the two tools beside them. */
+export const SECTIONS = [
+  { id: "overview", label: "Overview" },
+  { id: "left-behind", label: "Who is left behind" },
+  { id: "early", label: "Early ANC" },
+  { id: "models", label: "Models" },
+  { id: "what-if", label: "What if" },
+] as const;
+
+const TOOLS = [
+  { href: "/predict", label: "Score one woman" },
+  { href: "/your-data", label: "Facility list" },
+];
+
+export default function Header() {
+  const pathname = usePathname();
+  const search = useSearchParams();
+  const { toggle, present, togglePresent } = useTheme();
+  const qs = search.toString();
+  const home = (hash: string) => `/${qs ? `?${qs}` : ""}#${hash}`;
+  const btn = "h-30 px-10 rounded-3 text-13 flex items-center gap-6 flex-none border border-topline2";
+
+  return (
+    <header className="bg-top text-topfg flex items-center gap-12 px-12 md:px-16 h-52 flex-none min-w-0">
+      <Link href={home("overview")} className="flex items-center gap-10 min-w-0 flex-none">
+        {MOH_LOGO && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={MOH_LOGO} alt={MOH_NAME} title={MOH_NAME} className="h-32 w-auto bg-white rounded-full p-1" />
+        )}
+        <span className="leading-tight">
+          <span className="block text-15 font-semibold text-white whitespace-nowrap">ANC8+ Ethiopia Dashboard</span>
+          <span className="hidden sm:block text-11 text-topdim whitespace-nowrap">EDHS 2024–25 · Ministry of Health</span>
+        </span>
+      </Link>
+
+      <nav aria-label="Sections" className="hidden lg:flex items-center gap-2 ml-8 min-w-0 overflow-x-auto">
+        {SECTIONS.map((s) => (
+          <a key={s.id} href={home(s.id)} className="px-10 py-6 rounded-3 text-13 text-topdim hover:text-white hover:bg-topfill whitespace-nowrap">
+            {s.label}
+          </a>
+        ))}
+        <span className="w-px h-20 bg-topline2 mx-6" aria-hidden="true" />
+        {TOOLS.map((t) => (
+          <Link key={t.href} href={t.href}
+            className={`px-10 py-6 rounded-3 text-13 whitespace-nowrap ${pathname === t.href ? "bg-topsel text-top font-semibold" : "text-topdim hover:text-white hover:bg-topfill"}`}>
+            {t.label}
+          </Link>
+        ))}
+      </nav>
+
+      <div className="flex-1" />
+
+      <Link href="/help" className={`${btn} ${pathname.startsWith("/help") ? "bg-topsel text-top" : "bg-topfill2 text-topfg"}`} title="Help">
+        <CircleHelp className="size-15" />
+        <span className="hidden xl:inline">Help</span>
+      </Link>
+      <button data-mark="present" onClick={togglePresent} aria-pressed={present}
+        title="Presentation mode: a guided tour (arrow keys step, Esc leaves)"
+        className={btn} style={{ background: present ? "var(--topsel)" : "var(--topfill2)", color: present ? "var(--top)" : "inherit" }}>
+        <Monitor className="size-15" />
+        <span className="hidden xl:inline">Present</span>
+      </button>
+      <button data-mark="theme" onClick={toggle} title="Light or dark" aria-label="Toggle light or dark"
+        className={`${btn} bg-topfill2 text-topfg`}>
+        <Sun className="size-15 theme-light-only" />
+        <Moon className="size-15 theme-dark-only" />
+      </button>
+    </header>
+  );
+}
+
+/** The sections and tools as a strip, for screens too narrow for the header menu. */
+export function MobileNav() {
+  const search = useSearchParams();
+  const qs = search.toString();
+  return (
+    <nav aria-label="Sections" className="lg:hidden flex gap-4 overflow-x-auto px-12 py-6 bg-panel border-b border-border">
+      {SECTIONS.map((s) => (
+        <a key={s.id} href={`/${qs ? `?${qs}` : ""}#${s.id}`} className="px-10 py-5 rounded-3 text-13 text-dim whitespace-nowrap border border-border">
+          {s.label}
+        </a>
+      ))}
+      {TOOLS.map((t) => (
+        <Link key={t.href} href={t.href} className="px-10 py-5 rounded-3 text-13 text-accent whitespace-nowrap border border-border">
+          {t.label}
+        </Link>
+      ))}
+    </nav>
+  );
+}

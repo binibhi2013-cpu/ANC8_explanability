@@ -38,7 +38,6 @@ export default function Welcome() {
               <span className="text-11.5 font-semibold leading-tight" style={{ color: MOH_BLUE }}>Ministry of Health<br />Ethiopia</span>
             </div>
           ) : null}
-          <div className="w-30 h-30 bg-top text-white text-12 font-bold flex items-center justify-center rounded-3 flex-none">A8</div>
           <div className="text-10.5 uppercase tracking-label text-dim font-semibold">{PROJECT.programme}</div>
         </div>
 

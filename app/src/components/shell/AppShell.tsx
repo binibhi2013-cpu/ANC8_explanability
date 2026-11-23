@@ -1,15 +1,9 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { topicForScreen } from "@/lib/help/href";
+import { createContext, useContext, useEffect } from "react";
 import { startOffline } from "@/lib/offline";
-import { LEGACY_HASH, itemForPath } from "@/lib/nav";
-import TopBar from "./TopBar";
-import Sidebar from "./Sidebar";
-import ContentHeader from "./ContentHeader";
+import Header, { MobileNav } from "@/components/dash/Header";
 import { ScopeProvider } from "./ScopePicker";
-import StatusBar from "./StatusBar";
 import Tour from "./Tour";
 
 interface ShellHeader {
@@ -19,7 +13,7 @@ interface ShellHeader {
   actions?: React.ReactNode;
 }
 
-/** Lets a screen override the 36px content header (the house HeaderContext). */
+/** Kept for screens that still call it; the dashboard has no per-screen header bar. */
 const HeaderContext = createContext<(h: ShellHeader) => void>(() => {});
 export function useShellHeader(header: ShellHeader, deps: unknown[] = []) {
   const set = useContext(HeaderContext);
@@ -30,84 +24,24 @@ export function useShellHeader(header: ShellHeader, deps: unknown[] = []) {
 }
 
 /**
- * The house application shell: 38px top bar, 236px sidebar, 36px content header,
- * 24px status bar. The content pane is the only thing that scrolls.
+ * The dashboard shell: one header with the sections and tools, then a single scrolling
+ * page. No sidebar and no second navigation: every view is reached from the header.
  */
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const search = useSearchParams();
-  const [override, setOverride] = useState<ShellHeader>({});
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    setOverride({});
-    setDrawerOpen(false);
-  }, [pathname]);
-
   // Save the app for offline use, once the first screen has what it needs.
   useEffect(() => startOffline(), []);
 
-  // Links shared before the studio (…/#reports, …/#predict/…) still arrive somewhere.
-  useEffect(() => {
-    if (pathname !== "/" || !window.location.hash) return;
-    const key = window.location.hash.replace(/^#/, "").split("/")[0];
-    const to = LEGACY_HASH[key];
-    if (to) router.replace(to);
-  }, [pathname, router]);
-
-  useEffect(() => {
-    if (!drawerOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setDrawerOpen(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [drawerOpen]);
-
-  const item = itemForPath(pathname);
-  const meta = item?.meta ?? ["", "", ""];
-  const helpTopic = topicForScreen(item?.key, pathname, search.get("mode"));
-
   return (
-    <HeaderContext.Provider value={setOverride}>
+    <HeaderContext.Provider value={() => {}}>
       <ScopeProvider>
-      <div className="h-dvh w-full grid grid-rows-[38px_1fr_24px] bg-bg overflow-hidden">
-        <TopBar onOpenMenu={() => setDrawerOpen(true)} />
-
-        <div className="grid grid-cols-1 md:grid-cols-[236px_1fr] min-h-0 overflow-hidden relative">
-          <div className="hidden md:block min-h-0">
-            <Sidebar />
-          </div>
-
-          {drawerOpen && (
-            <>
-              <div
-                className="md:hidden fixed inset-0 bg-black opacity-40 z-[1300]"
-                onClick={() => setDrawerOpen(false)}
-                aria-hidden="true"
-              />
-              <div className="md:hidden fixed left-0 top-38 bottom-24 w-[min(280px,85vw)] z-[1301] border-r border-border">
-                <Sidebar onNavigate={() => setDrawerOpen(false)} />
-              </div>
-            </>
-          )}
-
-          <div className="flex flex-col min-w-0 min-h-0 bg-bg overflow-hidden">
-            <ContentHeader
-              crumb={override.crumb ?? meta[0]}
-              title={override.title ?? meta[1]}
-              subtitle={override.subtitle ?? meta[2]}
-              actions={override.actions}
-              help={helpTopic}
-            />
-            <main className="flex-1 overflow-auto min-h-0" id="content">
-              {children}
-            </main>
-          </div>
+        <div className="h-dvh w-full flex flex-col bg-bg overflow-hidden">
+          <Header />
+          <MobileNav />
+          <main className="flex-1 overflow-auto min-h-0 scroll-smooth" id="content">
+            {children}
+          </main>
+          <Tour />
         </div>
-
-        <StatusBar />
-        <Tour />
-      </div>
       </ScopeProvider>
     </HeaderContext.Provider>
   );

@@ -1,7 +1,4 @@
-import { BASICS } from "./basics";
-import { EXPLORE } from "./explore";
-import { MODELS } from "./models";
-import { PLAN } from "./plan";
+import { DASH_HELP } from "./dash";
 import { TERMS } from "./terms";
 import { TOPIC_LIST } from "./topics";
 import type { HelpCard, HelpTerm, HelpTopic } from "./types";
@@ -13,16 +10,16 @@ export { TERMS };
 export type { HelpCard, HelpTerm, HelpTopic };
 
 /** Every topic, in the order of the table of contents (lib/help/topics.ts). */
-const BY_KEY = new Map([...BASICS, ...PLAN, ...EXPLORE, ...MODELS].map((t) => [t.key, t]));
+const BY_KEY = new Map(DASH_HELP.map((t) => [t.key, t]));
 
 /** The glossary is a topic of its own, built from the terms. */
 const TERMS_TOPIC: HelpTopic = {
   key: "terms",
   label: "Words, A to Z",
   group: "start",
-  blurb: "Every term the studio uses, in plain language",
+  blurb: "Every term the dashboard uses, in plain language",
   purpose:
-    "Every word the studio uses that might be new, in plain language and in alphabetical order. Chips on the other Help pages link straight to the word they name.",
+    "Every word the dashboard uses that might be new, in plain language and in alphabetical order. Chips on the other Help pages link straight to the word they name.",
   cards: [],
 };
 BY_KEY.set("terms", TERMS_TOPIC);

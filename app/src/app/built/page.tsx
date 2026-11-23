@@ -37,7 +37,7 @@ const STEPS: { icon: typeof Database; title: string; what: string; out: string; 
     out: "Model bundles (all PASS), study.json, the Predict screen's questions and models.",
     where: "scripts/export_serving.py --v1 · build_study_predict.py · build_study_data.py · extract_nb4_printed.py" },
   { icon: Globe, title: "7 · The dashboard",
-    what: "A web app (Next.js and React) built on the supervisor's ANC Planning Studio design: map, ladder, region panels and the guided presentation. Logistic models are scored in the browser; tree models from their exported files. It works offline once opened.",
+    what: "A one-page dashboard (Next.js and React) with one filter bar for cohort, indicator and region: map, care ladder, who is left behind, early ANC, the three models and what-if, plus a tool to score one woman or a facility's list. Logistic models are scored in the browser; tree models from their exported files. It works offline once opened.",
     out: "Every screen reads the files above; nothing is re-estimated in the app.",
     where: "app/ in the repository · deployed on Vercel" },
 ];
@@ -100,7 +100,7 @@ export default function Built() {
 
       <SectionRule label="Next" />
       <div className="flex flex-wrap gap-14 text-11">
-        <Link href="/about" className="text-accent hover:underline">About the study</Link>
+        <Link href="/" className="text-accent hover:underline">Dashboard</Link>
         <Link href="/welcome" className="text-accent hover:underline">Title screen</Link>
       </div>
     </Screen>
