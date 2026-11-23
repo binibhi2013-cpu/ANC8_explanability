@@ -124,6 +124,18 @@ export default function FacilityList() {
     }
   }
 
+  async function onSample() {
+    try {
+      const res = await fetch(versioned("/samples/anc8_facility_sample_MADE_UP.csv"));
+      if (!res.ok) throw new Error("could not load the sample list");
+      const table = parseCSV(await res.text());
+      setFile({ name: "Made-up sample list (40 women, not real data)", table });
+      run(table, alg);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    }
+  }
+
   async function onFile(f: File) {
     const text = await f.text();
     const table = parseCSV(text);
@@ -160,6 +172,12 @@ export default function FacilityList() {
             <FileUp className="size-24 text-accent" />
             {file ? <span><b className="text-text">{file.name}</b> · {file.table.length - 1} {file.table.length === 2 ? "woman" : "women"} · choose another</span> : "Choose a file"}
           </button>
+          <div className="flex items-center gap-8 flex-wrap text-12.5">
+            <button type="button" onClick={onSample} className="text-accent font-semibold hover:underline">Try a made-up sample list</button>
+            <span className="text-faint">·</span>
+            <a href={versioned("/samples/anc8_facility_sample_MADE_UP.csv")} download="anc8_facility_sample_MADE_UP.csv" className="text-accent hover:underline">download it</a>
+            <span className="text-faint">40 invented women, not survey or patient data</span>
+          </div>
         </Card>
         <Card title="3 · Choose the model" sub="All three are the study's own; XGBoost scored highest">
           <Seg label="Model" value={alg} onChange={(k) => { setAlg(k); if (file) run(file.table, k); }}

@@ -497,7 +497,8 @@
 
 /* Presentation mode: the same screens, larger, for a projector. */
 :root[data-present="on"] {
-  --font-scale: 1.3;
+  /* Slightly larger type for a room, but small enough that every tab still fits one screen. */
+  --font-scale: 1.05;
 }
 
 /* The house @theme spells decimal sizes with a hyphen (--text-10-5), but Tailwind v4

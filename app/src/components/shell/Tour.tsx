@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, GripHorizontal, Maximize2, Minus, X } from "lucide-react";
 import { useTheme } from "./theme-provider";
 
 /**
@@ -47,6 +47,26 @@ export default function Tour() {
   const router = useRouter();
   const pathname = usePathname();
   const [i, setI] = useState(0);
+  // The panel can be dragged by its top bar and minimised to a small strip, so it never
+  // has to cover what is being shown. null = its default corner.
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const [mini, setMini] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ dx: number; dy: number } | null>(null);
+  const onDown = (e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest("button")) return;
+    const r = box.current!.getBoundingClientRect();
+    drag.current = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+  const onMove = (e: React.PointerEvent) => {
+    if (!drag.current || !box.current) return;
+    const r = box.current.getBoundingClientRect();
+    const x = Math.max(4, Math.min(window.innerWidth - r.width - 4, e.clientX - drag.current.dx));
+    const y = Math.max(4, Math.min(window.innerHeight - r.height - 4, e.clientY - drag.current.dy));
+    setPos({ x, y });
+  };
+  const onUp = () => { drag.current = null; };
 
   const go = useCallback(
     (k: number) => {
@@ -88,13 +108,31 @@ export default function Tour() {
   if (!present) return null;
   const s = STEPS[i];
   const here = pathname === s.path.split("?")[0];
+  const place = pos ? { left: pos.x, top: pos.y } : undefined;
+  if (mini) {
+    return (
+      <div ref={box} role="dialog" aria-label="Guided tour (minimised)" style={place}
+        className={`fixed z-[1200] flex items-center gap-6 bg-panel border border-accent rounded-full shadow-lg pl-10 pr-4 py-4 ${pos ? "" : "right-14 bottom-14"}`}>
+        <span onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} className="cursor-move touch-none text-faint" title="Drag to move"><GripHorizontal className="size-14" /></span>
+        <span className="text-11 font-semibold text-accent whitespace-nowrap">Presentation {i + 1}/{STEPS.length}</span>
+        <button type="button" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Back" className="size-24 rounded-full flex items-center justify-center hover:bg-soft disabled:opacity-40"><ChevronLeft className="size-14" /></button>
+        <button type="button" onClick={() => go(i + 1)} disabled={i === STEPS.length - 1} aria-label="Next" className="size-24 rounded-full flex items-center justify-center bg-accent text-white disabled:opacity-40"><ChevronRight className="size-14" /></button>
+        <button type="button" onClick={() => setMini(false)} aria-label="Show the presentation notes" title="Show notes" className="size-24 rounded-full flex items-center justify-center hover:bg-soft"><Maximize2 className="size-13" /></button>
+      </div>
+    );
+  }
   return (
-    <div role="dialog" aria-label="Guided tour"
-      className="fixed right-14 bottom-36 z-[1200] w-[min(360px,calc(100vw-28px))] bg-panel border border-accent rounded-3">
-      <div className="flex items-center gap-8 px-12 py-7 border-b border-border">
+    <div ref={box} role="dialog" aria-label="Guided tour" style={place}
+      className={`fixed z-[1200] w-[min(360px,calc(100vw-28px))] bg-panel border border-accent rounded-3 shadow-lg ${pos ? "" : "right-14 bottom-36"}`}>
+      <div onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
+        className="flex items-center gap-8 px-12 py-7 border-b border-border cursor-move touch-none select-none" title="Drag to move">
+        <GripHorizontal className="size-13 text-faint flex-none" aria-hidden="true" />
         <span className="text-9.5 font-semibold uppercase tracking-label text-accent flex-1">
           Presentation · {i + 1} of {STEPS.length}
         </span>
+        <button type="button" onClick={() => setMini(true)} className="text-faint hover:text-text" aria-label="Minimise" title="Minimise">
+          <Minus className="size-13" />
+        </button>
         <button type="button" onClick={togglePresent} className="text-faint hover:text-text" aria-label="Leave the tour" title="Leave (Esc)">
           <X className="size-13" />
         </button>
