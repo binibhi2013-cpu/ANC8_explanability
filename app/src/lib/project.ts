@@ -16,6 +16,7 @@ export const PROJECT = {
   short: "ANC8+ Ethiopia",
   programme: "Data Science Capstone · ANC8+ prediction",
   team: ["Biniam Kefiyalew Taye, PhD", "Solomon Kasahun", "Hagere Mekonen", "Roman Gebreyes"],
+  supervisor: "Daniel Mitiku",
   date: "November 2026",
   data: "Ethiopia Demographic and Health Survey 2024–25 (women's file), survey-weighted",
   citation:
