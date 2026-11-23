@@ -71,6 +71,7 @@ export default function Welcome() {
 
         <div className="mt-auto pt-16 border-t border-border flex flex-wrap gap-x-20 gap-y-6 text-11 text-dim">
           <span><span className="font-semibold text-text">Team:</span> {PROJECT.team.join(", ")}</span>
+          <span><span className="font-semibold text-text">Supervisor:</span> {PROJECT.supervisor}</span>
           <span>{PROJECT.date}</span>
           <span className="basis-full text-faint text-10.5">
             In the presentation, the arrow keys step through the story and Esc leaves. Associations, not causes.
