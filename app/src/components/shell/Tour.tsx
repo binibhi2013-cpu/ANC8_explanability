@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, GripHorizontal, Maximize2, Minus, X } from "lucide-react";
 import { useTheme } from "./theme-provider";
 
 /**
@@ -16,30 +16,30 @@ import { useTheme } from "./theme-provider";
  *  what to act on → how it was built. `focus` is the panel the step scrolls to and
  *  outlines (its data-help id). About 50 seconds a step. */
 const STEPS: { path: string; focus?: string; title: string; say: string }[] = [
-  { path: "/", focus: "overview.tiles", title: "1 · The problem",
-    say: "78% of women had at least one ANC contact, 52% reached four, and only 19% reached the eight the WHO recommends." },
-  { path: "/", focus: "overview.ladder", title: "2 · Where women are lost",
-    say: "The biggest loss is not starting care but staying in it: of women who reached four contacts, 63% did not reach eight." },
-  { path: "/map?metric=anc8", focus: "map.map", title: "3 · Where in Ethiopia",
-    say: "ANC8+ ranges from 4% in Somali to 66% in Addis Ababa. Press Play to move the map from ANC1+ to ANC8+ and watch the country empty." },
-  { path: "/map?region=Somali&metric=never", title: "4 · One region",
-    say: "Somali: most women never start ANC. Each region panel shows its five stages against Ethiopia, its travel times and the study's review question." },
-  { path: "/explore/ladder", focus: "ladder.equity", title: "5 · Who is left behind",
-    say: "After four contacts, 20% of the poorest reach eight against 52% of the richest. Switch to travel time: the same gradient." },
-  { path: "/explore/ladder", focus: "ladder.region-travel", title: "6 · Distance",
-    say: "In Afar, 79% of women within two hours of care start ANC, against 39% of those further away." },
-  { path: "/models", focus: "analysis.vs-chance", title: "7 · Our models",
-    say: "Three models on 21 predictors, tested on 1,375 held-out women: average precision 0.40 to 0.44 against 0.16 by chance. All three overpredict." },
-  { path: "/models", focus: "analysis.learned", title: "8 · What the models lean on",
-    say: "Wealth, travel time and region lead. They are markers of circumstances, not causes." },
-  { path: "/explore/cohorts", focus: "cohorts.timing", title: "9 · The first visit",
-    say: "42% of early starters reached ANC8+ against 11% of later starters, yet 58% of early starters still did not. Adding early ANC to the models raised AP by 0.022 to 0.034, with intervals that include zero." },
-  { path: "/", focus: "overview.key-finding", title: "10 · Key finding",
-    say: "The models predict 34% against 13% with an early first visit: a model contrast, not an intervention effect." },
-  { path: "/", focus: "overview.act-on", title: "11 · Four things to act on",
-    say: "Retention after four contacts, women who never start, the wealth gap and distance: questions for programme review, from notebook 4." },
+  { path: "/", focus: "dash.tiles", title: "1 · The problem",
+    say: "78% of women had at least one ANC contact, 52% reached four, and only 19% reached the eight the national guideline recommends." },
+  { path: "/", focus: "dash.ladder", title: "2 · Where women are lost",
+    say: "The biggest loss is staying in care: of women who reached four contacts, 63% did not reach eight. Click Cue for retention ideas." },
+  { path: "/", focus: "dash.map", title: "3 · Where in Ethiopia",
+    say: "ANC8+ ranges from 4% in Somali to 66% in Addis Ababa. Click a region and every tab follows." },
+  { path: "/?region=Somali", focus: "dash.ladder", title: "4 · One region",
+    say: "Somali: two in three women never start ANC, so the cue turns to outreach and community mobilisation." },
+  { path: "/?tab=left-behind", focus: "dash.stacked", title: "5 · Who is left behind",
+    say: "Each bar is all the women in a group. 5% of the poorest reach eight against 43% of the richest; most of the gap opens at first contact. Group by switches the predictor." },
+  { path: "/?tab=regions", focus: "dash.stages", title: "6 · Each region's weak stage",
+    say: "Regions lose women at different stages: some never start, others stop after four. One national fix will not fit all." },
+  { path: "/?tab=early", focus: "dash.early-observed", title: "7 · The first visit",
+    say: "42% of early starters reached ANC8+ against 11% of later starters, yet 58% of early starters still did not." },
+  { path: "/?tab=models", focus: "dash.performance", title: "8 · Our three models",
+    say: "Tested on 1,375 held-out women: average precision 0.40 to 0.44 against 0.16 by chance. Wealth, travel time and region lead the predictors." },
+  { path: "/?tab=what-if", focus: "dash.whatif", title: "9 · What if",
+    say: "Change one predictor for every woman: all richest instead of poorest moves XGBoost from 9% to 25%; an early first visit adds 21 points. Model contrasts, not programme effects." },
+  { path: "/?tab=review", focus: "dash.review", title: "10 · Programme review",
+    say: "The study's four core signals, each with what was observed, what the models show, the review cue and its caution." },
+  { path: "/your-data", title: "11 · A tool for facilities",
+    say: "A facility uploads its list of women attending ANC; the ANC-entry models rank them so staff can follow up those least likely to reach eight." },
   { path: "/built", title: "12 · How it was built",
-    say: "Survey file → four notebooks → exported models checked against the published results → this dashboard. Next: external validation and recalibration." },
+    say: "Survey file → analysis in four steps → exported models checked against the published results → this dashboard. Next: external validation and recalibration." },
 ];
 
 export default function Tour() {
@@ -47,6 +47,26 @@ export default function Tour() {
   const router = useRouter();
   const pathname = usePathname();
   const [i, setI] = useState(0);
+  // The panel can be dragged by its top bar and minimised to a small strip, so it never
+  // has to cover what is being shown. null = its default corner.
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const [mini, setMini] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ dx: number; dy: number } | null>(null);
+  const onDown = (e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest("button")) return;
+    const r = box.current!.getBoundingClientRect();
+    drag.current = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+  const onMove = (e: React.PointerEvent) => {
+    if (!drag.current || !box.current) return;
+    const r = box.current.getBoundingClientRect();
+    const x = Math.max(4, Math.min(window.innerWidth - r.width - 4, e.clientX - drag.current.dx));
+    const y = Math.max(4, Math.min(window.innerHeight - r.height - 4, e.clientY - drag.current.dy));
+    setPos({ x, y });
+  };
+  const onUp = () => { drag.current = null; };
 
   const go = useCallback(
     (k: number) => {
@@ -88,13 +108,31 @@ export default function Tour() {
   if (!present) return null;
   const s = STEPS[i];
   const here = pathname === s.path.split("?")[0];
+  const place = pos ? { left: pos.x, top: pos.y } : undefined;
+  if (mini) {
+    return (
+      <div ref={box} role="dialog" aria-label="Guided tour (minimised)" style={place}
+        className={`tour-type fixed z-[1200] flex items-center gap-6 bg-panel border border-accent rounded-full shadow-lg pl-10 pr-4 py-4 ${pos ? "" : "right-14 bottom-14"}`}>
+        <span onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} className="cursor-move touch-none text-faint" title="Drag to move"><GripHorizontal className="size-14" /></span>
+        <span className="text-11 font-semibold text-accent whitespace-nowrap">Presentation {i + 1}/{STEPS.length}</span>
+        <button type="button" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Back" className="size-24 rounded-full flex items-center justify-center hover:bg-soft disabled:opacity-40"><ChevronLeft className="size-14" /></button>
+        <button type="button" onClick={() => go(i + 1)} disabled={i === STEPS.length - 1} aria-label="Next" className="size-24 rounded-full flex items-center justify-center bg-accent text-white disabled:opacity-40"><ChevronRight className="size-14" /></button>
+        <button type="button" onClick={() => setMini(false)} aria-label="Show the presentation notes" title="Show notes" className="size-24 rounded-full flex items-center justify-center hover:bg-soft"><Maximize2 className="size-13" /></button>
+      </div>
+    );
+  }
   return (
-    <div role="dialog" aria-label="Guided tour"
-      className="fixed right-14 bottom-36 z-[1200] w-[min(360px,calc(100vw-28px))] bg-panel border border-accent rounded-3">
-      <div className="flex items-center gap-8 px-12 py-7 border-b border-border">
+    <div ref={box} role="dialog" aria-label="Guided tour" style={place}
+      className={`tour-type fixed z-[1200] w-[min(360px,calc(100vw-28px))] bg-panel border border-accent rounded-3 shadow-lg ${pos ? "" : "right-14 bottom-36"}`}>
+      <div onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
+        className="flex items-center gap-8 px-12 py-7 border-b border-border cursor-move touch-none select-none" title="Drag to move">
+        <GripHorizontal className="size-13 text-faint flex-none" aria-hidden="true" />
         <span className="text-9.5 font-semibold uppercase tracking-label text-accent flex-1">
           Presentation · {i + 1} of {STEPS.length}
         </span>
+        <button type="button" onClick={() => setMini(true)} className="text-faint hover:text-text" aria-label="Minimise" title="Minimise">
+          <Minus className="size-13" />
+        </button>
         <button type="button" onClick={togglePresent} className="text-faint hover:text-text" aria-label="Leave the tour" title="Leave (Esc)">
           <X className="size-13" />
         </button>

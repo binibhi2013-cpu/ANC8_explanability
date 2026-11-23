@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import DotRows from "@/components/charts/DotRows";
 import RankedBars from "@/components/charts/RankedBars";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Note, Panel, Range, SectionRule, Segmented, Tag } from "@/components/studio/ui";
+import { Note, Panel, Range, SectionRule, Segmented } from "@/components/studio/ui";
 import { score, type Answers, type Bundle } from "@/lib/ebm";
 import { label } from "@/lib/labels";
 import { versioned } from "@/lib/offline";
@@ -150,9 +149,9 @@ export default function Predict({
 
   const [outcome, setOutcome] = useState<CatalogModel["outcome"]>("anc8plus");
   const [horizon, setHorizon] = useState<CatalogModel["horizon"]>("before");
-  const [algorithm, setAlgorithm] = useState<string>("Logistic regression");
+  const [algorithm, setAlgorithm] = useState<string>("XGBoost");
   // The recommended model (logistic regression) is shown first; the others on request.
-  const [showModels, setShowModels] = useState(false);
+  const showModels = true;
   const [answers, setAnswers] = useState<Answers>(start);
   const [showAll, setShowAll] = useState(false);
   const [current, setCurrent] = useState<Scored | null>(null);
@@ -324,7 +323,6 @@ export default function Predict({
   const changedCount = model ? model.fields.filter(changed).length : 0;
   const contribs = (current?.contributions ?? []).slice(0, 12);
   const key = model ? cardKey(model) : "";
-  const analysisHref = "/models";
 
   return (
     <div className="grid gap-10 md:gap-14 lg:grid-cols-[minmax(0,1fr)_380px]">
@@ -334,12 +332,6 @@ export default function Predict({
         how="The starting woman is a synthetic profile close to the typical woman in the survey. Change an answer to see what the model predicts for someone with that recorded characteristic, not what would happen if her circumstances changed."
       >
         <div className="px-14 py-10 flex flex-wrap items-center gap-10 border-b border-border">
-          {!showModels ? (
-            <>
-              <Tag>{SHORT[algorithm] ?? algorithm} · recommended</Tag>
-              <button type="button" className={btn} onClick={() => setShowModels(true)}>Compare models</button>
-            </>
-          ) : (
           <Segmented
             label="Model"
             options={ALGORITHMS.map((a) => {
@@ -347,13 +339,12 @@ export default function Predict({
               return {
                 key: a, label: SHORT[a], disabled: !m || !usable(m),
                 title: !m ? "No such model for this rung" : !usable(m) ? "Needs the prediction service, which this copy of the site cannot reach"
-                  : `Held-out AP ${m.heldout_AP?.toFixed(3) ?? "–"}${m.browser || m.trees ? " · scored in your browser" : ""}`,
+                  : `Held-out average precision ${m.heldout_AP?.toFixed(3) ?? "–"}`,
               };
             })}
             value={algorithm}
             onChange={(a) => setAlgorithm(a)}
           />
-          )}
           {Object.keys(schema.outcomes).length > 1 && <Segmented
             label="Outcome"
             options={(["anc1plus", "anc4plus", "anc8plus"] as const).filter((o) => schema.outcomes[o]).map((o) => ({ key: o, label: schema.outcomes[o] }))}
@@ -375,11 +366,10 @@ export default function Predict({
         </div>
         {model && (
           <div className="px-14 py-8 flex flex-wrap items-center gap-6 border-b border-border">
-            <Tag>AP {model.heldout_AP?.toFixed(3) ?? "–"}</Tag>
-            {model.heldout_AUROC != null && <Tag>AUROC {model.heldout_AUROC.toFixed(3)}</Tag>}
-            <Tag>{model.n_predictors} predictors</Tag>
-            <Tag tone={localBundle(model) || model.trees ? "accent" : "neutral"}>{model.browser || model.trees ? "in your browser" : "prediction service"}</Tag>
-            <Link href={analysisHref} className="ml-auto text-10.5 text-accent hover:underline">How it was built</Link>
+            <span className="text-12.5 text-dim">
+              Tested on held-out women: average precision <b className="font-mono text-text">{model.heldout_AP?.toFixed(3) ?? "–"}</b>
+              {model.heldout_AUROC != null && <> · AUROC <b className="font-mono text-text">{model.heldout_AUROC.toFixed(3)}</b></>} · {model.n_predictors} predictors
+            </span>
           </div>
         )}
         <div className="px-14 pt-6 pb-14">
@@ -448,7 +438,7 @@ export default function Predict({
         </Panel>
 
         {contribs.length > 0 && (
-          <Panel help="predict.why" title="Why, exactly" how="What each answer adds on the log-odds scale, largest first. With the intercept they sum to the number behind the percentage. Green raises her chance; red lowers it.">
+          <Panel help="predict.why" title="What moves her chance" how="What each answer adds on the log-odds scale, largest first. With the intercept they sum to the number behind the percentage. Green raises her chance; red lowers it.">
             <RankedBars
               signed
               referenceLabel=""

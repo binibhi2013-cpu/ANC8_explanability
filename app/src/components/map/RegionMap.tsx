@@ -192,7 +192,7 @@ export default function RegionMap({ geo, data, selected, onSelect, basemap, them
           onEachFeature={(f, layer) => {
             const region = REGION_BY_PCODE[(f.properties as { pcode: string }).pcode]?.name;
             if (!region) {
-              layer.bindTooltip("Contested area: no survey region", { className: "studio-tip", sticky: true });
+              layer.bindTooltip("Contested area", { className: "studio-tip", sticky: true });
               return;
             }
             layer.bindTooltip(`<b>${region}</b>`, { className: "studio-tip", sticky: true });

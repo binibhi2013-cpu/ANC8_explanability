@@ -14,17 +14,15 @@ import { HELP_GROUPS, TOPICS, helpHref, searchHelp } from "@/lib/help";
  */
 
 const TASKS: { q: string; a: string; href: string }[] = [
-  { q: "Where are women lost in each region?", a: "Map & regions", href: "/help/map" },
-  { q: "Which region has the most women with no ANC?", a: "Map & regions, never start", href: "/help/map#layer" },
-  { q: "Who reaches each rung, by wealth or education?", a: "The ANC ladder", href: "/help/ladder" },
-  { q: "What does an early first visit add?", a: "Cohorts & horizons", href: "/help/cohorts" },
-  { q: "How well do our models predict ANC8+?", a: "Model analysis", href: "/help/analysis" },
-  { q: "Which predictors do the models lean on?", a: "Model analysis, SHAP", href: "/help/analysis#learned" },
-  { q: "Why is one woman's chance high or low?", a: "Predict", href: "/help/predict" },
-  { q: "What will next year look like at my facilities?", a: "Your data (a tool)", href: "/help/data" },
-  { q: "What does average precision, or AUROC, mean?", a: "How models are judged", href: "/help/basics-models" },
-  { q: "What is the difference between percent and points?", a: "Reading the numbers", href: "/help/basics-numbers#points" },
-  { q: "How do I send a colleague exactly what I see?", a: "Controls and settings", href: "/help/controls#links" },
+  { q: "How do the cohort, indicator and region filters work?", a: "Using the dashboard", href: "/help/start" },
+  { q: "Where on the care ladder are women lost?", a: "Overview", href: "/help/overview#ladder" },
+  { q: "Which groups are left behind?", a: "Who is left behind", href: "/help/left-behind" },
+  { q: "Where does each region lose women?", a: "Regions", href: "/help/regions" },
+  { q: "Does an early first visit go with reaching eight?", a: "Early ANC", href: "/help/early" },
+  { q: "How well do our three models predict ANC8+?", a: "Our three models", href: "/help/models" },
+  { q: "Which predictors does XGBoost lean on?", a: "Our three models", href: "/help/models#shap" },
+  { q: "What does average precision, or AUROC, mean?", a: "Reading the numbers", href: "/help/reading#models" },
+  { q: "How do I score my facility's list of women?", a: "Score a facility's list", href: "/help/your-data" },
 ];
 
 export default function HelpHome() {
@@ -34,14 +32,14 @@ export default function HelpHome() {
 
   return (
     <Screen>
-      <Panel title="How to use the studio">
+      <Panel title="How to use the dashboard">
         <div className="px-14 py-12 flex flex-col gap-10 max-w-[820px]">
           <p className="text-12.5 leading-relaxed">
-            <HelpText text="Every tool in the studio, explained in plain language with screenshots. Start with the basics if charts and models are new to you, or search for what you want to know. Every panel's (i) also has a **Read more** link that opens its explanation here." />
+            <HelpText text="Every section of the dashboard and its two tools, explained in plain language. Start with the basics if charts and models are new to you, or search for what you want to know." />
           </p>
           <label className="flex items-center gap-8 max-w-[520px]">
             <Search className="size-14 text-faint flex-none" aria-hidden="true" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search the Help, e.g. budget, AUROC, cohort, forecast…" aria-label="Search the Help" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search the Help, e.g. AUROC, cohort, SHAP…" aria-label="Search the Help" />
           </label>
         </div>
         {q.trim().length > 1 && (

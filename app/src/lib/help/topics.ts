@@ -2,7 +2,7 @@ import type { HelpGroup } from "./types";
 
 /**
  * The Help's table of contents, light enough for the navigation and the finder to load
- * on every screen. The full text lives in basics.ts, plan.ts, explore.ts and models.ts;
+ * on every screen. The full text lives in dash.ts;
  * lib/help/index.ts checks that the two agree.
  */
 
@@ -15,27 +15,23 @@ export interface TopicEntry {
 
 export const HELP_GROUPS: { key: HelpGroup; label: string }[] = [
   { key: "start", label: "Start here" },
-  { key: "plan", label: "Screens" },
-  { key: "explore", label: "Exploratory analysis" },
-  { key: "models", label: "Models" },
+  { key: "plan", label: "The dashboard, section by section" },
+  { key: "models", label: "Tools" },
 ];
 
 export const TOPIC_LIST: TopicEntry[] = [
-  { key: "start", label: "Getting around", group: "start", blurb: "What the studio is for and the parts of every screen" },
-  { key: "controls", label: "Controls and settings", group: "start", blurb: "Modes, scope, cohort, the finder, presenting, sharing a view" },
-  { key: "basics-ladder", label: "The ANC ladder", group: "start", blurb: "Antenatal care, contacts, the three rungs and the three cohorts" },
-  { key: "basics-numbers", label: "Reading the numbers", group: "start", blurb: "Shares, points, intervals, women per year, associations" },
-  { key: "basics-charts", label: "Reading the charts", group: "start", blurb: "Every kind of chart in the studio, and how to read it" },
-  { key: "basics-models", label: "How models are judged", group: "start", blurb: "Predictions, held-out women, chance, AP, AUROC, calibration" },
-  { key: "terms", label: "Words, A to Z", group: "start", blurb: "Every term the studio uses, in plain language" },
-  { key: "overview", label: "Overview", group: "plan", blurb: "The ladder at a glance and the key finding from our model" },
-  { key: "map", label: "Map & regions", group: "plan", blurb: "Where women are lost, and one region's full analysis" },
-  { key: "data", label: "Your data", group: "plan", blurb: "A tool, not a study finding: trends and forecasts from ANC counts" },
-  { key: "ladder", label: "The ANC ladder (screen)", group: "explore", blurb: "Who reaches each rung, and where they stop" },
-  { key: "cohorts", label: "Cohorts & horizons", group: "explore", blurb: "Full cohort and ANC entry, and what the first visit adds" },
-  { key: "analysis", label: "Model analysis", group: "models", blurb: "Our three models for ANC8+: performance, calibration, SHAP" },
-  { key: "predict", label: "Predict", group: "models", blurb: "Score one woman and see why" },
-  { key: "about", label: "About the study", group: "models", blurb: "The study on one page, from the manuscript abstract" },
+  { key: "start", label: "Using the dashboard", group: "start", blurb: "What the dashboard shows and how the filter bar works" },
+  { key: "reading", label: "Reading the numbers", group: "start", blurb: "Shares, intervals, points and how the models are judged" },
+  { key: "terms", label: "Words, A to Z", group: "start", blurb: "Every term the dashboard uses, in plain language" },
+  { key: "overview", label: "1 · Overview", group: "plan", blurb: "The four indicators, the map and the care ladder" },
+  { key: "left-behind", label: "2 · Who is left behind", group: "plan", blurb: "The whole care pathway, stacked, for each group of a predictor" },
+  { key: "regions", label: "3 · Regions", group: "plan", blurb: "Each region through five stages of care, and its weakest stage" },
+  { key: "early", label: "4 · Early ANC", group: "plan", blurb: "Does a first visit by 12 weeks go with reaching eight contacts?" },
+  { key: "models", label: "5 · Our three models", group: "plan", blurb: "Logistic regression, random forest and XGBoost: performance, calibration, predictors" },
+  { key: "whatif", label: "6 · What if", group: "plan", blurb: "Change one thing for every woman and ask the models what they predict" },
+  { key: "review", label: "7 · Programme review", group: "plan", blurb: "The study's programme-review brief: observed, models, review cue, caution" },
+  { key: "predict", label: "Score one woman", group: "models", blurb: "Answer the 21 questions and see one woman's predicted chance of ANC8+" },
+  { key: "your-data", label: "Score a facility's list", group: "models", blurb: "Upload a list of women attending ANC and get each one's predicted chance of ANC8+" },
 ];
 
 export const TOPIC_KEYS = TOPIC_LIST.map((t) => t.key);
