@@ -97,7 +97,7 @@ export const DASH_HELP: HelpTopic[] = [
     label: "1 · Overview",
     group: "plan",
     blurb: "The four indicators, the map and the care ladder",
-    screen: "/",
+    screen: "/?tab=overview",
     purpose: "The national or regional picture at a glance: how many women reach each indicator, how it varies across the 14 regions, and at which step of the care ladder women are lost.",
     cards: [
       {

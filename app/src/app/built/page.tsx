@@ -93,8 +93,8 @@ export default function Built() {
 
       <SectionRule label="Next" />
       <div className="flex flex-wrap gap-14 text-11">
-        <Link href="/" className="text-accent hover:underline">Dashboard</Link>
-        <Link href="/welcome" className="text-accent hover:underline">Title screen</Link>
+        <Link href="/?tab=overview" className="text-accent hover:underline">Dashboard</Link>
+        <Link href="/" className="text-accent hover:underline">Title screen</Link>
       </div>
     </Screen>
   );

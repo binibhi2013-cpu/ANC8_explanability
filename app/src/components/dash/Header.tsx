@@ -26,7 +26,7 @@ export default function Header() {
 
   return (
     <header className="bg-top text-topfg flex items-center gap-12 px-12 md:px-16 h-52 flex-none min-w-0">
-      <Link href={home("overview")} className="flex items-center gap-10 min-w-0 flex-none">
+      <Link href="/" title="Title page" className="flex items-center gap-10 min-w-0 flex-none">
         {MOH_LOGO && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={MOH_LOGO} alt={MOH_NAME} title={MOH_NAME} className="h-32 w-auto bg-white rounded-full p-1" />
@@ -96,8 +96,8 @@ export function MobileNav() {
 /** The dashboard with one tab open, keeping the cohort, indicator and region chosen. */
 function tabHref(search: URLSearchParams | { get(k: string): string | null; toString(): string }, tab: string) {
   const next = new URLSearchParams(search.toString());
-  if (tab === "overview") next.delete("tab"); else next.set("tab", tab);
+  next.set("tab", tab);
   for (const k of [...next.keys()]) if (!["tab", "cohort", "ind", "region"].includes(k)) next.delete(k);
   const qs = next.toString();
-  return qs ? `/?${qs}` : "/";
+  return `/?${qs}`;
 }

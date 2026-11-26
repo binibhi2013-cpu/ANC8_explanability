@@ -16,13 +16,13 @@ import { useTheme } from "./theme-provider";
  *  what to act on → how it was built. `focus` is the panel the step scrolls to and
  *  outlines (its data-help id). About 50 seconds a step. */
 const STEPS: { path: string; focus?: string; title: string; say: string }[] = [
-  { path: "/", focus: "dash.tiles", title: "1 · The problem",
+  { path: "/?tab=overview", focus: "dash.tiles", title: "1 · The problem",
     say: "78% of women had at least one ANC contact, 52% reached four, and only 19% reached the eight the national guideline recommends." },
-  { path: "/", focus: "dash.ladder", title: "2 · Where women are lost",
+  { path: "/?tab=overview", focus: "dash.ladder", title: "2 · Where women are lost",
     say: "The biggest loss is staying in care: of women who reached four contacts, 63% did not reach eight. Click Cue for retention ideas." },
-  { path: "/", focus: "dash.map", title: "3 · Where in Ethiopia",
+  { path: "/?tab=overview", focus: "dash.map", title: "3 · Where in Ethiopia",
     say: "ANC8+ ranges from 4% in Somali to 66% in Addis Ababa. Click a region and every tab follows." },
-  { path: "/?region=Somali", focus: "dash.ladder", title: "4 · One region",
+  { path: "/?tab=overview&region=Somali", focus: "dash.ladder", title: "4 · One region",
     say: "Somali: two in three women never start ANC, so the cue turns to outreach and community mobilisation." },
   { path: "/?tab=left-behind", focus: "dash.stacked", title: "5 · Who is left behind",
     say: "Each bar is all the women in a group. 5% of the poorest reach eight against 43% of the richest; most of the gap opens at first contact. Group by switches the predictor." },

@@ -9,13 +9,22 @@ import Overview from "@/components/dash/Overview";
 import LeftBehind from "@/components/dash/LeftBehind";
 import Regions from "@/components/dash/Regions";
 import { EarlyAnc, Models, Review, WhatIf } from "@/components/dash/Sections";
+import Welcome from "@/components/shell/Welcome";
+import { useSearchParams } from "next/navigation";
 
 /**
  * The ANC8+ Ethiopia Dashboard: one tab at a time, each sized to fit the screen, under
  * one filter bar that every chart obeys. Every number comes from the study's own saved
  * outputs (lib/dash.ts).
  */
-export default function Dashboard() {
+export default function Home() {
+  // The plain address opens the title page; the dashboard always has ?tab= (or another
+  // filter) in its address, so every dashboard link and bookmark still opens the dashboard.
+  const params = useSearchParams();
+  return params.toString() ? <Dashboard /> : <Welcome />;
+}
+
+function Dashboard() {
   const { reg, study, error, ready } = useDashData();
   const d = useDash();
   return (
