@@ -81,11 +81,14 @@ export function useDash() {
       const next = new URLSearchParams(params.toString());
       for (const [k, v] of Object.entries(patch)) {
         const d = (DEFAULTS as unknown as Record<string, string>)[k];
-        if (v === undefined || v === "" || v === d) next.delete(k);
+        if (k !== "tab" && (v === undefined || v === "" || v === d)) next.delete(k);
+        else if (k === "tab" && !v) next.set(k, "overview");
         else next.set(k, String(v));
       }
+      // The plain address (/) is the title screen, so the dashboard always carries ?tab=.
+      if (!next.get("tab")) next.set("tab", state.tab);
       const qs = next.toString();
-      const url = qs ? `/?${qs}` : "/";
+      const url = `/?${qs}`;
       // A new tab is a new view: push it, so the browser's back button returns to the last tab.
       if (patch.tab !== undefined && patch.tab !== state.tab) router.push(url, { scroll: false });
       else router.replace(url, { scroll: false });
